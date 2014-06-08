@@ -1,7 +1,13 @@
 
-import java.util.ArrayList;
+import UI.MainFrame;
+import UI.controllers.SideBarTableController;
+import UI.model.SideBarTableModel;
+import javax.swing.JFrame;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.table.TableModel;
+import manager.ApplicationManager;
 import org.ayf.DatabaseManager;
-import org.ayf.Type;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -20,10 +26,6 @@ public class AYFMain {
      */
     public static void main(String[] args) {
         // TODO code application logic here
-        
-        ArrayList<Type> types = DatabaseManager.getDonationTypes();
-        
-        System.out.println(types);
+        ApplicationManager manager = new ApplicationManager();
     }
-    
 }
