@@ -255,6 +255,8 @@ public class DatabaseManager {
                 types.add(type);
             }
             
+            ps.close();
+            rs.close();
             closeConnection(connection);
             
         } catch (SQLException ex) {
@@ -297,9 +299,24 @@ public class DatabaseManager {
                 Member.Gender gender    = rs.getObject("Gender").equals("Male") ? Member.Gender.MALE : Member.Gender.FEMALE;
                 String imagePath        = rs.getObject("Image").toString();
                 
-                members.add(new Member(memberID, firstName, middleName, lastName, permanentAddress, temporaryAddress, contactNumber, dateOfBirth, registerationDate, position, getProfessionTypeForName(profession), emailAddress, gender, imagePath));
+                members.add(new Member(memberID, 
+                        firstName, 
+                        middleName, 
+                        lastName, 
+                        permanentAddress, 
+                        temporaryAddress, 
+                        contactNumber, 
+                        dateOfBirth, 
+                        registerationDate, 
+                        position, 
+                        getProfessionTypeForName(profession), 
+                        emailAddress, 
+                        gender, 
+                        imagePath));
             }
             
+            ps.close();
+            rs.close();
             closeConnection(connection);
             
         } catch (SQLException ex) {
@@ -349,9 +366,25 @@ public class DatabaseManager {
                     Logger.getLogger(DatabaseManager.class.getName()).log(Level.INFO, "getMemberWithID : Multiple members found with same memberID={0}", id);
                     break;
                 }
-                member = new Member(memberID, firstName, middleName, lastName, permanentAddress, temporaryAddress, contactNumber, dateOfBirth, registerationDate, position, getProfessionTypeForName(profession), emailAddress, gender, imagePath);
+                
+                member = new Member(memberID, 
+                        firstName, 
+                        middleName, 
+                        lastName, 
+                        permanentAddress, 
+                        temporaryAddress, 
+                        contactNumber, 
+                        dateOfBirth, 
+                        registerationDate, 
+                        position, 
+                        getProfessionTypeForName(profession), 
+                        emailAddress, 
+                        gender, 
+                        imagePath);
             }
             
+            ps.close();
+            rs.close();
             closeConnection(connection);
             
         } catch (SQLException ex) {
@@ -386,7 +419,7 @@ public class DatabaseManager {
                 String  lastName        = rs.getObject("LastName").toString();
                 String  permanentAddress= rs.getObject("PermanenetAddress").toString();
                 String  temporaryAddress= rs.getObject("TemporaryAddress").toString();
-                String  contactNumber    = rs.getObject("ContactNumber").toString();
+                String  contactNumber   = rs.getObject("ContactNumber").toString();
                 String  emailAddress    = rs.getObject("EmailAddress").toString();                
                 String  profession      = rs.getObject("Profession").toString();
                 Date    dateOfBirth     = (Date) rs.getObject("DateOfBirth");
@@ -433,6 +466,8 @@ public class DatabaseManager {
                         imagePath));
             }
             
+            ps.close();
+            rs.close();
             closeConnection(connection);
             
         } catch (SQLException ex) {
@@ -443,4 +478,83 @@ public class DatabaseManager {
         return donors;
     }
     
+    public static boolean registerMember(Member member)
+    {
+        boolean bRegistered = false; 
+        if(member != null)
+        {
+            try 
+            {
+                Connection conn = createConnection();
+                PreparedStatement ps = conn.prepareStatement("INSERT INTO ? (FirstName, MiddleName, LastName, PermanenetAddress, TemporaryAddress, ContactNumber, EmailAddress, RegisterationDate, Position, Profession, DateOfBirth, Gender, Image) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )");
+                
+                ps.setObject(0, MEMBER_TABLE_NAME);
+                ps.setString(1, member.getFirstName());
+                ps.setString(2, member.getMiddleName());
+                ps.setString(3, member.getLastName());
+                ps.setString(4, member.getPermanentAddress());
+                ps.setString(5, member.getTemporaryAddress());
+                ps.setString(6, member.getContactNumber());
+                ps.setString(7, member.getEmailAddress());
+                ps.setDate(8, new java.sql.Date(member.getRegisterationDate().getTime()));
+                ps.setString(9, member.getPosition());
+                ps.setString(10, member.getProfession().getStringValue());
+                ps.setDate(11, new java.sql.Date(member.getDateOfBirth().getTime()));
+                ps.setString(12, member.getGender() == Member.Gender.MALE ? "Male" : "Female" );
+                ps.setString(13, member.getImagePath());
+                
+                ps.executeUpdate();
+                
+                bRegistered = true;
+                
+            } catch (SQLException ex) {
+                Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, ex);
+                JOptionPane.showMessageDialog(null, ex.getLocalizedMessage(), "Unable to register member ", ERROR_MESSAGE);
+            }
+        }
+        
+        return bRegistered;
+    }
+    
+    public static boolean performDonate(Donor donor)
+    {
+        boolean bDonateSuccess = false; 
+        if(donor != null)
+        {
+            try 
+            {
+                Connection conn = createConnection();
+                PreparedStatement ps = conn.prepareStatement("INSERT INTO ? (FirstName, MiddleName, LastName, PermanenetAddress, TemporaryAddress, ContactNumber, EmailAddress, Profession, DateOfBirth, Gender, Amount, DonationDate, Type, PaymentMode) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                
+                ps.setObject(0, DONATIONS_TABLE_NAME);
+                ps.setString(1, donor.getFirstName());
+                ps.setString(2, donor.getMiddleName());
+                ps.setString(3, donor.getLastName());
+                ps.setString(4, donor.getPermanentAddress());
+                ps.setString(5, donor.getTemporaryAddress());
+                ps.setString(6, donor.getContactNumber());
+                ps.setString(7, donor.getEmailAddress());
+                ps.setString(8, donor.getProfession().getStringValue());
+                ps.setDate(9, new java.sql.Date(donor.getDateOfBirth().getTime()));
+                ps.setString(10, donor.getGender() == Member.Gender.MALE ? "Male" : "Female" );
+                
+                
+                //Donor attributes
+                ps.setFloat(11, donor.getDonationAmount());
+                ps.setDate(12, new java.sql.Date(donor.getDonationDate().getTime()));
+                ps.setString(13, donor.getDonationType().getStringValue());
+                ps.setString(14, donor.getPaymentMode().getStringValue());
+                
+                ps.executeUpdate();
+                
+                bDonateSuccess = true;
+                
+            } catch (SQLException ex) {
+                Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, ex);
+                JOptionPane.showMessageDialog(null, ex.getLocalizedMessage(), "Unable to save donation", ERROR_MESSAGE);
+            }
+        }
+        
+        return bDonateSuccess;
+    }
 }
