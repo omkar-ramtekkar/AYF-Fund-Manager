@@ -2,9 +2,10 @@ package UI.model;
 
 import UI.GradientButton;
 import java.awt.*;
-import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.table.*;
+
+
 
 /**
  *  The ButtonRenderer class provides a renderer and an editor that looks like a
@@ -21,7 +22,7 @@ import javax.swing.table.*;
  */
 public class ButtonRenderer implements TableCellRenderer
 {
-    private final JButton headerOptionButton;
+    private final GlossyButton headerOptionButton;
     private final JButton subOptionButton;
     /**
      *  Create the ButtonColumn to be used as a renderer and editor. The

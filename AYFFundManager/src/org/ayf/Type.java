@@ -38,6 +38,7 @@ public class Type {
 
     @Override
     public String toString() {
-        return "Type{" + "id=" + id + ", stringValue=" + stringValue + '}';
+        //return "Type{" + "id=" + id + ", stringValue=" + stringValue + '}';
+        return getStringValue();
     }
 }
