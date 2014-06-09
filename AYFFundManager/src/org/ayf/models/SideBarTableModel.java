@@ -8,6 +8,8 @@ package org.ayf.models;
 
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 
@@ -68,7 +70,7 @@ public final class SideBarTableModel extends AbstractTableModel{
         
         public HeaderOption(String title) {
             super(title, null);
-            subOptions = new ArrayList<>();
+            subOptions = new ArrayList();
         }
         
         public void addSubOption(Option option)
@@ -88,7 +90,7 @@ public final class SideBarTableModel extends AbstractTableModel{
     
     public void generateSideBarOptions()
     {
-        this.options = new ArrayList<>(15);
+        this.options = new ArrayList(15);
         
         HeaderOption dashboardOption = new HeaderOption("Dashboard");
         this.options.add(dashboardOption);
@@ -118,7 +120,7 @@ public final class SideBarTableModel extends AbstractTableModel{
         miscellaneousOption.addSubOption(new Option("MiscellaneousOption3", miscellaneousOption));
         miscellaneousOption.addSubOption(new Option("MiscellaneousOption4", miscellaneousOption));
         
-        this.filteredOption = new ArrayList<>(this.options);
+        this.filteredOption = new ArrayList(this.options);
     }
     
     @Override
@@ -170,6 +172,11 @@ public final class SideBarTableModel extends AbstractTableModel{
             }
             
             this.fireTableDataChanged();
+            try {
+                Thread.sleep(25);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(SideBarTableModel.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
         else if(this.selectedSubOption != value)
         {

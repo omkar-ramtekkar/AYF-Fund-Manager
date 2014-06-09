@@ -29,7 +29,8 @@ public class SideBarTableController implements MouseListener, ActionListener, Ke
         
         this.model = new SideBarTableModel();
         this.table = new JTable(this.model);
-        
+        this.table.setRowMargin(5);
+        this.table.setRowHeight(60);
         this.table.getColumnModel().getColumn(0).setCellRenderer(new ButtonRenderer(0));
         this.table.setTableHeader(null);
         

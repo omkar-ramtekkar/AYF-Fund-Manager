@@ -14,7 +14,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Date;
+import java.sql.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -68,7 +68,7 @@ public class DatabaseManager {
         String url = null;
         if(System.getProperty("os.name").toLowerCase().contains("win"))
         {
-            url = "jdbc:ucanaccess://c:/database.accdb;lockmdb=true;ignorecase=true";
+            url = "jdbc:ucanaccess://c:/AYF/database.accdb;lockmdb=true;ignorecase=true";
         }
         else
         {
@@ -176,6 +176,8 @@ public class DatabaseManager {
     private static Type getTypeFromValue(String typeValue, ArrayList<Type> types)
     {
         Type returnType = null;
+        try
+        {
         for (Type type : types) {
             if(type.getStringValue().equals(typeValue))
             {
@@ -183,6 +185,9 @@ public class DatabaseManager {
                 break;
             }
         }
+        }
+        catch(NullPointerException ex){}
+        catch(Exception ex) {}
         
         if(returnType == null)
         {
@@ -237,10 +242,10 @@ public class DatabaseManager {
     {
         Logger.getLogger(DatabaseManager.class.getName()).log(Level.INFO, "getTypesFromTable({0})", tableName);
         
-        ArrayList<Type> types = new ArrayList<>();
-        
+        ArrayList<Type> types = new ArrayList();
+        Connection connection = null;
         try {
-            Connection connection = createConnection();
+            connection = createConnection();
             
             PreparedStatement ps = connection.prepareStatement("SELECT * FROM " + tableName);
             
@@ -250,21 +255,23 @@ public class DatabaseManager {
             
             while(rs.next())
             {
-                int id = Integer.parseInt(rs.getObject("ID").toString());
-                String typeValue = rs.getObject("Type").toString();
+                int id = rs.getInt("ID");
+                String typeValue = rs.getString("Type");
                 Type type = new Type(id, typeValue);
                 types.add(type);
             }
             
             ps.close();
             rs.close();
-            closeConnection(connection);
             
         } catch (SQLException ex) {
             Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, ex);
             JOptionPane.showMessageDialog(null, ex.getLocalizedMessage(), "Unable to fetch data from table" + tableName, ERROR_MESSAGE);
         }
-        
+        finally
+        {
+            if(connection != null) closeConnection(connection);
+        }
         return types;
     }
     
@@ -272,10 +279,10 @@ public class DatabaseManager {
     {
         Logger.getLogger(DatabaseManager.class.getName()).log(Level.INFO, "getRegisteredMembers");
         
-        ArrayList<Member> members = new ArrayList<>();
-        
+        ArrayList<Member> members = new ArrayList();
+        Connection connection = null;
         try {
-            Connection connection = createConnection();
+            connection = createConnection();
             
             PreparedStatement ps = connection.prepareStatement("SELECT * FROM " + MEMBER_TABLE_NAME);
             
@@ -285,21 +292,22 @@ public class DatabaseManager {
             
             while(rs.next())
             {
-                int     memberID        = Integer.parseInt(rs.getObject("ID").toString());
-                String  firstName       = rs.getObject("FirstName").toString();
-                String  middleName      = rs.getObject("MiddleName").toString();
-                String  lastName        = rs.getObject("LastName").toString();
-                String  permanentAddress= rs.getObject("PermanenetAddress").toString();
-                String  temporaryAddress= rs.getObject("TemporaryAddress").toString();
-                String  contactNumber    = rs.getObject("ContactNumber").toString();
-                String  emailAddress    = rs.getObject("EmailAddress").toString();
-                Date    registerationDate = (Date) rs.getObject("RegisterationDate");
-                String  position        = rs.getObject("Position").toString();
-                String  profession      = rs.getObject("Profession").toString();
-                Date    dateOfBirth     = (Date) rs.getObject("DateOfBirth");
-                Member.Gender gender    = rs.getObject("Gender").equals("Male") ? Member.Gender.MALE : Member.Gender.FEMALE;
-                String imagePath        = rs.getObject("Image").toString();
-                
+                int     memberID        = rs.getInt("ID");
+                String  firstName       = rs.getString("FirstName");
+                String  middleName      = rs.getString("MiddleName");
+                String  lastName        = rs.getString("LastName");
+                String  permanentAddress= rs.getString("PermanentAddress");
+                String  temporaryAddress= rs.getString("TemporaryAddress");
+                String  contactNumber    = rs.getString("ContactNumber");
+                String  emailAddress    = rs.getString("EmailAddress");
+                Date    registerationDate = rs.getDate("RegisterationDate");
+                String  position        = rs.getString("Position");
+                String  profession      = rs.getString("Profession");
+                Date    dateOfBirth     = rs.getDate("DateOfBirth");
+                String genderString     = rs.getString("Gender");
+                Member.Gender gender     = genderString != null ? (genderString.equals("Male") ? Member.Gender.MALE : Member.Gender.FEMALE) : Member.Gender.MALE;
+                String imagePath        = rs.getString("Image");
+
                 members.add(new Member(memberID, 
                         firstName, 
                         middleName, 
@@ -317,14 +325,15 @@ public class DatabaseManager {
             }
             
             ps.close();
-            rs.close();
-            closeConnection(connection);
-            
+            rs.close();            
         } catch (SQLException ex) {
             Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, ex);
             JOptionPane.showMessageDialog(null, ex.getLocalizedMessage(), "Unable to fetch data from table", ERROR_MESSAGE);
         }
-        
+        finally
+        {
+            if(connection != null) closeConnection(connection);
+        }
         return members;
     }
     
@@ -334,12 +343,12 @@ public class DatabaseManager {
         
         Member member = null;
         
+        Connection connection = null;
         try {
-            Connection connection = createConnection();
+            connection = createConnection();
             
-            PreparedStatement ps = connection.prepareStatement("SELECT * FROM ? WHERE ID=?");
-            ps.setObject(0, MEMBER_TYPE_TABLE_NAME);
-            ps.setObject(1, id);
+            PreparedStatement ps = connection.prepareStatement("SELECT * FROM "+ MEMBER_TABLE_NAME +" WHERE ID=?");
+            ps.setInt(1, id);
             
             ResultSet rs = ps.executeQuery();
             
@@ -347,20 +356,21 @@ public class DatabaseManager {
             
             while(rs.next())
             {
-                int     memberID        = Integer.parseInt(rs.getObject("ID").toString());
-                String  firstName       = rs.getObject("FirstName").toString();
-                String  middleName      = rs.getObject("MiddleName").toString();
-                String  lastName        = rs.getObject("LastName").toString();
-                String  permanentAddress= rs.getObject("PermanenetAddress").toString();
-                String  temporaryAddress= rs.getObject("TemporaryAddress").toString();
-                String  contactNumber    = rs.getObject("ContactNumber").toString();
-                String  emailAddress    = rs.getObject("EmailAddress").toString();
-                Date    registerationDate = (Date) rs.getObject("RegisterationDate");
-                String  position        = rs.getObject("Position").toString();
-                String  profession      = rs.getObject("Profession").toString();
-                Date    dateOfBirth     = (Date) rs.getObject("DateOfBirth");
-                Member.Gender gender    = rs.getObject("Gender").equals("Male") ? Member.Gender.MALE : Member.Gender.FEMALE;
-                String imagePath        = rs.getObject("Image").toString();
+                int     memberID        = rs.getInt("ID");
+                String  firstName       = rs.getString("FirstName");
+                String  middleName      = rs.getString("MiddleName");
+                String  lastName        = rs.getString("LastName");
+                String  permanentAddress= rs.getString("PermanentAddress");
+                String  temporaryAddress= rs.getString("TemporaryAddress");
+                String  contactNumber    = rs.getString("ContactNumber");
+                String  emailAddress    = rs.getString("EmailAddress");
+                Date    registerationDate = rs.getDate("RegisterationDate");
+                String  position        = rs.getString("Position");
+                String  profession      = rs.getString("Profession");
+                Date    dateOfBirth     = rs.getDate("DateOfBirth");
+                String genderString = rs.getString("Gender");
+                Member.Gender gender     = genderString != null ? (genderString.equals("Male") ? Member.Gender.MALE : Member.Gender.FEMALE) : Member.Gender.MALE;
+                String imagePath        = rs.getString("Image");
 
                 if(member != null)
                 {
@@ -386,11 +396,17 @@ public class DatabaseManager {
             
             ps.close();
             rs.close();
-            closeConnection(connection);
             
+        } catch (NullPointerException ex) {
+            Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(null, ex.getLocalizedMessage(), "Unable to fetch data from table", ERROR_MESSAGE);
         } catch (SQLException ex) {
             Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, ex);
             JOptionPane.showMessageDialog(null, ex.getLocalizedMessage(), "Unable to fetch data from table", ERROR_MESSAGE);
+        }
+        finally
+        {
+            if(connection != null) closeConnection(connection);
         }
         
         return member;
@@ -401,10 +417,10 @@ public class DatabaseManager {
     {
         Logger.getLogger(DatabaseManager.class.getName()).log(Level.INFO, "getDonors");
         
-        ArrayList<Donor> donors = new ArrayList<>();
-        
+        ArrayList<Donor> donors = new ArrayList();
+        Connection connection = null;
         try {
-            Connection connection = createConnection();
+            connection = createConnection();
             
             PreparedStatement ps = connection.prepareStatement("SELECT * FROM " + DONATIONS_TABLE_NAME);
             
@@ -414,22 +430,23 @@ public class DatabaseManager {
             
             while(rs.next())
             {
-                int     memberID        = rs.getObject("MemberID").toString().length() > 0 ? Integer.parseInt(rs.getObject("MemberID").toString()) : Integer.MAX_VALUE;
-                String  firstName       = rs.getObject("FirstName").toString();
-                String  middleName      = rs.getObject("MiddleName").toString();
-                String  lastName        = rs.getObject("LastName").toString();
-                String  permanentAddress= rs.getObject("PermanenetAddress").toString();
-                String  temporaryAddress= rs.getObject("TemporaryAddress").toString();
-                String  contactNumber   = rs.getObject("ContactNumber").toString();
-                String  emailAddress    = rs.getObject("EmailAddress").toString();                
-                String  profession      = rs.getObject("Profession").toString();
-                Date    dateOfBirth     = (Date) rs.getObject("DateOfBirth");
-                Member.Gender gender    = rs.getObject("Gender").equals("Male") ? Member.Gender.MALE : Member.Gender.FEMALE;
-                float   donationAmount  = Float.parseFloat(rs.getObject("Amount").toString());
-                long    receiptNumber   = Long.parseLong(rs.getObject("ReceiptNumber").toString());
-                Date    donationDate    = (Date) rs.getObject("DonationDate");
-                String donationType     = rs.getObject("DonationType").toString();
-                String paymentMode      = rs.getObject("PaymentMode").toString();
+                int     memberID        = rs.getInt("MemberID");
+                String  firstName       = rs.getString("FirstName");
+                String  middleName      = rs.getString("MiddleName");
+                String  lastName        = rs.getString("LastName");
+                String  permanentAddress= rs.getString("PermanenetAddress");
+                String  temporaryAddress= rs.getString("TemporaryAddress");
+                String  contactNumber   = rs.getString("ContactNumber");
+                String  emailAddress    = rs.getString("EmailAddress");                
+                String  profession      = rs.getString("Profession");
+                Date    dateOfBirth     = rs.getDate("DateOfBirth");
+                String genderString     = rs.getString("Gender");
+                Member.Gender gender     = genderString != null ? (genderString.equals("Male") ? Member.Gender.MALE : Member.Gender.FEMALE) : Member.Gender.MALE;
+                float   donationAmount  = rs.getFloat("Amount");
+                long    receiptNumber   = rs.getLong("ReceiptNumber");
+                Date    donationDate    = rs.getDate("DonationDate");
+                String donationType     = rs.getString("DonationType");
+                String paymentMode      = rs.getString("PaymentMode");
                 
                 //Member properties
                 String imagePath = null;
@@ -469,13 +486,15 @@ public class DatabaseManager {
             
             ps.close();
             rs.close();
-            closeConnection(connection);
             
         } catch (SQLException ex) {
             Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, ex);
             JOptionPane.showMessageDialog(null, ex.getLocalizedMessage(), "Unable to fetch data from table", ERROR_MESSAGE);
         }
-        
+        finally
+        {
+            if(connection != null) closeConnection(connection);
+        }
         return donors;
     }
     
@@ -487,9 +506,8 @@ public class DatabaseManager {
             try 
             {
                 Connection conn = createConnection();
-                PreparedStatement ps = conn.prepareStatement("INSERT INTO ? (FirstName, MiddleName, LastName, PermanenetAddress, TemporaryAddress, ContactNumber, EmailAddress, RegisterationDate, Position, Profession, DateOfBirth, Gender, Image) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )");
+                PreparedStatement ps = conn.prepareStatement("INSERT INTO "+ MEMBER_TABLE_NAME + " (FirstName, MiddleName, LastName, PermanentAddress, TemporaryAddress, ContactNumber, EmailAddress, RegisterationDate, Position, Profession, DateOfBirth, Gender, Image) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )");
                 
-                ps.setObject(0, MEMBER_TABLE_NAME);
                 ps.setString(1, member.getFirstName());
                 ps.setString(2, member.getMiddleName());
                 ps.setString(3, member.getLastName());
@@ -497,10 +515,10 @@ public class DatabaseManager {
                 ps.setString(5, member.getTemporaryAddress());
                 ps.setString(6, member.getContactNumber());
                 ps.setString(7, member.getEmailAddress());
-                ps.setDate(8, new java.sql.Date(member.getRegisterationDate().getTime()));
+                ps.setDate(8, member.getRegisterationDate());
                 ps.setString(9, member.getPosition());
-                ps.setString(10, member.getProfession().getStringValue());
-                ps.setDate(11, new java.sql.Date(member.getDateOfBirth().getTime()));
+                ps.setString(10, member.getProfession() != null ? member.getProfession().getStringValue() : null);
+                ps.setDate(11, member.getDateOfBirth());
                 ps.setString(12, member.getGender() == Member.Gender.MALE ? "Male" : "Female" );
                 ps.setString(13, member.getImagePath());
                 
@@ -535,16 +553,16 @@ public class DatabaseManager {
                 ps.setString(5, donor.getTemporaryAddress());
                 ps.setString(6, donor.getContactNumber());
                 ps.setString(7, donor.getEmailAddress());
-                ps.setString(8, donor.getProfession().getStringValue());
-                ps.setDate(9, new java.sql.Date(donor.getDateOfBirth().getTime()));
+                ps.setString(8, donor.getProfession() != null ? donor.getProfession().getStringValue() : null);
+                ps.setDate(9, (java.sql.Date) donor.getDateOfBirth());
                 ps.setString(10, donor.getGender() == Member.Gender.MALE ? "Male" : "Female" );
                 
                 
                 //Donor attributes
                 ps.setFloat(11, donor.getDonationAmount());
-                ps.setDate(12, new java.sql.Date(donor.getDonationDate().getTime()));
-                ps.setString(13, donor.getDonationType().getStringValue());
-                ps.setString(14, donor.getPaymentMode().getStringValue());
+                ps.setDate(12, donor.getDonationDate());
+                ps.setString(13, donor.getDonationType() != null ? donor.getDonationType().getStringValue() : null);
+                ps.setString(14, donor.getPaymentMode()!= null ? donor.getPaymentMode().getStringValue() : null);
                 
                 ps.executeUpdate();
                 

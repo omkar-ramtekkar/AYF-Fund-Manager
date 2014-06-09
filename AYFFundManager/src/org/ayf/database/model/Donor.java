@@ -6,7 +6,7 @@
 
 package org.ayf.database.model;
 
-import java.util.Date;
+import java.sql.Date;
 
 /**
  *

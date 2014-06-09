@@ -6,8 +6,7 @@
 
 package org.ayf.database.model;
 
-import java.util.Date;
-import java.util.Objects;
+import java.sql.Date;
 
 /**
  *
@@ -150,15 +149,14 @@ public class Member {
 
     @Override
     public int hashCode() {
-        int hash = 5;
-        hash = 17 * hash + this.memberID;
-        hash = 17 * hash + Objects.hashCode(this.dateOfBirth);
-        hash = 17 * hash + Objects.hashCode(this.gender);
-        hash = 17 * hash + Objects.hashCode(this.firstName);
-        hash = 17 * hash + Objects.hashCode(this.middleName);
-        hash = 17 * hash + Objects.hashCode(this.lastName);
+        int hash = 7;
+        hash = 47 * hash + this.memberID;
+        hash = 47 * hash + (this.dateOfBirth != null ? this.dateOfBirth.hashCode() : 0);
+        hash = 47 * hash + (this.gender != null ? this.gender.hashCode() : 0);
         return hash;
     }
+
+    
 
     @Override
     public boolean equals(Object obj) {
@@ -172,7 +170,7 @@ public class Member {
         if (this.memberID != other.memberID) {
             return false;
         }
-        if (!Objects.equals(this.dateOfBirth, other.dateOfBirth)) {
+        if (this.dateOfBirth.equals(other.dateOfBirth)) {
             return false;
         }
         if (this.gender != other.gender) {

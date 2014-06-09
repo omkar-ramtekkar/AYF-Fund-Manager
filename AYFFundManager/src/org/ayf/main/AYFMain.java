@@ -1,15 +1,13 @@
 package org.ayf.main;
 
 
-import org.ayf.ui.MainFrame;
-import org.ayf.ui.controllers.SideBarTableController;
-import org.ayf.models.SideBarTableModel;
-import javax.swing.JFrame;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.table.TableModel;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.plaf.synth.SynthLookAndFeel;
 import org.ayf.managers.ApplicationManager;
-import org.ayf.database.manager.DatabaseManager;
+import org.ayf.ui.MainFrame;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -27,7 +25,20 @@ public class AYFMain {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        // TODO code application logic here
+        try {
+            // TODO code application logic here
+            
+            UIManager.setLookAndFeel("com.seaglasslookandfeel.SeaGlassLookAndFeel");
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(AYFMain.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            Logger.getLogger(AYFMain.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            Logger.getLogger(AYFMain.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (UnsupportedLookAndFeelException ex) {
+            Logger.getLogger(AYFMain.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
         ApplicationManager manager = new ApplicationManager();
     }
 }

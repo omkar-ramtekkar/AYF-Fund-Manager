@@ -6,7 +6,9 @@ import javax.swing.*;
 import javax.swing.table.*;
 import org.ayf.models.SideBarTableModel;
 import org.ayf.tpl.color.util.Theme;
+import org.ayf.tpl.glossybutton.ButtonType;
 import org.ayf.tpl.glossybutton.GlossyButton;
+import org.ayf.tpl.glossybutton.StandardButton;
 
 
 
@@ -25,8 +27,8 @@ import org.ayf.tpl.glossybutton.GlossyButton;
  */
 public class ButtonRenderer implements TableCellRenderer
 {
-    private final GlossyButton headerOptionButton;
-    private final GlossyButton subOptionButton;
+    private final StandardButton headerOptionButton;
+    private final StandardButton subOptionButton;
     /**
      *  Create the ButtonColumn to be used as a renderer and editor. The
      *  renderer and editor will automatically be installed on the TableColumn
@@ -36,8 +38,11 @@ public class ButtonRenderer implements TableCellRenderer
      */
     public ButtonRenderer(int column)
     {
-            headerOptionButton = new GlossyButton("", Theme.GRADIENT_VOILET_THEME);
-            subOptionButton = new GlossyButton("", Theme.STANDARD_GOLD_THEME);
+            headerOptionButton = new StandardButton("");
+            headerOptionButton.setSelectButtonTheme(Theme.STANDARD_INDIGO_THEME);
+            subOptionButton = new StandardButton("", Theme.STANDARD_GOLD_THEME, ButtonType.BUTTON_ROUNDED_RECTANGLUR);
+            subOptionButton.setSelectButtonTheme(Theme.STANDARD_OLIVEGREEN_THEME);
+            subOptionButton.setRolloverButtonTheme(Theme.STANDARD_LIGHTORANGE_THEME);
     }
 
     //  Implement TableCellRenderer interface
@@ -58,12 +63,14 @@ public class ButtonRenderer implements TableCellRenderer
         if(value.getClass().equals(SideBarTableModel.HeaderOption.class))
         {
             headerOptionButton.setText(value.toString());
-            table.setRowHeight(row, 40);
+            headerOptionButton.setSelected(true);
+            table.setRowHeight(row, 60);
             return headerOptionButton;
         }
         else
         {
-            table.setRowHeight(row, 25);
+            table.setRowHeight(row, 50);
+            subOptionButton.setSelected(true);
             this.subOptionButton.setBorderPainted(isSelected);
             this.subOptionButton.setText(value.toString());
             return this.subOptionButton;
