@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package UI;
+package org.ayf.ui;
 
 import javax.swing.JFrame;
 

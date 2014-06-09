@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package UI.model;
+package org.ayf.models;
 
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;

@@ -1,13 +1,15 @@
+package org.ayf.main;
 
-import UI.MainFrame;
-import UI.controllers.SideBarTableController;
-import UI.model.SideBarTableModel;
+
+import org.ayf.ui.MainFrame;
+import org.ayf.ui.controllers.SideBarTableController;
+import org.ayf.models.SideBarTableModel;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.TableModel;
-import manager.ApplicationManager;
-import org.ayf.DatabaseManager;
+import org.ayf.managers.ApplicationManager;
+import org.ayf.database.manager.DatabaseManager;
 
 /*
  * To change this license header, choose License Headers in Project Properties.

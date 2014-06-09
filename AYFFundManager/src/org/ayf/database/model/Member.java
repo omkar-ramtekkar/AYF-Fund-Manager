@@ -4,11 +4,10 @@
  * and open the template in the editor.
  */
 
-package backend.model;
+package org.ayf.database.model;
 
 import java.util.Date;
 import java.util.Objects;
-import org.ayf.Type;
 
 /**
  *

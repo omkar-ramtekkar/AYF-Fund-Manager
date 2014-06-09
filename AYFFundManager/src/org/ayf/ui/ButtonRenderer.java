@@ -1,9 +1,12 @@
-package UI.model;
+package org.ayf.ui;
 
-import UI.GradientButton;
+
 import java.awt.*;
 import javax.swing.*;
 import javax.swing.table.*;
+import org.ayf.models.SideBarTableModel;
+import org.ayf.tpl.color.util.Theme;
+import org.ayf.tpl.glossybutton.GlossyButton;
 
 
 
@@ -23,7 +26,7 @@ import javax.swing.table.*;
 public class ButtonRenderer implements TableCellRenderer
 {
     private final GlossyButton headerOptionButton;
-    private final JButton subOptionButton;
+    private final GlossyButton subOptionButton;
     /**
      *  Create the ButtonColumn to be used as a renderer and editor. The
      *  renderer and editor will automatically be installed on the TableColumn
@@ -33,8 +36,8 @@ public class ButtonRenderer implements TableCellRenderer
      */
     public ButtonRenderer(int column)
     {
-            headerOptionButton = new GradientButton();
-            subOptionButton = new JButton();
+            headerOptionButton = new GlossyButton("", Theme.GRADIENT_VOILET_THEME);
+            subOptionButton = new GlossyButton("", Theme.STANDARD_GOLD_THEME);
     }
 
     //  Implement TableCellRenderer interface

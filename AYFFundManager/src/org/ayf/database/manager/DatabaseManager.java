@@ -4,10 +4,10 @@
  * and open the template in the editor.
  */
 
-package org.ayf;
+package org.ayf.database.manager;
 
-import backend.model.Donor;
-import backend.model.Member;
+import org.ayf.database.model.Donor;
+import org.ayf.database.model.Member;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -18,6 +18,7 @@ import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import org.ayf.database.model.Type;
 import static javax.swing.JOptionPane.ERROR_MESSAGE;
 
 
@@ -425,9 +426,9 @@ public class DatabaseManager {
                 Date    dateOfBirth     = (Date) rs.getObject("DateOfBirth");
                 Member.Gender gender    = rs.getObject("Gender").equals("Male") ? Member.Gender.MALE : Member.Gender.FEMALE;
                 float   donationAmount  = Float.parseFloat(rs.getObject("Amount").toString());
-                long    receiptNumber   = Long.parseLong(rs.getObject("ID").toString());
+                long    receiptNumber   = Long.parseLong(rs.getObject("ReceiptNumber").toString());
                 Date    donationDate    = (Date) rs.getObject("DonationDate");
-                String donationType     = rs.getObject("Type").toString();
+                String donationType     = rs.getObject("DonationType").toString();
                 String paymentMode      = rs.getObject("PaymentMode").toString();
                 
                 //Member properties
@@ -524,7 +525,7 @@ public class DatabaseManager {
             try 
             {
                 Connection conn = createConnection();
-                PreparedStatement ps = conn.prepareStatement("INSERT INTO ? (FirstName, MiddleName, LastName, PermanenetAddress, TemporaryAddress, ContactNumber, EmailAddress, Profession, DateOfBirth, Gender, Amount, DonationDate, Type, PaymentMode) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                PreparedStatement ps = conn.prepareStatement("INSERT INTO ? (FirstName, MiddleName, LastName, PermanenetAddress, TemporaryAddress, ContactNumber, EmailAddress, Profession, DateOfBirth, Gender, Amount, DonationDate, DonationType, PaymentMode) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
                 
                 ps.setObject(0, DONATIONS_TABLE_NAME);
                 ps.setString(1, donor.getFirstName());

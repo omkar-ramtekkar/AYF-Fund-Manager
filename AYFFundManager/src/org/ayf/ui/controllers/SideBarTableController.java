@@ -4,10 +4,10 @@
  * and open the template in the editor.
  */
 
-package UI.controllers;
+package org.ayf.ui.controllers;
 
-import UI.model.ButtonRenderer;
-import UI.model.SideBarTableModel;
+import org.ayf.ui.ButtonRenderer;
+import org.ayf.models.SideBarTableModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;

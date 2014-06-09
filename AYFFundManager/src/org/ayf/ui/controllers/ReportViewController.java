@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package UI.controllers;
+package org.ayf.ui.controllers;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

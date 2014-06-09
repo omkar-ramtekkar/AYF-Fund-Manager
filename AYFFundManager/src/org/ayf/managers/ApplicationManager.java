@@ -4,10 +4,10 @@
  * and open the template in the editor.
  */
 
-package manager;
+package org.ayf.managers;
 
-import UI.MainFrame;
-import UI.controllers.SideBarTableController;
+import org.ayf.ui.MainFrame;
+import org.ayf.ui.controllers.SideBarTableController;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 

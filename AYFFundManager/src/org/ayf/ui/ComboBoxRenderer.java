@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package UI.model;
+package org.ayf.ui;
 
 /**
  *
