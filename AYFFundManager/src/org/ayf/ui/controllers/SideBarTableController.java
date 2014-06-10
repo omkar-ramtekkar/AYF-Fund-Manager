@@ -6,8 +6,6 @@
 
 package org.ayf.ui.controllers;
 
-import org.ayf.ui.ButtonRenderer;
-import org.ayf.models.SideBarTableModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -15,7 +13,10 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import javax.swing.JTable;
+import static javax.swing.ListSelectionModel.MULTIPLE_INTERVAL_SELECTION;
 import javax.swing.table.TableModel;
+import org.ayf.models.SideBarTableModel;
+import org.ayf.ui.ButtonRenderer;
 
 /**
  *
@@ -31,6 +32,7 @@ public class SideBarTableController implements MouseListener, ActionListener, Ke
         this.table = new JTable(this.model);
         this.table.setRowMargin(5);
         this.table.setRowHeight(60);
+        this.table.setSelectionMode(MULTIPLE_INTERVAL_SELECTION);
         this.table.getColumnModel().getColumn(0).setCellRenderer(new ButtonRenderer(0));
         this.table.setTableHeader(null);
         

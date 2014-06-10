@@ -3,6 +3,8 @@ package org.ayf.ui;
 
 import java.awt.*;
 import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.border.EmptyBorder;
 import javax.swing.table.*;
 import org.ayf.models.SideBarTableModel;
 import org.ayf.tpl.color.util.Theme;
@@ -29,6 +31,7 @@ public class ButtonRenderer implements TableCellRenderer
 {
     private final StandardButton headerOptionButton;
     private final StandardButton subOptionButton;
+    private static final Border noFocusBorder = new EmptyBorder(1, 1, 1, 1);
     /**
      *  Create the ButtonColumn to be used as a renderer and editor. The
      *  renderer and editor will automatically be installed on the TableColumn
@@ -39,10 +42,8 @@ public class ButtonRenderer implements TableCellRenderer
     public ButtonRenderer(int column)
     {
             headerOptionButton = new StandardButton("");
-            headerOptionButton.setSelectButtonTheme(Theme.STANDARD_INDIGO_THEME);
-            subOptionButton = new StandardButton("", Theme.STANDARD_GOLD_THEME, ButtonType.BUTTON_ROUNDED_RECTANGLUR);
-            subOptionButton.setSelectButtonTheme(Theme.STANDARD_OLIVEGREEN_THEME);
-            subOptionButton.setRolloverButtonTheme(Theme.STANDARD_LIGHTORANGE_THEME);
+            subOptionButton = new StandardButton("", ButtonType.BUTTON_ROUNDED_RECTANGLUR, Theme.STANDARD_LIGHTGRAY_THEME, Theme.STANDARD_GREEN_THEME, Theme.STANDARD_GREEN_THEME);
+
     }
 
     //  Implement TableCellRenderer interface
@@ -51,30 +52,26 @@ public class ButtonRenderer implements TableCellRenderer
     public Component getTableCellRendererComponent(
             JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column)
     {
-        subOptionButton.setBorder(null);
-        headerOptionButton.setBorder(null);
-        if(isSelected)
-        {
-            headerOptionButton.setBorder(BorderFactory.createLineBorder(Color.gray));
-            subOptionButton.setBorder(BorderFactory.createLineBorder(Color.gray));
-        }
         
-            
+        StandardButton target = null;  
         if(value.getClass().equals(SideBarTableModel.HeaderOption.class))
         {
             headerOptionButton.setText(value.toString());
             headerOptionButton.setSelected(true);
             table.setRowHeight(row, 60);
-            return headerOptionButton;
+            target = headerOptionButton;
         }
         else
         {
-            table.setRowHeight(row, 50);
-            subOptionButton.setSelected(true);
-            this.subOptionButton.setBorderPainted(isSelected);
+            table.setRowHeight(row, 40);
             this.subOptionButton.setText(value.toString());
-            return this.subOptionButton;
+            target = this.subOptionButton;
         }
         
+        target.getModel().setSelected(isSelected);
+        target.getModel().setRollover(hasFocus);
+        
+
+        return target;
     }
 }
