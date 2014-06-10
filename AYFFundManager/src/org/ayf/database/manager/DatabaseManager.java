@@ -20,6 +20,7 @@ import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import org.ayf.database.model.Type;
 import static javax.swing.JOptionPane.ERROR_MESSAGE;
+import net.ucanaccess.jdbc.UcanaccessDriver;
 
 
 /**
@@ -63,22 +64,48 @@ public class DatabaseManager {
     {
         DatabaseManager.intializeDatabaseManager();
     }
-
-    private static Connection createConnection(){
+    
+    private static void dump(ResultSet rs,String exName)
+                    throws SQLException {
+        System.out.println("-------------------------------------------------");
+        System.out.println();
+        System.out.println(exName+" result:");
+        System.out.println();
+        while (rs.next()) {
+                System.out.print("| ");
+                int j=rs.getMetaData().getColumnCount();
+                for (int i = 1; i <=j ; ++i) {
+                        Object o = rs.getObject(i);
+                        System.out.print(o + " | ");
+                }
+                System.out.println();
+                System.out.println();
+        }
+    }
+    
+    private static Connection createConnection()
+    {
         String url = null;
         if(System.getProperty("os.name").toLowerCase().contains("win"))
         {
-            url = "jdbc:ucanaccess://c:/AYF/database.accdb;lockmdb=true;ignorecase=true";
+            url = UcanaccessDriver.URL_PREFIX + "D:/database.accdb" + ";newDatabaseVersion=V2007";
         }
         else
         {
-            url = "jdbc:ucanaccess:///Volumes/MACINTOSH 2/Projects/AadimYouthFoundation/AYF-Fund-Manager/AYFFundManager/database.accdb;lockmdb=true;ignorecase=true";
-        }
+            url = UcanaccessDriver.URL_PREFIX + "/Volumes/MACINTOSH 2/Projects/AadimYouthFoundation/AYF-Fund-Manager/AYFFundManager/database.accdb"+ ";newDatabaseVersion=V2007";
+        }            
+        
         // specify url, username, pasword - make sure these are valid 
         Connection conn = null;
         try {
             conn = DriverManager.getConnection(url, "", "");
         } catch (SQLException ex) {
+            Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(null, ex.getLocalizedMessage(), "Database connection error", ERROR_MESSAGE);
+            System.exit(0);
+        }
+        catch(NullPointerException ex)
+        {
             Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, ex);
             JOptionPane.showMessageDialog(null, ex.getLocalizedMessage(), "Database connection error", ERROR_MESSAGE);
             System.exit(0);
@@ -434,7 +461,7 @@ public class DatabaseManager {
                 String  firstName       = rs.getString("FirstName");
                 String  middleName      = rs.getString("MiddleName");
                 String  lastName        = rs.getString("LastName");
-                String  permanentAddress= rs.getString("PermanenetAddress");
+                String  permanentAddress= rs.getString("PermanentAddress");
                 String  temporaryAddress= rs.getString("TemporaryAddress");
                 String  contactNumber   = rs.getString("ContactNumber");
                 String  emailAddress    = rs.getString("EmailAddress");                
@@ -501,13 +528,16 @@ public class DatabaseManager {
     public static boolean registerMember(Member member)
     {
         boolean bRegistered = false; 
+        Connection conn = null;
         if(member != null)
         {
             try 
             {
-                Connection conn = createConnection();
-                PreparedStatement ps = conn.prepareStatement("INSERT INTO "+ MEMBER_TABLE_NAME + " (FirstName, MiddleName, LastName, PermanentAddress, TemporaryAddress, ContactNumber, EmailAddress, RegisterationDate, Position, Profession, DateOfBirth, Gender, Image) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )");
-                
+                conn = createConnection();
+                              
+                String sql = "INSERT INTO "+ MEMBER_TABLE_NAME + " (FirstName, MiddleName, LastName, PermanentAddress, TemporaryAddress, ContactNumber, EmailAddress, RegisterationDate, Position, Profession, DateOfBirth, Gender, Image) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                PreparedStatement ps = conn.prepareStatement(sql);
+
                 ps.setString(1, member.getFirstName());
                 ps.setString(2, member.getMiddleName());
                 ps.setString(3, member.getLastName());
@@ -522,13 +552,18 @@ public class DatabaseManager {
                 ps.setString(12, member.getGender() == Member.Gender.MALE ? "Male" : "Female" );
                 ps.setString(13, member.getImagePath());
                 
-                ps.executeUpdate();
-                
-                bRegistered = true;
+                bRegistered = ps.executeUpdate() > 0;
+               conn.commit();
+               
+               DatabaseManager.dump(conn.createStatement().executeQuery("select * from Members"), "After Commit");
                 
             } catch (SQLException ex) {
                 Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, ex);
                 JOptionPane.showMessageDialog(null, ex.getLocalizedMessage(), "Unable to register member ", ERROR_MESSAGE);
+            }
+            finally
+            {
+                closeConnection(conn);
             }
         }
         
@@ -538,14 +573,14 @@ public class DatabaseManager {
     public static boolean performDonate(Donor donor)
     {
         boolean bDonateSuccess = false; 
+        Connection conn = null;
         if(donor != null)
         {
             try 
             {
-                Connection conn = createConnection();
-                PreparedStatement ps = conn.prepareStatement("INSERT INTO ? (FirstName, MiddleName, LastName, PermanenetAddress, TemporaryAddress, ContactNumber, EmailAddress, Profession, DateOfBirth, Gender, Amount, DonationDate, DonationType, PaymentMode) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-                
-                ps.setObject(0, DONATIONS_TABLE_NAME);
+                conn = createConnection();
+                PreparedStatement ps = conn.prepareStatement("INSERT INTO "+DONATIONS_TABLE_NAME+" (FirstName, MiddleName, LastName, PermanentAddress, TemporaryAddress, ContactNumber, EmailAddress, Profession, DateOfBirth, Gender, Amount, DonationDate, DonationType, PaymentMode) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+
                 ps.setString(1, donor.getFirstName());
                 ps.setString(2, donor.getMiddleName());
                 ps.setString(3, donor.getLastName());
@@ -554,7 +589,7 @@ public class DatabaseManager {
                 ps.setString(6, donor.getContactNumber());
                 ps.setString(7, donor.getEmailAddress());
                 ps.setString(8, donor.getProfession() != null ? donor.getProfession().getStringValue() : null);
-                ps.setDate(9, (java.sql.Date) donor.getDateOfBirth());
+                ps.setDate(9, donor.getDateOfBirth());
                 ps.setString(10, donor.getGender() == Member.Gender.MALE ? "Male" : "Female" );
                 
                 
@@ -564,13 +599,15 @@ public class DatabaseManager {
                 ps.setString(13, donor.getDonationType() != null ? donor.getDonationType().getStringValue() : null);
                 ps.setString(14, donor.getPaymentMode()!= null ? donor.getPaymentMode().getStringValue() : null);
                 
-                ps.executeUpdate();
-                
-                bDonateSuccess = true;
+                bDonateSuccess = ps.executeUpdate() > 0;
                 
             } catch (SQLException ex) {
                 Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, ex);
                 JOptionPane.showMessageDialog(null, ex.getLocalizedMessage(), "Unable to save donation", ERROR_MESSAGE);
+            }
+            finally
+            {
+                if(conn != null) closeConnection(conn);
             }
         }
         

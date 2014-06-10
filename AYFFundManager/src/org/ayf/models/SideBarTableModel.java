@@ -153,6 +153,7 @@ public final class SideBarTableModel extends AbstractTableModel{
         int rowIndex = table.rowAtPoint(event.getPoint());
         Object value = table.getModel().getValueAt(rowIndex, 0);
         
+        if(table.getSelectedRowCount() > 0) table.clearSelection();
         if(value.getClass().equals(HeaderOption.class))
         {
             if(this.selectedHelderOption != value)
@@ -172,6 +173,7 @@ public final class SideBarTableModel extends AbstractTableModel{
             }
             
             this.fireTableDataChanged();
+            
             try {
                 Thread.sleep(25);
             } catch (InterruptedException ex) {
@@ -182,6 +184,9 @@ public final class SideBarTableModel extends AbstractTableModel{
         {
             this.selectedSubOption = (Option)value;
         }
+        
+        
+        
     }
     //Private data members
     private ArrayList<Option> options;
