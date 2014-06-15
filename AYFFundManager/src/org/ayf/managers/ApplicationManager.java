@@ -6,44 +6,50 @@
 
 package org.ayf.managers;
 
-import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.JFrame;
-import javax.swing.JScrollPane;
-import javax.swing.UnsupportedLookAndFeelException;
-import org.ayf.database.manager.DatabaseManager;
-import org.ayf.database.model.Donor;
-import org.ayf.database.model.Member;
+import java.awt.event.MouseEvent;
+import javax.swing.event.MouseInputListener;
 import org.ayf.ui.MainFrame;
 import org.ayf.ui.controllers.SideBarTableController;
 
 /**
- *
+ 
  * @author om
  */
-public class ApplicationManager {
-    private JFrame mainFrame = null;
-    private final SideBarTableController sidebarTableController;
+public class ApplicationManager implements MouseInputListener
+{
+    private MainFrame mainFrame = null;
+    private SideBarTableController sidebarTableController;
     private ReportManager reportManager;
+    
+    private static ApplicationManager instance = null;
 
-    public ApplicationManager() 
+    public static ApplicationManager getSharedManager()
+    {
+        if(instance == null)
+        {
+            instance = new ApplicationManager();
+        }
+        
+        return instance;
+    }
+    
+    
+    private ApplicationManager() 
+    {
+    }
+    
+    public void initialize()
     {
         this.mainFrame = new MainFrame();
-        ArrayList<Donor> donors = DatabaseManager.getDonors();
-        Donor donor = donors.get(0);
-        
-        DatabaseManager.performDonate(donor);
 
+        //Configure sidebar table
         this.sidebarTableController = new SideBarTableController();
-        JScrollPane scrollPane = new JScrollPane(this.sidebarTableController.getTable());
-        scrollPane.setBounds(0, 0, 200, this.mainFrame.getHeight());
-        this.sidebarTableController.getTable().setBounds(0, 0, 200, this.mainFrame.getHeight());
-        this.mainFrame.add(scrollPane);
+        this.sidebarTableController.getTable().addMouseListener(this);
+        this.reportManager = new ReportManager();
     }
 
     
-    public JFrame getMainFrame() {
+    public MainFrame getMainFrame() {
         return mainFrame;
     }
 
@@ -53,6 +59,34 @@ public class ApplicationManager {
 
     public ReportManager getReportManager() {
         return reportManager;
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+    }
+
+    @Override
+    public void mouseDragged(MouseEvent e) {
+    }
+
+    @Override
+    public void mouseMoved(MouseEvent e) {
     }
     
     

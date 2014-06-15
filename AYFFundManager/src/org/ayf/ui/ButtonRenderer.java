@@ -9,7 +9,6 @@ import javax.swing.table.*;
 import org.ayf.models.SideBarTableModel;
 import org.ayf.tpl.color.util.Theme;
 import org.ayf.tpl.glossybutton.ButtonType;
-import org.ayf.tpl.glossybutton.GlossyButton;
 import org.ayf.tpl.glossybutton.StandardButton;
 
 
@@ -43,7 +42,7 @@ public class ButtonRenderer implements TableCellRenderer
     {
             headerOptionButton = new StandardButton("");
             subOptionButton = new StandardButton("", ButtonType.BUTTON_ROUNDED_RECTANGLUR, Theme.STANDARD_LIGHTGRAY_THEME, Theme.STANDARD_GREEN_THEME, Theme.STANDARD_GREEN_THEME);
-
+            subOptionButton.setDirection(-1);
     }
 
     //  Implement TableCellRenderer interface
@@ -60,6 +59,15 @@ public class ButtonRenderer implements TableCellRenderer
             headerOptionButton.setSelected(true);
             table.setRowHeight(row, 60);
             target = headerOptionButton;
+            SideBarTableModel model = (SideBarTableModel) table.getModel();
+            if(model.getSelectedHelderOption() == value)
+            {
+                headerOptionButton.setDirection(SwingConstants.SOUTH);
+            }
+            else
+            {
+                headerOptionButton.setDirection(SwingConstants.EAST);
+            }
         }
         else
         {
@@ -70,6 +78,8 @@ public class ButtonRenderer implements TableCellRenderer
         
         target.getModel().setSelected(isSelected);
         target.getModel().setRollover(hasFocus);
+        
+        //Set Direction option
         
 
         return target;

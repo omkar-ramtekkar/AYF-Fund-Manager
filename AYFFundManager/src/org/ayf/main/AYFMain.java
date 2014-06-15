@@ -39,6 +39,6 @@ public class AYFMain {
             Logger.getLogger(AYFMain.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        ApplicationManager manager = new ApplicationManager();
+        ApplicationManager.getSharedManager().initialize();
     }
 }
