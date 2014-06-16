@@ -20,6 +20,14 @@ import javax.swing.table.AbstractTableModel;
 
 public final class SideBarTableModel extends AbstractTableModel{
 
+    enum OptionTypes
+    {
+        Dashboard,
+        Reports,
+        Notifications,
+        Miscellaneous
+    };
+    
     public class Option
     {
         String title;
@@ -30,11 +38,23 @@ public final class SideBarTableModel extends AbstractTableModel{
             this.title = title;
             this.parentOption = parent;
             
-            if(parent instanceof HeaderOption)
+            /*if(parent instanceof HeaderOption)
             {
                 HeaderOption header = (HeaderOption) parent;
                 header.addSubOption(this);
-            }
+            }*/
+        }
+        
+        
+        public Option(OptionTypes type, Option parent) {
+            this.title = type.toString();
+            this.parentOption = parent;
+            
+            /*if(parent instanceof HeaderOption)
+            {
+                HeaderOption header = (HeaderOption) parent;
+                header.addSubOption(this);
+            }*/
         }
         
         public String getTitle() {
@@ -73,6 +93,12 @@ public final class SideBarTableModel extends AbstractTableModel{
             subOptions = new ArrayList();
         }
         
+        public HeaderOption(OptionTypes type)
+        {
+            super(type, null);
+            subOptions = new ArrayList();
+        }
+        
         public void addSubOption(Option option)
         {
             subOptions.add(option);
@@ -90,35 +116,24 @@ public final class SideBarTableModel extends AbstractTableModel{
     
     public void generateSideBarOptions()
     {
-        this.options = new ArrayList(15);
+        this.options = new ArrayList();
         
-        HeaderOption dashboardOption = new HeaderOption("Dashboard");
+        HeaderOption dashboardOption = new HeaderOption(OptionTypes.Dashboard);
         this.options.add(dashboardOption);
-        dashboardOption.addSubOption(new Option("DashboardSubOption1", dashboardOption));
-        dashboardOption.addSubOption(new Option("DashboardSubOption2", dashboardOption));
-        dashboardOption.addSubOption(new Option("DashboardSubOption3", dashboardOption));
         
-        HeaderOption reportOption = new HeaderOption("Reports");
+        HeaderOption reportOption = new HeaderOption(OptionTypes.Reports);
         this.options.add(reportOption);
-        reportOption.addSubOption(new Option("ReportOption1", reportOption));
-        reportOption.addSubOption(new Option("ReportOption2", reportOption));
-        reportOption.addSubOption(new Option("ReportOption3", reportOption));
-        reportOption.addSubOption(new Option("ReportOption4", reportOption));
-        reportOption.addSubOption(new Option("ReportOption5", reportOption));
+        reportOption.addSubOption(new Option("Statement", reportOption));
+        reportOption.addSubOption(new Option("Subscriptions", reportOption));
+        reportOption.addSubOption(new Option("Donations", reportOption)); //member wise donation details
         
-        HeaderOption notificationOption = new HeaderOption("Notifications");
+        HeaderOption notificationOption = new HeaderOption(OptionTypes.Notifications);
         this.options.add(notificationOption);
-        notificationOption.addSubOption(new Option("NotificationOption1", notificationOption));
-        notificationOption.addSubOption(new Option("NotificationOption2", notificationOption));
-        notificationOption.addSubOption(new Option("NotificationOption3", notificationOption));
-        notificationOption.addSubOption(new Option("NotificationOption4", notificationOption));
-        
-        HeaderOption miscellaneousOption = new HeaderOption("Miscellaneous");
+        notificationOption.addSubOption(new Option("Subscription Expiration", notificationOption));
+
+        HeaderOption miscellaneousOption = new HeaderOption(OptionTypes.Miscellaneous);
         this.options.add(miscellaneousOption);
-        miscellaneousOption.addSubOption(new Option("MiscellaneousOption1", miscellaneousOption));
-        miscellaneousOption.addSubOption(new Option("MiscellaneousOption2", miscellaneousOption));
-        miscellaneousOption.addSubOption(new Option("MiscellaneousOption3", miscellaneousOption));
-        miscellaneousOption.addSubOption(new Option("MiscellaneousOption4", miscellaneousOption));
+        miscellaneousOption.addSubOption(new Option("Infrastructure Funds", miscellaneousOption));
         
         this.filteredOption = new ArrayList(this.options);
     }

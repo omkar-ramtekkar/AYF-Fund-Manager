@@ -68,6 +68,12 @@ public class ButtonRenderer implements TableCellRenderer
             {
                 headerOptionButton.setDirection(SwingConstants.EAST);
             }
+            
+            if(((SideBarTableModel.HeaderOption)value).getSubOptions().size() == 0)
+            {
+                headerOptionButton.setDirection(-1);
+            }
+                
         }
         else
         {

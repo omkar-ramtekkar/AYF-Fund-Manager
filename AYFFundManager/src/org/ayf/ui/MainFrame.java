@@ -6,6 +6,7 @@
 
 package org.ayf.ui;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.Toolkit;
@@ -31,17 +32,25 @@ public class MainFrame extends javax.swing.JFrame {
         //size of the screen
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         setExtendedState(java.awt.Frame.MAXIMIZED_BOTH);
+        
         //height of the task bar
         Insets scnMax = Toolkit.getDefaultToolkit().getScreenInsets(getGraphicsConfiguration());
         int taskBarSize = scnMax.bottom;
         //available size of the screen 
         setSize(screenSize.width, screenSize.height - taskBarSize);
+        
+        this.statusBar = new StatusBarPanel();
+        //this.statusBar.setSize(getWidth(), 33);
+        this.statusBar.setBounds(0, getHeight() - 33, getWidth(), 33);
+        add(this.statusBar, BorderLayout.SOUTH);
+        
+        
         getSplitPane().setLeftComponent(null);
         getSplitPane().setRightComponent(null);
-        getSplitPane().setSize(getWidth(), getHeight());
-        getSplitPane().setMinimumSize(new Dimension(200, getHeight()));
-        getSplitPane().setMaximumSize(new Dimension(getWidth()/3, getHeight()));
-        getSplitPane().setDividerLocation(200);
+        getSplitPane().setSize(getWidth(), getHeight() - this.statusBar.getHeight());
+
+        getSplitPane().setMinimumSize(new Dimension(200, getHeight() - this.statusBar.getHeight()));
+        getSplitPane().setMaximumSize(new Dimension(getWidth()/3, getHeight() - this.statusBar.getHeight()));
         
         setVisible(true);
     }
@@ -66,21 +75,7 @@ public class MainFrame extends javax.swing.JFrame {
         splitPane = new javax.swing.JSplitPane();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(splitPane, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 1007, Short.MAX_VALUE))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(splitPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 753, Short.MAX_VALUE))
-        );
+        getContentPane().add(splitPane, java.awt.BorderLayout.CENTER);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -105,6 +100,7 @@ public class MainFrame extends javax.swing.JFrame {
         });
     }
 
+    private StatusBarPanel statusBar;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.ButtonGroup buttonGroup2;

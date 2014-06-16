@@ -20,44 +20,87 @@ public class Member {
     String  firstName;
     String  middleName;
     String  lastName;
+    Date    dateOfBirth;
+    String  maritalStatus;
+    String  cast;
+    String  subCast;
+    String  district;
+    String  bloodGroup;
+    Gender  gender;
+    byte    age;
+    
     String  permanentAddress;
     String  temporaryAddress;
     String  contactNumber;
-    byte    age;
-    Date    dateOfBirth;
+    String  emailAddress;
+    
+    String  education;
+    Type    profession;
+    
     Date    registerationDate;
     String  position;
-    Type    profession;
-    String  emailAddress;
-    Gender  gender;
     String  imagePath;
 
-    public Member(int memberID, String firstName, String middleName, String lastName, Date dateOfBirth, Date registerationDate, Gender gender) {
+    public Member(int memberID, String firstName, String middleName, String lastName, Date dateOfBirth, String maritalStatus, String cast, String subCast, String district, String bloodGroup, Gender gender, String permanentAddress, String temporaryAddress, String contactNumber, String emailAddress, String education, Type profession, Date registerationDate, String position, String imagePath) {
         this.memberID = memberID;
         this.firstName = firstName;
         this.middleName = middleName;
         this.lastName = lastName;
         this.dateOfBirth = dateOfBirth;
-        this.registerationDate = registerationDate;
+        this.maritalStatus = maritalStatus;
+        this.cast = cast;
+        this.subCast = subCast;
+        this.district = district;
+        this.bloodGroup = bloodGroup;
         this.gender = gender;
-    }
-
-    public Member(int memberID, String firstName, String middleName, String lastName, String permanentAddress, String temporaryAddress, String contactNumber, Date dateOfBirth, Date registerationDate, String position, Type profession, String emailAddress, Gender gender, String imagePath) {
-        this.memberID = memberID;
-        this.firstName = firstName;
-        this.middleName = middleName;
-        this.lastName = lastName;
         this.permanentAddress = permanentAddress;
         this.temporaryAddress = temporaryAddress;
         this.contactNumber = contactNumber;
-        this.dateOfBirth = dateOfBirth;
+        this.emailAddress = emailAddress;
+        this.education = education;
+        this.profession = profession;
         this.registerationDate = registerationDate;
         this.position = position;
-        this.profession = profession;
-        this.emailAddress = emailAddress;
-        this.gender = gender;
         this.imagePath = imagePath;
     }
+
+    public Member(int memberID, String firstName, String middleName, String lastName, Date dateOfBirth, String maritalStatus, String cast, Gender gender, Date registerationDate, String position) {
+        this.memberID = memberID;
+        this.firstName = firstName;
+        this.middleName = middleName;
+        this.lastName = lastName;
+        this.dateOfBirth = dateOfBirth;
+        this.maritalStatus = maritalStatus;
+        this.cast = cast;
+        this.gender = gender;
+        this.registerationDate = registerationDate;
+        this.position = position;
+    }
+
+    public String getMaritalStatus() {
+        return maritalStatus;
+    }
+
+    public String getCast() {
+        return cast;
+    }
+
+    public String getSubCast() {
+        return subCast;
+    }
+
+    public String getDistrict() {
+        return district;
+    }
+
+    public String getBloodGroup() {
+        return bloodGroup;
+    }
+
+    public String getEducation() {
+        return education;
+    }
+    
 
     public int getMemberID() {
         return memberID;
@@ -147,6 +190,60 @@ public class Member {
         this.imagePath = imagePath;
     }
 
+    public void setMemberID(int memberID) {
+        this.memberID = memberID;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public void setMiddleName(String middleName) {
+        this.middleName = middleName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public void setDateOfBirth(Date dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
+    }
+
+    public void setMaritalStatus(String maritalStatus) {
+        this.maritalStatus = maritalStatus;
+    }
+
+    public void setCast(String cast) {
+        this.cast = cast;
+    }
+
+    public void setSubCast(String subCast) {
+        this.subCast = subCast;
+    }
+
+    public void setDistrict(String district) {
+        this.district = district;
+    }
+
+    public void setBloodGroup(String bloodGroup) {
+        this.bloodGroup = bloodGroup;
+    }
+
+    public void setGender(Gender gender) {
+        this.gender = gender;
+    }
+
+    public void setEducation(String education) {
+        this.education = education;
+    }
+
+    public void setRegisterationDate(Date registerationDate) {
+        this.registerationDate = registerationDate;
+    }
+    
+    
+
     @Override
     public int hashCode() {
         int hash = 7;
@@ -173,29 +270,12 @@ public class Member {
         if (this.dateOfBirth.equals(other.dateOfBirth)) {
             return false;
         }
-        if (this.gender != other.gender) {
-            return false;
-        }
-        return true;
+        return this.gender == other.gender;
     }
     
     @Override
     public String toString() {
-        return "Member{" + "memberID=" + 
-                memberID + ", firstName=" + 
-                firstName + ", middleName=" + 
-                middleName + ", lastName=" + 
-                lastName + ", permanentAddress=" + 
-                permanentAddress + ", temporaryAddress=" + 
-                temporaryAddress + ", contactNumber=" + 
-                contactNumber + ", age=" + 
-                age + ", dateOfBirth=" + 
-                dateOfBirth + ", registerationDate=" + 
-                registerationDate + ", position=" + 
-                position + ", profession=" + 
-                profession.getStringValue() + ", emailAddress=" + 
-                emailAddress + ", gender=" + 
-                gender + ", imagePath=" + 
-                imagePath + '}';
-    }    
+        return "Member{" + "memberID=" + memberID + ", firstName=" + firstName + ", middleName=" + middleName + ", lastName=" + lastName + ", dateOfBirth=" + dateOfBirth + ", maritalStatus=" + maritalStatus + ", cast=" + cast + ", subCast=" + subCast + ", district=" + district + ", bloodGroup=" + bloodGroup + ", gender=" + gender + ", age=" + age + ", permanentAddress=" + permanentAddress + ", temporaryAddress=" + temporaryAddress + ", contactNumber=" + contactNumber + ", emailAddress=" + emailAddress + ", education=" + education + ", profession=" + profession + ", registerationDate=" + registerationDate + ", position=" + position + ", imagePath=" + imagePath + '}';
+    }
+        
 }

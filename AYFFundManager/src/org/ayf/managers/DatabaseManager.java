@@ -38,10 +38,6 @@ public class DatabaseManager {
     public static final String MEMBER_TABLE_NAME            = "Members";
     public static final String DAILYCASH_TABLE_NAME         = "DailyCash";
     
-    public static final String[] MEMBER_TABLE_COLUMNS = {"ID", "FirstName", "MiddleName", "LastName", "PermanentAddress", 
-                                                        "TemporaryAddress", "ContactNumber", "EmailAddress", "RegisterationDate",
-                                                        "Position", "DateOfBirth", "Profession", "Gender", "Image"};
-    
     private static ArrayList<Type> PROFESSION_TYPES;
     private static ArrayList<Type> DONATION_TYPES;
     private static ArrayList<Type> MEMBER_TYPES;
@@ -329,30 +325,25 @@ public class DatabaseManager {
                 String  lastName        = rs.getString("LastName");
                 String  permanentAddress= rs.getString("PermanentAddress");
                 String  temporaryAddress= rs.getString("TemporaryAddress");
-                String  contactNumber    = rs.getString("ContactNumber");
+                String  contactNumber   = rs.getString("ContactNumber");
                 String  emailAddress    = rs.getString("EmailAddress");
                 Date    registerationDate = rs.getDate("RegisterationDate");
                 String  position        = rs.getString("Position");
                 String  profession      = rs.getString("Profession");
                 Date    dateOfBirth     = rs.getDate("DateOfBirth");
                 String genderString     = rs.getString("Gender");
+                String  maritalStatus   = rs.getString("MaritalStatus");
+                String  cast            = rs.getString("Cast");
+                String  subCast         = rs.getString("SubCast");
+                String  district        = rs.getString("District");
+                String  bloodGroup      = rs.getString("BloodGroup");
+                String  education       = rs.getString("Education");
+                
                 Member.Gender gender     = genderString != null ? (genderString.equals("Male") ? Member.Gender.MALE : Member.Gender.FEMALE) : Member.Gender.MALE;
                 String imagePath        = rs.getString("Image");
 
-                members.add(new Member(memberID, 
-                        firstName, 
-                        middleName, 
-                        lastName, 
-                        permanentAddress, 
-                        temporaryAddress, 
-                        contactNumber, 
-                        dateOfBirth, 
-                        registerationDate, 
-                        position, 
-                        getProfessionTypeForName(profession), 
-                        emailAddress, 
-                        gender, 
-                        imagePath));
+                members.add(new Member(memberID, firstName, middleName, lastName, dateOfBirth, maritalStatus, cast, subCast, district, bloodGroup, gender, permanentAddress, temporaryAddress, contactNumber, emailAddress, education, getProfessionTypeForName(profession), registerationDate, position, imagePath));
+                
             }
             
             ps.close();
@@ -393,36 +384,31 @@ public class DatabaseManager {
                 String  lastName        = rs.getString("LastName");
                 String  permanentAddress= rs.getString("PermanentAddress");
                 String  temporaryAddress= rs.getString("TemporaryAddress");
-                String  contactNumber    = rs.getString("ContactNumber");
+                String  contactNumber   = rs.getString("ContactNumber");
                 String  emailAddress    = rs.getString("EmailAddress");
                 Date    registerationDate = rs.getDate("RegisterationDate");
                 String  position        = rs.getString("Position");
                 String  profession      = rs.getString("Profession");
                 Date    dateOfBirth     = rs.getDate("DateOfBirth");
-                String genderString = rs.getString("Gender");
-                Member.Gender gender     = genderString != null ? (genderString.equals("Male") ? Member.Gender.MALE : Member.Gender.FEMALE) : Member.Gender.MALE;
+                String genderString     = rs.getString("Gender");
+                Member.Gender gender    = genderString != null ? (genderString.equals("Male") ? Member.Gender.MALE : Member.Gender.FEMALE) : Member.Gender.MALE;
                 String imagePath        = rs.getString("Image");
 
+                String  maritalStatus   = rs.getString("MaritalStatus");
+                String  cast            = rs.getString("Cast");
+                String  subCast         = rs.getString("SubCast");
+                String  district        = rs.getString("District");
+                String  bloodGroup      = rs.getString("BloodGroup");
+                String  education       = rs.getString("Education");
+                
                 if(member != null)
                 {
                     Logger.getLogger(DatabaseManager.class.getName()).log(Level.INFO, "getMemberWithID : Multiple members found with same memberID={0}", id);
                     break;
                 }
                 
-                member = new Member(memberID, 
-                        firstName, 
-                        middleName, 
-                        lastName, 
-                        permanentAddress, 
-                        temporaryAddress, 
-                        contactNumber, 
-                        dateOfBirth, 
-                        registerationDate, 
-                        position, 
-                        getProfessionTypeForName(profession), 
-                        emailAddress, 
-                        gender, 
-                        imagePath);
+                
+                member = new Member(memberID, firstName, middleName, lastName, dateOfBirth, maritalStatus, cast, subCast, district, bloodGroup, gender, permanentAddress, temporaryAddress, contactNumber, emailAddress, education, getProfessionTypeForName(profession), registerationDate, position, imagePath);
             }
             
             ps.close();
@@ -472,7 +458,7 @@ public class DatabaseManager {
                 String  profession      = rs.getString("Profession");
                 Date    dateOfBirth     = rs.getDate("DateOfBirth");
                 String genderString     = rs.getString("Gender");
-                Member.Gender gender     = genderString != null ? (genderString.equals("Male") ? Member.Gender.MALE : Member.Gender.FEMALE) : Member.Gender.MALE;
+                Member.Gender gender    = genderString != null ? (genderString.equals("Male") ? Member.Gender.MALE : Member.Gender.FEMALE) : Member.Gender.MALE;
                 float   donationAmount  = rs.getFloat("Amount");
                 long    receiptNumber   = rs.getLong("ReceiptNumber");
                 Date    donationDate    = rs.getDate("DonationDate");
@@ -480,9 +466,15 @@ public class DatabaseManager {
                 String paymentMode      = rs.getString("PaymentMode");
                 
                 //Member properties
-                String imagePath = null;
-                Date registerationDate = null;
-                String position = null;
+                String imagePath        = null;
+                Date registerationDate  = null;
+                String position         = null;
+                String  maritalStatus   = null;
+                String  cast            = null;
+                String  subCast         = null;
+                String  district        = null;
+                String  bloodGroup      = null;
+                String  education       = null;
                 if(memberID != Integer.MAX_VALUE)
                 {
                     Member member = getMemberWithID(memberID);
@@ -491,28 +483,16 @@ public class DatabaseManager {
                         registerationDate = member.getRegisterationDate();
                         imagePath = member.getImagePath();
                         position = member.getPosition();
+                        maritalStatus = member.getMaritalStatus();
+                        cast = member.getCast();
+                        subCast = member.getSubCast();
+                        district = member.getDistrict();
+                        bloodGroup = member.getBloodGroup();
+                        education = member.getEducation();
                     }
                 }
                 
-                donors.add(new Donor(donationAmount, 
-                        receiptNumber, 
-                        donationDate, 
-                        getTypeFromValue(donationType, DONATION_TYPES), 
-                        null, //TODO: - getTypeFromValue(paymentMode, PAYMENT_MODES), 
-                        memberID, 
-                        firstName, 
-                        middleName, 
-                        lastName, 
-                        permanentAddress, 
-                        temporaryAddress, 
-                        contactNumber, 
-                        dateOfBirth, 
-                        registerationDate,
-                        position, 
-                        getProfessionTypeForName(profession), 
-                        emailAddress, 
-                        gender, 
-                        imagePath));
+                donors.add(new Donor(donationAmount, receiptNumber, donationDate, getDonationTypeForName(donationType), null/*TODO: getPaymentMode()*/ , memberID, firstName, middleName, lastName, dateOfBirth, maritalStatus, cast, subCast, district, bloodGroup, gender, permanentAddress, temporaryAddress, contactNumber, emailAddress, education, getProfessionTypeForName(profession), registerationDate, position, imagePath));
             }
             
             ps.close();
@@ -538,8 +518,8 @@ public class DatabaseManager {
             try 
             {
                 conn = createConnection();
-                              
-                String sql = "INSERT INTO "+ MEMBER_TABLE_NAME + " (FirstName, MiddleName, LastName, PermanentAddress, TemporaryAddress, ContactNumber, EmailAddress, RegisterationDate, Position, Profession, DateOfBirth, Gender, Image) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                
+                String sql = "INSERT INTO "+ MEMBER_TABLE_NAME + " (FirstName, MiddleName, LastName, PermanentAddress, TemporaryAddress, ContactNumber, EmailAddress, RegisterationDate, Position, Profession, DateOfBirth, Gender, Image, MaritalStatus, Cast, SubCast, District, BloodGroup, Education) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
                 PreparedStatement ps = conn.prepareStatement(sql);
 
                 ps.setString(1, member.getFirstName());
@@ -555,9 +535,15 @@ public class DatabaseManager {
                 ps.setDate(11, member.getDateOfBirth());
                 ps.setString(12, member.getGender() == Member.Gender.MALE ? "Male" : "Female" );
                 ps.setString(13, member.getImagePath());
+                ps.setString(14, member.getMaritalStatus());
+                ps.setString(15, member.getCast());
+                ps.setString(16, member.getSubCast());
+                ps.setString(17, member.getDistrict());
+                ps.setString(18, member.getBloodGroup());
+                ps.setString(19, member.getEducation());
                 
                 bRegistered = ps.executeUpdate() > 0;
-               conn.commit();
+                conn.commit();
                
                DatabaseManager.dump(conn.createStatement().executeQuery("select * from Members"), "After Commit");
                 
