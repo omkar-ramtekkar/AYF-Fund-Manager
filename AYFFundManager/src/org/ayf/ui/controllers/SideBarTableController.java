@@ -59,9 +59,7 @@ public class SideBarTableController implements MouseListener, ActionListener, Ke
         
         this.table.addMouseListener(this);
         this.table.addKeyListener(this);
-        
-        mainFrame.getSplitPane().setRightComponent(new JPanel());
-        
+                
         setDefaultSplitPaneSize();
     }
     
@@ -113,7 +111,7 @@ public class SideBarTableController implements MouseListener, ActionListener, Ke
         SideBarTableModel.Option oldOption = this.model.getSelectedSubOption();
         this.model.clickEvent(e);
         SideBarTableModel.Option newOption = this.model.getSelectedSubOption();
-        if(oldOption != newOption)
+        if(newOption != null && oldOption != newOption)
         {
             fireActionPerformed(new ActionEvent(newOption, 0, null));
         }
