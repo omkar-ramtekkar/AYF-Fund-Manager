@@ -339,11 +339,10 @@ public class DatabaseManager {
                 String  bloodGroup      = rs.getString("BloodGroup");
                 String  education       = rs.getString("Education");
                 
-                Member.Gender gender     = genderString != null ? (genderString.equals("Male") ? Member.Gender.MALE : Member.Gender.FEMALE) : Member.Gender.MALE;
+                Member.Gender gender     = genderString != null ? (genderString.equals("Male") ? Member.Gender.Male : Member.Gender.Female) : Member.Gender.Male;
                 String imagePath        = rs.getString("Image");
 
                 members.add(new Member(memberID, firstName, middleName, lastName, dateOfBirth, maritalStatus, cast, subCast, district, bloodGroup, gender, permanentAddress, temporaryAddress, contactNumber, emailAddress, education, getProfessionTypeForName(profession), registerationDate, position, imagePath));
-                
             }
             
             ps.close();
@@ -391,7 +390,7 @@ public class DatabaseManager {
                 String  profession      = rs.getString("Profession");
                 Date    dateOfBirth     = rs.getDate("DateOfBirth");
                 String genderString     = rs.getString("Gender");
-                Member.Gender gender    = genderString != null ? (genderString.equals("Male") ? Member.Gender.MALE : Member.Gender.FEMALE) : Member.Gender.MALE;
+                Member.Gender gender    = genderString != null ? (genderString.equals("Male") ? Member.Gender.Male : Member.Gender.Female) : Member.Gender.Male;
                 String imagePath        = rs.getString("Image");
 
                 String  maritalStatus   = rs.getString("MaritalStatus");
@@ -458,7 +457,7 @@ public class DatabaseManager {
                 String  profession      = rs.getString("Profession");
                 Date    dateOfBirth     = rs.getDate("DateOfBirth");
                 String genderString     = rs.getString("Gender");
-                Member.Gender gender    = genderString != null ? (genderString.equals("Male") ? Member.Gender.MALE : Member.Gender.FEMALE) : Member.Gender.MALE;
+                Member.Gender gender    = genderString != null ? (genderString.equals("Male") ? Member.Gender.Male : Member.Gender.Female) : Member.Gender.Male;
                 float   donationAmount  = rs.getFloat("Amount");
                 long    receiptNumber   = rs.getLong("ReceiptNumber");
                 Date    donationDate    = rs.getDate("DonationDate");
@@ -533,7 +532,7 @@ public class DatabaseManager {
                 ps.setString(9, member.getPosition());
                 ps.setString(10, member.getProfession() != null ? member.getProfession().getStringValue() : null);
                 ps.setDate(11, member.getDateOfBirth());
-                ps.setString(12, member.getGender() == Member.Gender.MALE ? "Male" : "Female" );
+                ps.setString(12, member.getGender() == Member.Gender.Male ? "Male" : "Female" );
                 ps.setString(13, member.getImagePath());
                 ps.setString(14, member.getMaritalStatus());
                 ps.setString(15, member.getCast());
@@ -580,7 +579,7 @@ public class DatabaseManager {
                 ps.setString(7, donor.getEmailAddress());
                 ps.setString(8, donor.getProfession() != null ? donor.getProfession().getStringValue() : null);
                 ps.setDate(9, donor.getDateOfBirth());
-                ps.setString(10, donor.getGender() == Member.Gender.MALE ? "Male" : "Female" );
+                ps.setString(10, donor.getGender() == Member.Gender.Male ? "Male" : "Female" );
                 
                 
                 //Donor attributes

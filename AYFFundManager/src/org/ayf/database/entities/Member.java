@@ -7,6 +7,7 @@
 package org.ayf.database.entities;
 
 import java.sql.Date;
+import org.ayf.util.DateTime;
 
 /**
  *
@@ -14,7 +15,7 @@ import java.sql.Date;
  */
 public class Member {
     
-    public enum Gender { MALE, FEMALE }
+    public enum Gender { Male, Female }
     
     int     memberID;
     String  firstName;
@@ -242,6 +243,60 @@ public class Member {
         this.registerationDate = registerationDate;
     }
     
+    public static String[] getColumnNames()
+    {
+        String[] columnNames = {
+            "ID",
+            "FirstName",
+            "MiddleName",
+            "LastName",
+            "Gender",
+            "DateOfBirth",
+            "MaritalStatus",
+            "ContactNumber",
+            "EmailAddress",
+            "RegisterationDate",
+            "Position",
+            "Profession",
+            "Cast",
+            "SubCast",
+            "PermanentAddress",
+            "TemporaryAddress",
+            "District",
+            "BloodGroup",
+            "Education",
+            "Image"
+        };
+        
+         return columnNames;
+    }
+    
+    public Object[] toArray()
+    {
+        Object[] objects = new Object[20];
+        objects[0] = this.memberID;
+        objects[1] = this.firstName != null ? this.firstName : "";
+        objects[2] = this.middleName != null ? this.middleName : "";
+        objects[3] = this.lastName != null ? this.lastName : "";
+        objects[4] = this.gender.toString();
+        objects[5] = this.dateOfBirth != null ? DateTime.getFormattedDateSQL(this.dateOfBirth) : "";
+        objects[6] = this.maritalStatus != null ? this.maritalStatus : "";
+        objects[7] = this.contactNumber != null ? this.contactNumber : "";
+        objects[8] = this.emailAddress != null ? this.emailAddress : "";
+        objects[9] = this.registerationDate != null ? DateTime.getFormattedDateSQL(this.registerationDate) : "";
+        objects[10] = this.position != null ? this.profession : "";
+        objects[11] = this.profession != null ? this.profession : "";
+        objects[12] = this.cast != null ? this.cast : "";
+        objects[13] = this.subCast != null ? this.subCast : "";
+        objects[14] = this.permanentAddress != null ? this.permanentAddress : "";
+        objects[15] = this.temporaryAddress != null ? this.temporaryAddress : "";
+        objects[16] = this.district != null ? this.district : "";
+        objects[17] = this.bloodGroup != null ? this.bloodGroup : "";
+        objects[18] = this.education != null ? this.education : "";
+        objects[19] = this.imagePath != null ? this.imagePath : "";
+        
+        return objects;
+    }
     
 
     @Override

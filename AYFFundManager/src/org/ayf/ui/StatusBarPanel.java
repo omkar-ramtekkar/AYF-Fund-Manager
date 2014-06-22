@@ -13,6 +13,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import javax.swing.Timer;
+import org.ayf.util.DateTime;
 
 /**
  *
@@ -37,14 +38,14 @@ public class StatusBarPanel extends javax.swing.JPanel {
     
     private void initDateAndTime()
     {
-        SimpleDateFormat formatter = new SimpleDateFormat(" dd-MMM-yyyy ");
-        dateLabel.setText(formatter.format(cal.getTime()));
+        dateLabel.setText(DateTime.getFormattedDate());
         Timer t = new Timer(0, null);
 
-        t.addActionListener(new ActionListener() {
-
+        t.addActionListener(new ActionListener() 
+        {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(ActionEvent e) 
+            {
                 updateDateAndTime();
             }
         });
@@ -56,8 +57,7 @@ public class StatusBarPanel extends javax.swing.JPanel {
     
     private void updateDateAndTime()
     {
-        String datetime = dateFormat.format(new Date());
-        timeLabel.setText(datetime);
+        timeLabel.setText(DateTime.getFormattedTime());
     }
 
     /**
@@ -115,9 +115,6 @@ public class StatusBarPanel extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-
-    private static DateFormat dateFormat = new SimpleDateFormat("hh:mm:ss");
-    private static Calendar cal = Calendar.getInstance();
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel dateLabel;
     private javax.swing.JLabel jLabel1;
