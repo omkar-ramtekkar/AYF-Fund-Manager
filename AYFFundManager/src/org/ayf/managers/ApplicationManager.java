@@ -6,20 +6,23 @@
 
 package org.ayf.managers;
 
-import java.awt.event.MouseEvent;
-import javax.swing.event.MouseInputListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import org.ayf.models.Command;
+import org.ayf.models.SideBarTableModel.Option;
 import org.ayf.ui.MainFrame;
+import org.ayf.ui.controllers.ReportViewController;
 import org.ayf.ui.controllers.SideBarTableController;
 
 /**
  
  * @author om
  */
-public class ApplicationManager implements MouseInputListener
+public class ApplicationManager implements ActionListener
 {
     private MainFrame mainFrame = null;
     private SideBarTableController sidebarTableController;
-    private ReportManager reportManager;
+    private ReportViewController reportController;
     
     private static ApplicationManager instance = null;
 
@@ -44,8 +47,8 @@ public class ApplicationManager implements MouseInputListener
 
         //Configure sidebar table
         this.sidebarTableController = new SideBarTableController();
-        this.sidebarTableController.getTable().addMouseListener(this);
-        this.reportManager = new ReportManager();
+        this.reportController = new ReportViewController();
+        this.sidebarTableController.addActionListener(this);
     }
 
     
@@ -57,37 +60,23 @@ public class ApplicationManager implements MouseInputListener
         return sidebarTableController;
     }
 
-    public ReportManager getReportManager() {
-        return reportManager;
+    public ReportViewController getReportController() {
+        return reportController;
     }
 
-    @Override
-    public void mouseClicked(MouseEvent e) {
-    }
-
-    @Override
-    public void mousePressed(MouseEvent e) {
-    }
-
-    @Override
-    public void mouseReleased(MouseEvent e) {
-    }
-
-    @Override
-    public void mouseEntered(MouseEvent e) {
-    }
-
-    @Override
-    public void mouseExited(MouseEvent e) {
-    }
-
-    @Override
-    public void mouseDragged(MouseEvent e) {
-    }
-
-    @Override
-    public void mouseMoved(MouseEvent e) {
-    }
     
     
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        
+        Command command = (Command)e.getSource();
+        Option categoryOption = command.getOption().getParentOption();
+        
+        if(categoryOption == null)
+        {
+            categoryOption = command.getOption();
+        }
+        
+        getReportController().actionPerformed(e);
+    }
 }

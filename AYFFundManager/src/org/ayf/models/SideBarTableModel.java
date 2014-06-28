@@ -20,22 +20,14 @@ import javax.swing.table.AbstractTableModel;
 
 public final class SideBarTableModel extends AbstractTableModel{
 
-    enum OptionTypes
-    {
-        Dashboard,
-        Reports,
-        Notifications,
-        Miscellaneous
-    };
-    
     public class Option
     {
-        String title;
         Option parentOption;
         boolean isSelected;
+        Command.CommandType optionType;
 
-        public Option(String title, Option parent) {
-            this.title = title;
+        public Option(Command.CommandType type, Option parent) {
+            this.optionType = type;
             this.parentOption = parent;
             
             /*if(parent instanceof HeaderOption)
@@ -44,21 +36,14 @@ public final class SideBarTableModel extends AbstractTableModel{
                 header.addSubOption(this);
             }*/
         }
-        
-        
-        public Option(OptionTypes type, Option parent) {
-            this.title = type.toString();
-            this.parentOption = parent;
-            
-            /*if(parent instanceof HeaderOption)
-            {
-                HeaderOption header = (HeaderOption) parent;
-                header.addSubOption(this);
-            }*/
+
+        public Command.CommandType getOptionType() {
+            return optionType;
         }
+        
         
         public String getTitle() {
-            return title;
+            return Command.getDisplayNameForType(getOptionType());
         }
         
         public Option getParentOption()
@@ -81,19 +66,13 @@ public final class SideBarTableModel extends AbstractTableModel{
         {
             return getTitle();
         }
-                
     }
     
     public class HeaderOption extends Option
     {
         ArrayList<Option> subOptions;
-        
-        public HeaderOption(String title) {
-            super(title, null);
-            subOptions = new ArrayList();
-        }
-        
-        public HeaderOption(OptionTypes type)
+               
+        public HeaderOption(Command.CommandType type)
         {
             super(type, null);
             subOptions = new ArrayList();
@@ -118,22 +97,33 @@ public final class SideBarTableModel extends AbstractTableModel{
     {
         this.options = new ArrayList();
         
-        HeaderOption dashboardOption = new HeaderOption(OptionTypes.Dashboard);
+        HeaderOption dashboardOption = new HeaderOption(Command.CommandType.Dashboard);
         this.options.add(dashboardOption);
         
-        HeaderOption reportOption = new HeaderOption(OptionTypes.Reports);
-        this.options.add(reportOption);
-        reportOption.addSubOption(new Option("Statement", reportOption));
-        reportOption.addSubOption(new Option("Subscriptions", reportOption));
-        reportOption.addSubOption(new Option("Donations", reportOption)); //member wise donation details
+        HeaderOption detailsOption = new HeaderOption(Command.CommandType.Details);
+        this.options.add(detailsOption);
+        detailsOption.addSubOption(new Option(Command.CommandType.DetailsAllMembers, detailsOption));
+        detailsOption.addSubOption(new Option(Command.CommandType.DetailsAllDonors, detailsOption));
+        detailsOption.addSubOption(new Option(Command.CommandType.DetailsAllExpenses, detailsOption));
+        detailsOption.addSubOption(new Option(Command.CommandType.DetailsAllCashFlows, detailsOption));
+        detailsOption.addSubOption(new Option(Command.CommandType.None, detailsOption));
         
-        HeaderOption notificationOption = new HeaderOption(OptionTypes.Notifications);
+        
+        HeaderOption statementsOption = new HeaderOption(Command.CommandType.Statements);
+        this.options.add(statementsOption);
+        statementsOption.addSubOption(new Option(Command.CommandType.StatementsByMember, statementsOption));
+        statementsOption.addSubOption(new Option(Command.CommandType.StatementsCashFlows, statementsOption));
+        statementsOption.addSubOption(new Option(Command.CommandType.None, statementsOption));
+        
+        HeaderOption notificationOption = new HeaderOption(Command.CommandType.Notifications);
         this.options.add(notificationOption);
-        notificationOption.addSubOption(new Option("Subscription Expiration", notificationOption));
-
-        HeaderOption miscellaneousOption = new HeaderOption(OptionTypes.Miscellaneous);
+        notificationOption.addSubOption(new Option(Command.CommandType.NotificationsMemberSubscription, notificationOption));
+        notificationOption.addSubOption(new Option(Command.CommandType.None, notificationOption));
+        
+        
+        HeaderOption miscellaneousOption = new HeaderOption(Command.CommandType.Miscellaneous);
         this.options.add(miscellaneousOption);
-        miscellaneousOption.addSubOption(new Option("Infrastructure Funds", miscellaneousOption));
+        miscellaneousOption.addSubOption(new Option(Command.CommandType.None, miscellaneousOption));
         
         this.filteredOption = new ArrayList(this.options);
     }
@@ -199,9 +189,6 @@ public final class SideBarTableModel extends AbstractTableModel{
         {
             this.selectedSubOption = (Option)value;
         }
-        
-        
-        
     }
     //Private data members
     private ArrayList<Option> options;

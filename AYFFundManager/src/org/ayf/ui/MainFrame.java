@@ -10,6 +10,8 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.Toolkit;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 
 /**
@@ -41,9 +43,6 @@ public class MainFrame extends javax.swing.JFrame {
         add(this.statusBar, BorderLayout.SOUTH);
         
         
-        getSplitPane().setLeftComponent(null);
-        getSplitPane().setRightComponent(new InformationPanel());
-        
         getSplitPane().setSize(getWidth(), getHeight() - this.statusBar.getHeight());
         
         getSplitPane().setMinimumSize(new Dimension(200, getHeight() - this.statusBar.getHeight()));
@@ -55,7 +54,18 @@ public class MainFrame extends javax.swing.JFrame {
     public final JSplitPane getSplitPane() {
         return splitPane;
     }
+    
+    public void setLeftView(JComponent panel)
+    {
+        leftRootView.removeAll();
+        leftRootView.add(panel, BorderLayout.CENTER);
+    }
 
+    public void setRightView(JComponent panel)
+    {
+        rightRootView.removeAll();
+        rightRootView.add(panel, BorderLayout.CENTER);
+    }
     
     /**
      * This method is called from within the constructor to initialize the form.
@@ -67,8 +77,19 @@ public class MainFrame extends javax.swing.JFrame {
     private void initComponents() {
 
         splitPane = new javax.swing.JSplitPane();
+        leftRootView = new javax.swing.JPanel();
+        rightRootView = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        splitPane.setDividerLocation(200);
+
+        leftRootView.setLayout(new java.awt.BorderLayout());
+        splitPane.setLeftComponent(leftRootView);
+
+        rightRootView.setLayout(new java.awt.BorderLayout());
+        splitPane.setRightComponent(rightRootView);
+
         getContentPane().add(splitPane, java.awt.BorderLayout.CENTER);
 
         pack();
@@ -96,6 +117,8 @@ public class MainFrame extends javax.swing.JFrame {
 
     private StatusBarPanel statusBar;
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel leftRootView;
+    private javax.swing.JPanel rightRootView;
     private javax.swing.JSplitPane splitPane;
     // End of variables declaration//GEN-END:variables
 }

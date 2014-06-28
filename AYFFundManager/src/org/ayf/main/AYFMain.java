@@ -1,29 +1,10 @@
 package org.ayf.main;
 
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.sql.ResultSet;
-import java.util.Enumeration;
-import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.ScrollPaneConstants;
-import static javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
-import javax.swing.table.DefaultTableColumnModel;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.JTableHeader;
-import javax.swing.table.TableColumn;
 import org.ayf.database.entities.Member;
 import org.ayf.managers.ApplicationManager;
 import org.ayf.managers.DatabaseManager;
@@ -68,5 +49,6 @@ public class AYFMain {
         JTableUpdateTask jTableUpdateTask = new JTableUpdateTask(dialogFrame.getReportTable(), DatabaseManager.getRegisteredMembers(), Member.getColumnNames());
         jTableUpdateTask.execute();
         */
+        
     }
 }

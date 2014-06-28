@@ -15,12 +15,15 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.sql.Date;
+import java.sql.Statement;
+import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import org.ayf.database.entities.Type;
 import static javax.swing.JOptionPane.ERROR_MESSAGE;
 import net.ucanaccess.jdbc.UcanaccessDriver;
+import org.ayf.reports.ReportData;
 
 
 /**
@@ -543,9 +546,7 @@ public class DatabaseManager {
                 
                 bRegistered = ps.executeUpdate() > 0;
                 conn.commit();
-               
-               DatabaseManager.dump(conn.createStatement().executeQuery("select * from Members"), "After Commit");
-                
+                               
             } catch (SQLException ex) {
                 Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, ex);
                 JOptionPane.showMessageDialog(null, ex.getLocalizedMessage(), "Unable to register member ", ERROR_MESSAGE);
@@ -590,6 +591,9 @@ public class DatabaseManager {
                 
                 bDonateSuccess = ps.executeUpdate() > 0;
                 
+                ps.close();
+                
+                
             } catch (SQLException ex) {
                 Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, ex);
                 JOptionPane.showMessageDialog(null, ex.getLocalizedMessage(), "Unable to save donation", ERROR_MESSAGE);
@@ -602,4 +606,50 @@ public class DatabaseManager {
         
         return bDonateSuccess;
     }
+    
+    public static ReportData getDonationBySubscription()
+    {
+        boolean bRegistered = false; 
+        Connection conn = null;
+        
+        Vector rows = new Vector();
+        Vector columns = new Vector();
+        
+        columns.add("DonationType");
+        columns.add("TotalAmount");
+        
+        try 
+        {
+            conn = createConnection();
+
+            String sql = "SELECT DonationType, sum(Amount) as TotalAmount FROM " + DONATIONS_TABLE_NAME + " GROUP BY DonationType";
+            Statement statement = conn.createStatement();
+            ResultSet rs = statement.executeQuery(sql);
+            
+            
+            while(rs.next())
+            {
+                Vector rowData = new Vector();
+                rowData.add(rs.getString("DonationType"));
+                rowData.add(rs.getDouble("TotalAmount"));
+                
+                rows.add(rowData);
+            }
+            
+            rs.close();
+            statement.close();
+            
+
+        } catch (SQLException ex) {
+            Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(null, ex.getLocalizedMessage(), "Unable to get donations by type ", ERROR_MESSAGE);
+        }
+        finally
+        {
+            if(conn != null) { closeConnection(conn); }
+        }
+        
+        return new ReportData(rows, columns);
+    }
+        
 }

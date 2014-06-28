@@ -8,34 +8,25 @@ package org.ayf.ui.controllers;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import static javax.swing.ListSelectionModel.MULTIPLE_INTERVAL_SELECTION;
 import javax.swing.SwingUtilities;
 import javax.swing.event.EventListenerList;
-import javax.swing.event.TableModelEvent;
 import javax.swing.table.TableModel;
 import org.ayf.managers.ApplicationManager;
+import org.ayf.models.Command;
 import org.ayf.models.SideBarTableModel;
 import org.ayf.ui.ButtonRenderer;
 import org.ayf.ui.MainFrame;
-import org.w3c.dom.events.EventListener;
 
 /**
  *
  * @author om
  */
-public class SideBarTableController implements MouseListener, ActionListener, KeyListener {
+public class SideBarTableController implements MouseListener {
     private final JTable table;
     private final SideBarTableModel model;
     protected EventListenerList listenerList = new EventListenerList();
@@ -45,7 +36,7 @@ public class SideBarTableController implements MouseListener, ActionListener, Ke
         this.model = new SideBarTableModel();
         this.table = new JTable(this.model);
         this.table.setRowMargin(5);
-        this.table.setRowHeight(60);
+        this.table.setRowHeight(45);
         
         this.table.setSelectionMode(MULTIPLE_INTERVAL_SELECTION);
         this.table.getColumnModel().getColumn(0).setCellRenderer(new ButtonRenderer(0));
@@ -54,12 +45,11 @@ public class SideBarTableController implements MouseListener, ActionListener, Ke
         MainFrame mainFrame = ApplicationManager.getSharedManager().getMainFrame();
         JScrollPane scrollPane = new JScrollPane(getTable());
         
-        mainFrame.getSplitPane().setLeftComponent(scrollPane);
+        mainFrame.setLeftView(scrollPane);
         mainFrame.getSplitPane().setSize(mainFrame.getSize());
         
         this.table.addMouseListener(this);
-        this.table.addKeyListener(this);
-                
+       
         setDefaultSplitPaneSize();
     }
     
@@ -108,12 +98,23 @@ public class SideBarTableController implements MouseListener, ActionListener, Ke
     
     @Override
     public void mouseClicked(MouseEvent e) {
+        //Retain old selection
         SideBarTableModel.Option oldOption = this.model.getSelectedSubOption();
+        
+        //Update model with new selection
         this.model.clickEvent(e);
+        
         SideBarTableModel.Option newOption = this.model.getSelectedSubOption();
+        
+        if(newOption == null)
+        {
+            newOption = this.model.getSelectedHelderOption();
+        }
+        
         if(newOption != null && oldOption != newOption)
         {
-            fireActionPerformed(new ActionEvent(newOption, 0, null));
+            long uniqueId = System.currentTimeMillis() ;
+            fireActionPerformed(new ActionEvent(new Command(newOption, newOption.getOptionType()), (int)uniqueId, "Action"));
         }
     }
 
@@ -135,28 +136,5 @@ public class SideBarTableController implements MouseListener, ActionListener, Ke
     @Override
     public void mouseExited(MouseEvent e) {
         
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        
-    }
-
-    @Override
-    public void keyTyped(KeyEvent e) {
-        
-    }
-
-    @Override
-    public void keyPressed(KeyEvent e) {
-        
-    }
-
-    @Override
-    public void keyReleased(KeyEvent e) {
-        
-    }
-
-    
-    
+    }    
 }
