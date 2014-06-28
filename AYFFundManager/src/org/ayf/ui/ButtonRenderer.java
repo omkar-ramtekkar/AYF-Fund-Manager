@@ -6,10 +6,10 @@ import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.*;
+import org.ayf.models.Command;
 import org.ayf.models.SideBarTableModel;
 import org.ayf.tpl.color.util.Theme;
 import org.ayf.tpl.glossybutton.ButtonType;
-import org.ayf.tpl.glossybutton.GlossyButton;
 import org.ayf.tpl.glossybutton.StandardButton;
 
 
@@ -42,8 +42,9 @@ public class ButtonRenderer implements TableCellRenderer
     public ButtonRenderer(int column)
     {
             headerOptionButton = new StandardButton("");
+            headerOptionButton.setFont(new  Font("Thoma", Font.BOLD, 14));
             subOptionButton = new StandardButton("", ButtonType.BUTTON_ROUNDED_RECTANGLUR, Theme.STANDARD_LIGHTGRAY_THEME, Theme.STANDARD_GREEN_THEME, Theme.STANDARD_GREEN_THEME);
-
+            subOptionButton.setDirection(-1);
     }
 
     //  Implement TableCellRenderer interface
@@ -53,25 +54,49 @@ public class ButtonRenderer implements TableCellRenderer
             JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column)
     {
         
-        StandardButton target = null;  
+        JButton target = null;  
         if(value.getClass().equals(SideBarTableModel.HeaderOption.class))
         {
             headerOptionButton.setText(value.toString());
             headerOptionButton.setSelected(true);
-            table.setRowHeight(row, 60);
             target = headerOptionButton;
+            SideBarTableModel model = (SideBarTableModel) table.getModel();
+            if(model.getSelectedHelderOption() == value)
+            {
+                headerOptionButton.setDirection(SwingConstants.SOUTH);
+            }
+            else
+            {
+                headerOptionButton.setDirection(SwingConstants.EAST);
+            }
+            
+            int size = ((SideBarTableModel.HeaderOption)value).getSubOptions().size();
+            //Now every header option has an empty space option
+            if(size <= 1)
+            {
+                headerOptionButton.setDirection(-1);
+            }
+                
         }
         else
         {
-            table.setRowHeight(row, 40);
-            this.subOptionButton.setText(value.toString());
-            target = this.subOptionButton;
+            if(!value.toString().equalsIgnoreCase(Command.getDisplayNameForType(Command.CommandType.None)))
+            {
+                this.subOptionButton.setText(value.toString());
+                target = this.subOptionButton;
+            }
+            else
+            {
+                target = null;
+            }   
         }
         
-        target.getModel().setSelected(isSelected);
-        target.getModel().setRollover(hasFocus);
+        if(target != null)
+        {
+            target.getModel().setSelected(isSelected);
+            target.getModel().setRollover(hasFocus);
+        }
         
-
         return target;
     }
 }

@@ -26,6 +26,7 @@ import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
 import javax.swing.ButtonModel;
 import javax.swing.JButton;
+import javax.swing.SwingConstants;
 import org.ayf.tpl.color.util.ColorUtils;
 import org.ayf.tpl.color.util.Theme;
 
@@ -42,6 +43,7 @@ public class StandardButton extends JButton {
 	private int selectedButtonTheme = Theme.STANDARD_RED_THEME;
 	private int rolloverButtonTheme = Theme.STANDARD_BLACK_THEME;
 	private String buttonType = ButtonType.BUTTON_ROUNDED_RECTANGLUR;
+        private int direction = SwingConstants.SOUTH;
 
 	/**
 	 * Constructor which takes label of the button as argument.
@@ -148,6 +150,14 @@ public class StandardButton extends JButton {
 		setBorderPainted(false);
 	}
 
+        public int getDirection() {
+            return direction;
+        }
+
+        public void setDirection(int direction) {
+            this.direction = direction;
+        }
+        
 	@Override
 	public void paintComponent(Graphics g) {
 		Graphics2D g2d = (Graphics2D) g.create();
@@ -172,8 +182,31 @@ public class StandardButton extends JButton {
 					selectedButtonTheme, getHeight(), this);
 		}
 		drawShape(g2d, w, h, color);
+                
+                String symbol = null;
+                switch(getDirection())
+                {
+                    case EAST:
+                        symbol = "►";
+                        break;
+                    case WEST:
+                        symbol = "◄";
+                        break;
+                    case NORTH:
+                        symbol = "▲";
+                    break;
+                    case SOUTH:
+                        symbol = "▼";
+                    break;
+                }
+                
+                if(symbol != null)
+                {
+                    g.drawString(symbol, 15, (int)(getHeight() / 2.0f) + 5);
+                }
+                
 		super.paintComponent(g);
-
+                
 	}
 
 	/**

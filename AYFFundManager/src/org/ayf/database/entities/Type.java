@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package org.ayf.database.model;
+package org.ayf.database.entities;
 
 /**
  *

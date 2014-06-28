@@ -6,11 +6,13 @@
 
 package org.ayf.ui;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.JFrame;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Insets;
+import java.awt.Toolkit;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.JSplitPane;
 
 /**
  *
@@ -25,10 +27,46 @@ public class MainFrame extends javax.swing.JFrame {
     public MainFrame() {
         initComponents();
         
-        setExtendedState(JFrame.MAXIMIZED_BOTH);
+        //size of the screen
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        setExtendedState(java.awt.Frame.MAXIMIZED_BOTH);
+        
+        //height of the task bar
+        Insets scnMax = Toolkit.getDefaultToolkit().getScreenInsets(getGraphicsConfiguration());
+        int taskBarSize = scnMax.bottom;
+        //available size of the screen 
+        setSize(screenSize.width, screenSize.height - taskBarSize);
+        
+        this.statusBar = new StatusBarPanel();
+        //this.statusBar.setSize(getWidth(), 33);
+        this.statusBar.setBounds(0, getHeight() - 33, getWidth(), 33);
+        add(this.statusBar, BorderLayout.SOUTH);
+        
+        
+        getSplitPane().setSize(getWidth(), getHeight() - this.statusBar.getHeight());
+        
+        getSplitPane().setMinimumSize(new Dimension(200, getHeight() - this.statusBar.getHeight()));
+        getSplitPane().setMaximumSize(new Dimension(getWidth(), getHeight() - this.statusBar.getHeight()));
+        
         setVisible(true);
     }
 
+    public final JSplitPane getSplitPane() {
+        return splitPane;
+    }
+    
+    public void setLeftView(JComponent panel)
+    {
+        leftRootView.removeAll();
+        leftRootView.add(panel, BorderLayout.CENTER);
+    }
+
+    public void setRightView(JComponent panel)
+    {
+        rightRootView.removeAll();
+        rightRootView.add(panel, BorderLayout.CENTER);
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -38,22 +76,21 @@ public class MainFrame extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        buttonGroup1 = new javax.swing.ButtonGroup();
-        buttonGroup2 = new javax.swing.ButtonGroup();
-        buttonGroup3 = new javax.swing.ButtonGroup();
+        splitPane = new javax.swing.JSplitPane();
+        leftRootView = new javax.swing.JPanel();
+        rightRootView = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1183, Short.MAX_VALUE)
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 778, Short.MAX_VALUE)
-        );
+        splitPane.setDividerLocation(200);
+
+        leftRootView.setLayout(new java.awt.BorderLayout());
+        splitPane.setLeftComponent(leftRootView);
+
+        rightRootView.setLayout(new java.awt.BorderLayout());
+        splitPane.setRightComponent(rightRootView);
+
+        getContentPane().add(splitPane, java.awt.BorderLayout.CENTER);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -78,9 +115,10 @@ public class MainFrame extends javax.swing.JFrame {
         });
     }
 
+    private StatusBarPanel statusBar;
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.ButtonGroup buttonGroup1;
-    private javax.swing.ButtonGroup buttonGroup2;
-    private javax.swing.ButtonGroup buttonGroup3;
+    private javax.swing.JPanel leftRootView;
+    private javax.swing.JPanel rightRootView;
+    private javax.swing.JSplitPane splitPane;
     // End of variables declaration//GEN-END:variables
 }

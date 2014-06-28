@@ -5,9 +5,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
-import javax.swing.plaf.synth.SynthLookAndFeel;
+import org.ayf.database.entities.Member;
 import org.ayf.managers.ApplicationManager;
-import org.ayf.ui.MainFrame;
+import org.ayf.managers.DatabaseManager;
+import org.ayf.models.JTableUpdateTask;
+import org.ayf.ui.TableDialogFrame;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -21,13 +23,10 @@ import org.ayf.ui.MainFrame;
  */
 public class AYFMain {
 
-    /**
-     * @param args the command line arguments
-     */
     public static void main(String[] args) {
-        try {
-            // TODO code application logic here
-            
+        try 
+        {
+            DatabaseManager.getRegisteredMembers();
             UIManager.setLookAndFeel("com.seaglasslookandfeel.SeaGlassLookAndFeel");
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(AYFMain.class.getName()).log(Level.SEVERE, null, ex);
@@ -39,6 +38,17 @@ public class AYFMain {
             Logger.getLogger(AYFMain.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        ApplicationManager manager = new ApplicationManager();
+        ApplicationManager.getSharedManager().initialize();
+
+        /*
+        TableDialogFrame dialogFrame = new TableDialogFrame();
+        dialogFrame.setVisible(true);
+        dialogFrame.getReportTable().setRowHeight(30);
+        dialogFrame.getReportTable().setShowVerticalLines(true);
+        //dialogFrame.getReportTable().setShowHorizontalLines(true);
+        JTableUpdateTask jTableUpdateTask = new JTableUpdateTask(dialogFrame.getReportTable(), DatabaseManager.getRegisteredMembers(), Member.getColumnNames());
+        jTableUpdateTask.execute();
+        */
+        
     }
 }
