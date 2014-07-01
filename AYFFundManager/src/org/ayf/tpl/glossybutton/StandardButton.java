@@ -177,7 +177,7 @@ public class StandardButton extends JButton {
 					getHeight(), this);
 
 		}
-		if (model.isPressed()) {
+		if (model.isPressed() || model.isSelected()) {
 			color = ColorUtils.getInStance().getStandardColor(
 					selectedButtonTheme, getHeight(), this);
 		}

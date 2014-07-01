@@ -6,22 +6,23 @@
 
 package org.ayf.reports;
 
-import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 import org.ayf.models.Command;
+import org.ayf.reports.views.BaseReportView;
 
 /**
  *
  * @author om
  */
 public abstract class Report {
-    JPanel view;
+    BaseReportView view;
     Command.CommandType reportType;
 
     public Report(Command.CommandType type) {
         this.reportType = type;
     }
 
-    public JPanel getView() {
+    public BaseReportView getView() {
         return view;
     }
 
@@ -29,7 +30,7 @@ public abstract class Report {
         return reportType.toString();
     }
 
-    protected void setView(JPanel view) {
+    protected void setView(BaseReportView view) {
         this.view = view;
     }
 
@@ -37,6 +38,24 @@ public abstract class Report {
         return reportType;
     }
     
+    public abstract ReportData getData();
+    
+    public void updateReport()
+    {
+        SwingUtilities.invokeLater(new Runnable() 
+        {
+            @Override
+            public void run() {
+                ReportData data = getData();
+                BaseReportView view = getView();
+                
+                if(view != null)
+                {
+                    view.updateView(data);
+                }
+            }
+        });
+    }
     
 
     @Override
@@ -66,14 +85,9 @@ public abstract class Report {
         
         return true;
     }
-
-    
     
     @Override
     public String toString() {
         return "Report{" + "reportType=" + reportType + '}';
     }
-
-    abstract public void refresh();
-    abstract public void generate();    
 }

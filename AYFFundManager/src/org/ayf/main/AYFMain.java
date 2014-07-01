@@ -5,11 +5,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
-import org.ayf.database.entities.Member;
 import org.ayf.managers.ApplicationManager;
 import org.ayf.managers.DatabaseManager;
-import org.ayf.models.JTableUpdateTask;
-import org.ayf.ui.TableDialogFrame;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -46,9 +43,10 @@ public class AYFMain {
         dialogFrame.getReportTable().setRowHeight(30);
         dialogFrame.getReportTable().setShowVerticalLines(true);
         //dialogFrame.getReportTable().setShowHorizontalLines(true);
-        JTableUpdateTask jTableUpdateTask = new JTableUpdateTask(dialogFrame.getReportTable(), DatabaseManager.getRegisteredMembers(), Member.getColumnNames());
+        JTableUpdateTask jTableUpdateTask = new JTableUpdateTask(dialogFrame.getReportTable(), DatabaseManager.getRegisteredMembers(), Member.getColumnsForDetailsLevel(Member.DetailsLevel.Complete).toArray());
         jTableUpdateTask.execute();
-        */
+                */
+        
         
     }
 }

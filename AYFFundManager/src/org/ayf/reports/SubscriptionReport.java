@@ -17,15 +17,10 @@ public class SubscriptionReport extends Report{
     public SubscriptionReport(Command.CommandType type) {
         super(type);
     }
-    
-    @Override
-    public void refresh() {
-        
-    }
 
     @Override
-    public void generate() {
-        
+    public ReportData getData() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
 }

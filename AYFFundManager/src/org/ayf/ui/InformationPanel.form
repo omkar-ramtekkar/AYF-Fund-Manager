@@ -55,11 +55,11 @@
                                   <EmptySpace max="32767" attributes="0"/>
                                   <Group type="103" groupAlignment="0" max="-2" attributes="0">
                                       <Group type="102" alignment="0" attributes="0">
-                                          <Component id="dobTxt" min="-2" max="-2" attributes="0"/>
+                                          <Component id="dobDate" min="-2" max="-2" attributes="0"/>
                                           <EmptySpace max="-2" attributes="0"/>
                                           <Component id="jComboBox1" min="-2" max="-2" attributes="0"/>
                                           <EmptySpace type="separate" max="-2" attributes="0"/>
-                                          <Component id="dobTxt1" min="-2" max="-2" attributes="0"/>
+                                          <Component id="dobYear" min="-2" max="-2" attributes="0"/>
                                       </Group>
                                       <Group type="102" alignment="0" attributes="0">
                                           <Component id="firstNameTxt" min="-2" pref="127" max="-2" attributes="0"/>
@@ -108,7 +108,7 @@
                                               <Group type="102" alignment="0" attributes="0">
                                                   <Component id="jLabel20" min="-2" max="-2" attributes="0"/>
                                                   <EmptySpace max="-2" attributes="0"/>
-                                                  <Component id="jTextField3" min="-2" pref="109" max="-2" attributes="0"/>
+                                                  <Component id="permanentAddressCityTxt" min="-2" pref="109" max="-2" attributes="0"/>
                                                   <EmptySpace max="-2" attributes="0"/>
                                                   <Component id="jLabel21" min="-2" max="-2" attributes="0"/>
                                                   <EmptySpace max="-2" attributes="0"/>
@@ -116,18 +116,18 @@
                                                   <EmptySpace max="-2" attributes="0"/>
                                                   <Component id="jLabel22" min="-2" max="-2" attributes="0"/>
                                                   <EmptySpace max="32767" attributes="0"/>
-                                                  <Component id="jTextField8" min="-2" pref="106" max="-2" attributes="0"/>
+                                                  <Component id="permanentAddressCountryTxt" min="-2" pref="106" max="-2" attributes="0"/>
                                               </Group>
                                               <Group type="102" attributes="0">
                                                   <Group type="103" groupAlignment="0" attributes="0">
                                                       <Group type="103" alignment="0" groupAlignment="1" max="-2" attributes="0">
-                                                          <Component id="jTextField2" alignment="0" pref="299" max="32767" attributes="0"/>
-                                                          <Component id="jTextField1" alignment="0" max="32767" attributes="0"/>
+                                                          <Component id="permanentAddressSecondLine" alignment="0" pref="299" max="32767" attributes="0"/>
+                                                          <Component id="permanentAddrFirstLine" alignment="0" max="32767" attributes="0"/>
                                                       </Group>
                                                       <Group type="102" alignment="0" attributes="0">
                                                           <Component id="jLabel28" min="-2" max="-2" attributes="0"/>
                                                           <EmptySpace max="-2" attributes="0"/>
-                                                          <Component id="jTextField9" min="-2" pref="141" max="-2" attributes="0"/>
+                                                          <Component id="permanentAddressPincodeTxt" min="-2" pref="141" max="-2" attributes="0"/>
                                                       </Group>
                                                   </Group>
                                                   <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
@@ -149,15 +149,15 @@
                                           <Component id="jLabel8" min="-2" max="-2" attributes="0"/>
                                           <EmptySpace max="-2" attributes="0"/>
                                           <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                              <Component id="jTextField5" pref="304" max="32767" attributes="0"/>
-                                              <Component id="jTextField4" max="32767" attributes="0"/>
+                                              <Component id="temporaryAddressSecondLine" pref="304" max="32767" attributes="0"/>
+                                              <Component id="temporaryAddressFirstLine" max="32767" attributes="0"/>
                                           </Group>
                                       </Group>
                                       <Group type="102" alignment="0" attributes="0">
                                           <EmptySpace min="-2" pref="128" max="-2" attributes="0"/>
                                           <Component id="jLabel23" min="-2" max="-2" attributes="0"/>
                                           <EmptySpace max="-2" attributes="0"/>
-                                          <Component id="jTextField6" min="-2" pref="114" max="-2" attributes="0"/>
+                                          <Component id="temporaryAddressCityTxt" min="-2" pref="114" max="-2" attributes="0"/>
                                           <EmptySpace max="-2" attributes="0"/>
                                           <Component id="jLabel24" min="-2" max="-2" attributes="0"/>
                                           <EmptySpace max="-2" attributes="0"/>
@@ -165,7 +165,7 @@
                                           <EmptySpace max="-2" attributes="0"/>
                                           <Component id="jLabel25" min="-2" max="-2" attributes="0"/>
                                           <EmptySpace max="-2" attributes="0"/>
-                                          <Component id="jTextField11" max="32767" attributes="0"/>
+                                          <Component id="temporaryAddressCountryTxt" max="32767" attributes="0"/>
                                       </Group>
                                       <Component id="jLabel9" min="-2" max="-2" attributes="0"/>
                                       <Group type="102" alignment="0" attributes="0">
@@ -178,11 +178,11 @@
                                               <Group type="102" attributes="0">
                                                   <Component id="jLabel29" min="-2" max="-2" attributes="0"/>
                                                   <EmptySpace max="-2" attributes="0"/>
-                                                  <Component id="jTextField10" min="-2" pref="142" max="-2" attributes="0"/>
+                                                  <Component id="temporaryAddressPincodeTxt" min="-2" pref="142" max="-2" attributes="0"/>
                                               </Group>
                                               <Group type="103" groupAlignment="1" attributes="0">
-                                                  <Component id="jTextField7" min="-2" pref="311" max="-2" attributes="0"/>
-                                                  <Component id="contactTxt" min="-2" pref="311" max="-2" attributes="0"/>
+                                                  <Component id="mobileNumberTxt" min="-2" pref="311" max="-2" attributes="0"/>
+                                                  <Component id="emailAddressTxt" min="-2" pref="311" max="-2" attributes="0"/>
                                               </Group>
                                           </Group>
                                       </Group>
@@ -215,9 +215,9 @@
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="dobTxt" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="dobDate" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="jComboBox1" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="dobTxt1" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="dobYear" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="jLabel4" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace min="-2" pref="1" max="-2" attributes="0"/>
@@ -242,46 +242,46 @@
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Component id="jLabel7" alignment="0" min="-2" max="-2" attributes="0"/>
-                              <Component id="jTextField1" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="permanentAddrFirstLine" alignment="0" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="jTextField2" min="-2" max="-2" attributes="0"/>
+                          <Component id="permanentAddressSecondLine" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
                               <Component id="jLabel20" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="jTextField3" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="permanentAddressCityTxt" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="jLabel21" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="jComboBox3" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="jLabel22" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="jTextField8" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="permanentAddressCountryTxt" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace pref="24" max="32767" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
                               <Component id="jLabel28" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="jTextField9" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="permanentAddressPincodeTxt" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
                               <Component id="jLabel8" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="jTextField4" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="temporaryAddressFirstLine" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace min="-2" pref="1" max="-2" attributes="0"/>
-                          <Component id="jTextField5" min="-2" max="-2" attributes="0"/>
+                          <Component id="temporaryAddressSecondLine" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
                               <Component id="jLabel23" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="jTextField6" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="temporaryAddressCityTxt" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="jLabel24" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="jComboBox5" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="jLabel25" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="jTextField11" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="temporaryAddressCountryTxt" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace min="-2" pref="28" max="-2" attributes="0"/>
                       </Group>
                       <Group type="102" attributes="0">
                           <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="jTextField10" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="temporaryAddressPincodeTxt" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="jLabel29" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                       </Group>
@@ -290,12 +290,12 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="jLabel26" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="contactTxt" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="emailAddressTxt" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="jLabel27" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="jTextField7" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="mobileNumberTxt" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
@@ -313,7 +313,7 @@
             <Property name="text" type="java.lang.String" value="2014"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JTextField" name="dobTxt">
+        <Component class="javax.swing.JTextField" name="dobDate">
           <Properties>
             <Property name="text" type="java.lang.String" value="31"/>
           </Properties>
@@ -323,7 +323,7 @@
             <Property name="text" type="java.lang.String" value="Last Name"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JTextField" name="contactTxt">
+        <Component class="javax.swing.JTextField" name="emailAddressTxt">
         </Component>
         <Component class="javax.swing.JTextField" name="middleNameTxt">
           <Events>
@@ -407,7 +407,7 @@
             <Property name="text" type="java.lang.String" value="Temporary Address"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JTextField" name="dobTxt1">
+        <Component class="javax.swing.JTextField" name="dobYear">
           <Properties>
             <Property name="text" type="java.lang.String" value="2014"/>
           </Properties>
@@ -474,14 +474,14 @@
             <Property name="text" type="java.lang.String" value="Single"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JTextField" name="jTextField1">
+        <Component class="javax.swing.JTextField" name="permanentAddrFirstLine">
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jTextField1ActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="permanentAddrFirstLineActionPerformed"/>
           </Events>
         </Component>
-        <Component class="javax.swing.JTextField" name="jTextField2">
+        <Component class="javax.swing.JTextField" name="permanentAddressSecondLine">
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jTextField2ActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="permanentAddressSecondLineActionPerformed"/>
           </Events>
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel20">
@@ -489,7 +489,7 @@
             <Property name="text" type="java.lang.String" value="City"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JTextField" name="jTextField3">
+        <Component class="javax.swing.JTextField" name="permanentAddressCityTxt">
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel21">
           <Properties>
@@ -511,21 +511,21 @@
             <Property name="text" type="java.lang.String" value="Country"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JTextField" name="jTextField4">
+        <Component class="javax.swing.JTextField" name="temporaryAddressFirstLine">
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jTextField4ActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="temporaryAddressFirstLineActionPerformed"/>
           </Events>
         </Component>
-        <Component class="javax.swing.JTextField" name="jTextField5">
+        <Component class="javax.swing.JTextField" name="temporaryAddressSecondLine">
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel23">
           <Properties>
             <Property name="text" type="java.lang.String" value="City"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JTextField" name="jTextField6">
+        <Component class="javax.swing.JTextField" name="temporaryAddressCityTxt">
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jTextField6ActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="temporaryAddressCityTxtActionPerformed"/>
           </Events>
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel24">
@@ -560,31 +560,31 @@
             <Property name="text" type="java.lang.String" value="Mobile No."/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JTextField" name="jTextField7">
+        <Component class="javax.swing.JTextField" name="mobileNumberTxt">
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel28">
           <Properties>
             <Property name="text" type="java.lang.String" value="Zip Code"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JTextField" name="jTextField9">
+        <Component class="javax.swing.JTextField" name="permanentAddressPincodeTxt">
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel29">
           <Properties>
             <Property name="text" type="java.lang.String" value="Zip Code"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JTextField" name="jTextField10">
+        <Component class="javax.swing.JTextField" name="temporaryAddressPincodeTxt">
         </Component>
-        <Component class="javax.swing.JTextField" name="jTextField8">
+        <Component class="javax.swing.JTextField" name="permanentAddressCountryTxt">
           <Properties>
             <Property name="text" type="java.lang.String" value="jTextField8"/>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jTextField8ActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="permanentAddressCountryTxtActionPerformed"/>
           </Events>
         </Component>
-        <Component class="javax.swing.JTextField" name="jTextField11">
+        <Component class="javax.swing.JTextField" name="temporaryAddressCountryTxt">
           <Properties>
             <Property name="text" type="java.lang.String" value="jTextField8"/>
           </Properties>
@@ -628,12 +628,12 @@
                       <Group type="102" attributes="0">
                           <Component id="jLabel16" linkSize="2" min="-2" pref="49" max="-2" attributes="0"/>
                           <EmptySpace max="32767" attributes="0"/>
-                          <Component id="emailTxt1" linkSize="2" min="-2" pref="107" max="-2" attributes="0"/>
+                          <Component id="castTxt" linkSize="2" min="-2" pref="107" max="-2" attributes="0"/>
                       </Group>
                       <Group type="102" attributes="0">
                           <Component id="jLabel17" linkSize="2" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="32767" attributes="0"/>
-                          <Component id="emailTxt2" linkSize="2" min="-2" pref="107" max="-2" attributes="0"/>
+                          <Component id="subcastTxt" linkSize="2" min="-2" pref="107" max="-2" attributes="0"/>
                       </Group>
                       <Group type="102" attributes="0">
                           <Component id="jLabel11" linkSize="2" min="-2" pref="101" max="-2" attributes="0"/>
@@ -670,12 +670,12 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="jLabel16" linkSize="3" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="emailTxt1" linkSize="3" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="castTxt" linkSize="3" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="jLabel17" linkSize="3" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="emailTxt2" linkSize="3" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="subcastTxt" linkSize="3" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
@@ -762,14 +762,14 @@
             <Property name="text" type="java.lang.String" value="Cast"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JTextField" name="emailTxt1">
+        <Component class="javax.swing.JTextField" name="castTxt">
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel17">
           <Properties>
             <Property name="text" type="java.lang.String" value="Subcast"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JTextField" name="emailTxt2">
+        <Component class="javax.swing.JTextField" name="subcastTxt">
         </Component>
       </SubComponents>
     </Container>

@@ -26,6 +26,7 @@ public class ReportView extends javax.swing.JPanel {
         if(view != null)
         {
             rootPanel.add(view);
+            rootPanel.repaint(view.getBounds());
         }
     }
 
@@ -33,6 +34,7 @@ public class ReportView extends javax.swing.JPanel {
     public void cleanView() 
     {
         rootPanel.removeAll();
+        rootPanel.repaint();
     }
     
     /**

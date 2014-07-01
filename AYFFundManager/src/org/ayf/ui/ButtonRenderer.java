@@ -2,9 +2,9 @@ package org.ayf.ui;
 
 
 import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
 import javax.swing.*;
-import javax.swing.border.Border;
-import javax.swing.border.EmptyBorder;
 import javax.swing.table.*;
 import org.ayf.models.Command;
 import org.ayf.models.SideBarTableModel;
@@ -27,11 +27,10 @@ import org.ayf.tpl.glossybutton.StandardButton;
  *  the model row number of the button that was clicked.
  *
  */
-public class ButtonRenderer implements TableCellRenderer
+public class ButtonRenderer implements TableCellRenderer, MouseMotionListener
 {
     private final StandardButton headerOptionButton;
     private final StandardButton subOptionButton;
-    private static final Border noFocusBorder = new EmptyBorder(1, 1, 1, 1);
     /**
      *  Create the ButtonColumn to be used as a renderer and editor. The
      *  renderer and editor will automatically be installed on the TableColumn
@@ -42,8 +41,10 @@ public class ButtonRenderer implements TableCellRenderer
     public ButtonRenderer(int column)
     {
             headerOptionButton = new StandardButton("");
+            headerOptionButton.setRolloverButtonTheme(Theme.STANDARD_GOLD_THEME);
             headerOptionButton.setFont(new  Font("Thoma", Font.BOLD, 14));
             subOptionButton = new StandardButton("", ButtonType.BUTTON_ROUNDED_RECTANGLUR, Theme.STANDARD_LIGHTGRAY_THEME, Theme.STANDARD_GREEN_THEME, Theme.STANDARD_GREEN_THEME);
+            subOptionButton.setSelectButtonTheme(Theme.STANDARD_METALLICGRAY_THEME);
             subOptionButton.setDirection(-1);
     }
 
@@ -53,14 +54,13 @@ public class ButtonRenderer implements TableCellRenderer
     public Component getTableCellRendererComponent(
             JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column)
     {
-        
         JButton target = null;  
+        SideBarTableModel model = (SideBarTableModel) table.getModel();
         if(value.getClass().equals(SideBarTableModel.HeaderOption.class))
         {
             headerOptionButton.setText(value.toString());
             headerOptionButton.setSelected(true);
             target = headerOptionButton;
-            SideBarTableModel model = (SideBarTableModel) table.getModel();
             if(model.getSelectedHelderOption() == value)
             {
                 headerOptionButton.setDirection(SwingConstants.SOUTH);
@@ -93,10 +93,20 @@ public class ButtonRenderer implements TableCellRenderer
         
         if(target != null)
         {
+            target.getModel().setRollover(model.getHighlitedOption() == value);
             target.getModel().setSelected(isSelected);
-            target.getModel().setRollover(hasFocus);
         }
         
         return target;
+    }
+
+    @Override
+    public void mouseDragged(MouseEvent e) {
+        
+    }
+
+    @Override
+    public void mouseMoved(MouseEvent e) {
+         e.getSource();
     }
 }
