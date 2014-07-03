@@ -277,7 +277,7 @@ public class Member {
             case SubCast:
                 return "Sub Cast";
             case District:
-                return "District";
+                return "City";
             case BloodGroup:
                 return "Blood Group";
             case Gender:
@@ -372,12 +372,12 @@ public class Member {
         switch(level)
         {
             case Basic:
+                columnNames.add(getNameForColumnID(ColumnNames.District));
                 columnNames.add(getNameForColumnID(ColumnNames.MaritalStatus));
                 columnNames.add(getNameForColumnID(ColumnNames.ContactNumber));
                 columnNames.add(getNameForColumnID(ColumnNames.EmailAddress));
                 columnNames.add(getNameForColumnID(ColumnNames.Education));
                 columnNames.add(getNameForColumnID(ColumnNames.Profession));
-                columnNames.add(getNameForColumnID(ColumnNames.District));
                 columnNames.add(getNameForColumnID(ColumnNames.RegisterationDate));
                 columnNames.add(getNameForColumnID(ColumnNames.Position));
                 break;

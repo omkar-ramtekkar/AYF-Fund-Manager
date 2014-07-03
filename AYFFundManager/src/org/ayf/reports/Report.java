@@ -18,9 +18,15 @@ public abstract class Report {
     BaseReportView view;
     Command.CommandType reportType;
 
-    public Report(Command.CommandType type) {
+    public Report(Command.CommandType type, BaseReportView view) {
         this.reportType = type;
+        setView(view);
     }
+
+    public Report(Command.CommandType reportType) {
+        this.reportType = reportType;
+    }
+    
 
     public BaseReportView getView() {
         return view;

@@ -42,9 +42,12 @@ public class ButtonRenderer implements TableCellRenderer, MouseMotionListener
     {
             headerOptionButton = new StandardButton("");
             headerOptionButton.setRolloverButtonTheme(Theme.STANDARD_GOLD_THEME);
+            headerOptionButton.setSelectButtonTheme(Theme.STANDARD_RED_THEME);
             headerOptionButton.setFont(new  Font("Thoma", Font.BOLD, 14));
-            subOptionButton = new StandardButton("", ButtonType.BUTTON_ROUNDED_RECTANGLUR, Theme.STANDARD_LIGHTGRAY_THEME, Theme.STANDARD_GREEN_THEME, Theme.STANDARD_GREEN_THEME);
-            subOptionButton.setSelectButtonTheme(Theme.STANDARD_METALLICGRAY_THEME);
+            subOptionButton = new StandardButton("");
+            subOptionButton.setButtonTheme(Theme.STANDARD_LIGHTGRAY_THEME);
+            subOptionButton.setRolloverButtonTheme(Theme.STANDARD_GOLD_THEME);
+            subOptionButton.setSelectButtonTheme(Theme.STANDARD_GREEN_THEME);
             subOptionButton.setDirection(-1);
     }
 
@@ -56,10 +59,10 @@ public class ButtonRenderer implements TableCellRenderer, MouseMotionListener
     {
         JButton target = null;  
         SideBarTableModel model = (SideBarTableModel) table.getModel();
-        if(value.getClass().equals(SideBarTableModel.HeaderOption.class))
+        SideBarTableModel.Option option = (SideBarTableModel.Option) value;
+        if(option.isHeaderOption())
         {
             headerOptionButton.setText(value.toString());
-            headerOptionButton.setSelected(true);
             target = headerOptionButton;
             if(model.getSelectedHelderOption() == value)
             {
@@ -80,21 +83,24 @@ public class ButtonRenderer implements TableCellRenderer, MouseMotionListener
         }
         else
         {
-            if(!value.toString().equalsIgnoreCase(Command.getDisplayNameForType(Command.CommandType.None)))
+            if(!option.isNoneOption())
             {
                 this.subOptionButton.setText(value.toString());
                 target = this.subOptionButton;
-            }
-            else
-            {
-                target = null;
             }   
         }
         
         if(target != null)
         {
-            target.getModel().setRollover(model.getHighlitedOption() == value);
-            target.getModel().setSelected(isSelected);
+            target.getModel().setRollover(model.getHighlitedOption() == value);            
+            if(model.getSelectedHelderOption() == option || model.getSelectedSubOption() == option)
+            {
+                target.getModel().setSelected(true);
+            }
+            else
+            {
+                target.getModel().setSelected(false);
+            }
         }
         
         return target;

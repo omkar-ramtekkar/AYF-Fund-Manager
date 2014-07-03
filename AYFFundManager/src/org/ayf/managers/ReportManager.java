@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Vector;
 import org.ayf.models.Command;
 import org.ayf.reports.AllDonationsReport;
+import org.ayf.reports.AllExpensesReport;
 import org.ayf.reports.AllMembersReport;
 import org.ayf.reports.DonationReport;
 import org.ayf.reports.Report;
@@ -44,6 +45,8 @@ public class ReportManager
         Vector<Report> detailsReports = new Vector();
         detailsReports.add(new AllMembersReport());
         detailsReports.add(new AllDonationsReport());
+        detailsReports.add(new AllExpensesReport());
+        
         reports.put(Command.CommandType.Details, detailsReports);
     }
 

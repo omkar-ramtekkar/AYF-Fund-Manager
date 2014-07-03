@@ -36,6 +36,16 @@ public final class SideBarTableModel extends AbstractTableModel implements Mouse
                 header.addSubOption(this);
             }*/
         }
+        
+        public boolean isNoneOption()
+        {
+            return getOptionType() == Command.CommandType.None;
+        }
+        
+        public boolean isHeaderOption()
+        {
+            return false;
+        }
 
         public Command.CommandType getOptionType() {
             return optionType;
@@ -59,6 +69,15 @@ public final class SideBarTableModel extends AbstractTableModel implements Mouse
         public void setSelected(boolean bSelected)
         {
             this.isSelected = bSelected;
+        }
+        
+        public ArrayList<Option> getSubOptions() {
+            return null;
+        }
+        
+        public boolean hasSubOptions()
+        {
+            return (getSubOptions() != null && (getSubOptions().size() - 1) > 0);
         }
         
         @Override
@@ -86,6 +105,11 @@ public final class SideBarTableModel extends AbstractTableModel implements Mouse
         public ArrayList<Option> getSubOptions() {
             return subOptions;
         }
+        
+        public boolean isHeaderOption()
+        {
+            return true;
+        }
     }
     
     
@@ -99,6 +123,7 @@ public final class SideBarTableModel extends AbstractTableModel implements Mouse
         
         HeaderOption dashboardOption = new HeaderOption(Command.CommandType.Dashboard);
         this.options.add(dashboardOption);
+        this.selectedHelderOption = dashboardOption;
         
         HeaderOption detailsOption = new HeaderOption(Command.CommandType.Details);
         this.options.add(detailsOption);
@@ -152,6 +177,7 @@ public final class SideBarTableModel extends AbstractTableModel implements Mouse
         return selectedSubOption;
     }
 
+    @Override
     public void mouseClicked(MouseEvent event)
     {
         JTable table =(JTable) event.getSource();

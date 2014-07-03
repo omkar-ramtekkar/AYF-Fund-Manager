@@ -69,7 +69,10 @@ public class ReportViewController implements ActionListener, MouseListener
         }
         else
         {
-            reports = reportManager.getReports(command.getType());
+            if(!command.getOption().hasSubOptions())
+            {
+                reports = reportManager.getReports(command.getType());
+            }
         }
         
         updateReportViewWithReports(reports);
@@ -77,9 +80,10 @@ public class ReportViewController implements ActionListener, MouseListener
     
     void updateReportViewWithReports(Vector<Report> reports)
     {
-        cleanReportView();
-        if(reports != null)
+        if(reports != null && !reports.isEmpty())
         {
+            cleanReportView();
+            
             for (Report report : reports) 
             {
                 reportView.addView(report.getView());

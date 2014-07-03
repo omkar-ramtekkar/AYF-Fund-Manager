@@ -8,29 +8,42 @@ package org.ayf.reports.views;
 
 import java.awt.Component;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumnModel;
 import org.ayf.reports.Report;
 import org.ayf.reports.ReportData;
+import org.ayf.util.TableAutoFilterAdapter;
 
 /**
  *
  * @author om
  */
-public abstract class BaseReportView extends javax.swing.JPanel {
+public abstract class BaseReportView extends javax.swing.JPanel{
+    
     protected Report report;
+    TableAutoFilterAdapter rowFilter;
 
     public BaseReportView(Report report)
     {
         this.report = report;
+        rowFilter = null;
     }
     
     
     public abstract void updateView(ReportData data);
+    
     protected abstract JTable getReportTable();
     
-    protected boolean shouldResizeReportTableColumnWidth() { return true; }
-    protected int getMinimumColumnWidth() { return 50; }
+    protected boolean shouldResizeReportTableColumnWidth() 
+    { 
+        return true; 
+    }
+    
+    protected int getMinimumColumnWidth() 
+    { 
+        return 50; 
+    }
     
     private void resizeColumnWidth(JTable table) 
     {
@@ -59,6 +72,15 @@ public abstract class BaseReportView extends javax.swing.JPanel {
         }
     }
     
+    protected void setupTextSearchForReportTable(JTextField searchField)
+    {
+        
+        JTable reportTable = getReportTable();
+        if(searchField != null && reportTable != null)
+        {
+            rowFilter = new TableAutoFilterAdapter(reportTable, searchField);
+        }
+    }    
 
     public Report getReport() {
         return report;

@@ -16,17 +16,16 @@ import org.jdesktop.swingx.prompt.PromptSupport;
  *
  * @author om
  */
-public class AllDonationsReportView extends BaseReportView {
+public class AllExpensesReportView extends BaseReportView {
 
     /**
-     * Creates new form AllDonationsReportView
+     * Creates new form AllExpensesReportView
      */
-        
-    public AllDonationsReportView(Report report) 
-    {
+    public AllExpensesReportView(Report report) {
         super(report);
         initComponents();
-        PromptSupport.setPrompt("Type text to search Donor", searchTextField);
+        
+        PromptSupport.setPrompt("Type text to search Expense", searchTextField);
         setupTextSearchForReportTable(searchTextField);
     }
 
@@ -42,7 +41,7 @@ public class AllDonationsReportView extends BaseReportView {
         searchTextField = new javax.swing.JTextField();
         refreshButton = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
-        allMembersTable = new javax.swing.JTable();
+        allExpensesTable = new javax.swing.JTable();
 
         refreshButton.setText("Refresh");
         refreshButton.addActionListener(new java.awt.event.ActionListener() {
@@ -51,7 +50,7 @@ public class AllDonationsReportView extends BaseReportView {
             }
         });
 
-        allMembersTable.setModel(new javax.swing.table.DefaultTableModel(
+        allExpensesTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
@@ -59,9 +58,8 @@ public class AllDonationsReportView extends BaseReportView {
 
             }
         ));
-        allMembersTable.setColumnSelectionAllowed(true);
-        jScrollPane1.setViewportView(allMembersTable);
-        allMembersTable.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        allExpensesTable.setColumnSelectionAllowed(true);
+        jScrollPane1.setViewportView(allExpensesTable);
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
         this.setLayout(layout);
@@ -74,7 +72,7 @@ public class AllDonationsReportView extends BaseReportView {
                         .add(searchTextField)
                         .add(18, 18, 18)
                         .add(refreshButton))
-                    .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 403, Short.MAX_VALUE))
+                    .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 388, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -85,7 +83,7 @@ public class AllDonationsReportView extends BaseReportView {
                     .add(searchTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(refreshButton))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 263, Short.MAX_VALUE)
+                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 252, Short.MAX_VALUE)
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -100,24 +98,23 @@ public class AllDonationsReportView extends BaseReportView {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTable allMembersTable;
+    private javax.swing.JTable allExpensesTable;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JButton refreshButton;
     private javax.swing.JTextField searchTextField;
     // End of variables declaration//GEN-END:variables
 
     @Override
-    public void updateView(ReportData data) 
-    {
+    public void updateView(ReportData data) {
         if(data != null)
         {
-            this.allMembersTable.setModel(new GenericDefaultTableModel(data.getData(), data.getColumns()));
+            this.allExpensesTable.setModel(new GenericDefaultTableModel(data.getData(), data.getColumns()));
             adjustReportTableColumns();
         }
     }
-    
-    protected JTable getReportTable()
-    {
-        return allMembersTable;
+
+    @Override
+    protected JTable getReportTable() {
+        return this.allExpensesTable;
     }
 }

@@ -18,7 +18,6 @@ public class DonationReport extends Report{
 
     public DonationReport() {
         super(Command.CommandType.DashboardDonation);
-        
         setView(new DonationReportView(this));
     }
     

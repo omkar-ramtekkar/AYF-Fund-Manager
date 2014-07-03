@@ -7,7 +7,6 @@
 package org.ayf.reports.views;
 
 import javax.swing.JTable;
-import javax.swing.table.DefaultTableModel;
 import org.ayf.models.GenericDefaultTableModel;
 import org.ayf.reports.Report;
 import org.ayf.reports.ReportData;
@@ -28,14 +27,17 @@ public class AllMemberReportView extends BaseReportView {
     public AllMemberReportView(Report report) {
         super(report);
         initComponents();
-        PromptSupport.setPrompt("Type text to search Donor", searchTextField);
+        PromptSupport.setPrompt("Type text to search Member", searchTextField);
+        setupTextSearchForReportTable(searchTextField);
     }
     
     @Override
     public void updateView(ReportData data) {
         if(data != null)
         {
-            this.allMembersTable.setModel(new GenericDefaultTableModel(data.getData(), data.getColumns()));
+            GenericDefaultTableModel model = new GenericDefaultTableModel(data.getData(), data.getColumns());
+            this.allMembersTable.setModel(model);
+
             adjustReportTableColumns();
         }
     }
@@ -63,16 +65,15 @@ public class AllMemberReportView extends BaseReportView {
 
         allMembersTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {},
-                {},
-                {},
-                {}
+
             },
             new String [] {
 
             }
         ));
+        allMembersTable.setColumnSelectionAllowed(true);
         jScrollPane1.setViewportView(allMembersTable);
+        allMembersTable.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
         this.setLayout(layout);

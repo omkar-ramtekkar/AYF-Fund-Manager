@@ -14,8 +14,8 @@ import org.ayf.models.Command;
  */
 public class SubscriptionReport extends Report{
 
-    public SubscriptionReport(Command.CommandType type) {
-        super(type);
+    public SubscriptionReport() {
+        super(Command.CommandType.None, null);
     }
 
     @Override

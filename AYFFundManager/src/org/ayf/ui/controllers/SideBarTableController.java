@@ -15,6 +15,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import static javax.swing.ListSelectionModel.MULTIPLE_INTERVAL_SELECTION;
 import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 import javax.swing.event.EventListenerList;
 import javax.swing.table.TableModel;
 import org.ayf.managers.ApplicationManager;
@@ -27,7 +28,7 @@ import org.ayf.ui.MainFrame;
  *
  * @author om
  */
-public class SideBarTableController implements MouseListener, MouseMotionListener {
+public class SideBarTableController implements ActionListener, MouseListener, MouseMotionListener {
     private final JTable table;
     private final SideBarTableModel model;
     protected EventListenerList listenerList = new EventListenerList();
@@ -118,6 +119,8 @@ public class SideBarTableController implements MouseListener, MouseMotionListene
             long uniqueId = System.currentTimeMillis() ;
             fireActionPerformed(new ActionEvent(new Command(newOption, newOption.getOptionType()), (int)uniqueId, "Action"));
         }
+        
+        this.table.repaint();
     }
 
     @Override
@@ -149,6 +152,11 @@ public class SideBarTableController implements MouseListener, MouseMotionListene
     @Override
     public void mouseMoved(MouseEvent e) {
         this.model.mouseMoved(e);
+        this.table.repaint();
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
         this.table.repaint();
     }
 }
