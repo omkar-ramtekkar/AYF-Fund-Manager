@@ -6,12 +6,13 @@
 
 package org.ayf.managers;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
 import org.ayf.models.Command;
+import org.ayf.reports.AllDonationsReport;
+import org.ayf.reports.AllExpensesReport;
+import org.ayf.reports.AllMembersReport;
 import org.ayf.reports.DonationReport;
 import org.ayf.reports.Report;
 
@@ -29,6 +30,7 @@ public class ReportManager
     {
         reports = new HashMap<Command.CommandType, Vector<Report>>();
         initializeDashboardReports();
+        initializeDetailsReports();
     }
     
     void initializeDashboardReports()
@@ -37,6 +39,16 @@ public class ReportManager
         dashboardReports.add(new DonationReport());
         reports.put(Command.CommandType.Dashboard, dashboardReports);
     }
+    
+    void initializeDetailsReports()
+    {
+        Vector<Report> detailsReports = new Vector();
+        detailsReports.add(new AllMembersReport());
+        detailsReports.add(new AllDonationsReport());
+        detailsReports.add(new AllExpensesReport());
+        
+        reports.put(Command.CommandType.Details, detailsReports);
+    }
 
     public Vector<Report> getReports(Command.CommandType type)
     {
@@ -44,25 +56,28 @@ public class ReportManager
     }
     
     
-    
-    
-    
-    Report getReportsForType(Command.CommandType type, Command.CommandType subType)
+    public Report getReportsForType(Command.CommandType type, Command.CommandType subType)
     {
         Vector<Report> typeReports = getReports(type);
-        for (Report report : typeReports) 
+        Report requestedReport = null;
+
+        if(typeReports != null)
         {
-            if(report != null)
+            for (Report report : typeReports) 
             {
-                if(report.getReportType() == type)
+                if(report != null)
                 {
-                    return report;
+                    if(report.getReportType() == subType)
+                    {
+                        requestedReport = report;
+                        break;
+                    }
+
                 }
-                        
             }
         }
         
-        return null;
+        return requestedReport;
     }
    
 }

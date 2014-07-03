@@ -21,36 +21,25 @@ import org.ayf.reports.ReportData;
  *
  * @author om
  */
-public class DonationReportView extends javax.swing.JPanel {
+public class DonationReportView extends BaseReportView {
 
     static BufferedImage img = null;
-    Report report;
     /**
      * Creates new form DonationReportView
      */
     public DonationReportView(Report report) {
-        this.report = report;
+        super(report);
         initComponents();
     }
 
     public JTable getReportTable() {
         return reportTable;
     }
-    
-    
-    
-    public void setData(ReportData data)
-    {
-        if(data != null)
-        {
-            getReportTable().setModel(new DefaultTableModel(data.getData(), data.getColumns()));
-        }
-    }
 
-     protected void paintComponent(Graphics g) 
-     {
-        super.paintComponent(g);
-        
+    protected void paintComponent(Graphics g) 
+    {
+       super.paintComponent(g);
+
        if(img == null)
        {
             try 
@@ -60,10 +49,20 @@ public class DonationReportView extends javax.swing.JPanel {
                 Logger.getLogger(DonationReportView.class.getName()).log(Level.SEVERE, null, ex);
             }
        }
-       
+
        g.drawImage(img, 0, 0, null);
     }
-  
+     
+    @Override
+    public void updateView(ReportData data)
+    {
+        if(data != null)
+        {
+            getReportTable().setModel(new DefaultTableModel(data.getData(), data.getColumns()));
+            adjustReportTableColumns();
+        }
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -136,7 +135,7 @@ public class DonationReportView extends javax.swing.JPanel {
         // TODO add your handling code here:
         if(report != null)
         {
-            report.refresh();
+            report.updateReport();
         }
     }//GEN-LAST:event_refreshButtonActionPerformed
 
@@ -148,4 +147,5 @@ public class DonationReportView extends javax.swing.JPanel {
     private javax.swing.JButton refreshButton;
     private javax.swing.JTable reportTable;
     // End of variables declaration//GEN-END:variables
+
 }

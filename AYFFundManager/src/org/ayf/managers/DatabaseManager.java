@@ -23,6 +23,8 @@ import javax.swing.JOptionPane;
 import org.ayf.database.entities.Type;
 import static javax.swing.JOptionPane.ERROR_MESSAGE;
 import net.ucanaccess.jdbc.UcanaccessDriver;
+import org.ayf.database.entities.CashFlow;
+import org.ayf.database.entities.Expense;
 import org.ayf.reports.ReportData;
 
 
@@ -651,5 +653,58 @@ public class DatabaseManager {
         
         return new ReportData(rows, columns);
     }
+
+    
+    public static ArrayList<Expense> getExpenses() {
+        Logger.getLogger(DatabaseManager.class.getName()).log(Level.INFO, "getExpenses");
         
+        ArrayList<Expense> expenses = new ArrayList();
+        Connection connection = null;
+        try 
+        {
+            connection = createConnection();
+            
+            PreparedStatement ps = connection.prepareStatement("SELECT * FROM " + EXPENSES_TABLE_NAME);
+            
+            ResultSet rs = ps.executeQuery();
+            
+            Logger.getLogger(DatabaseManager.class.getName()).log(Level.INFO, "getExpenses : Column Count - {0}", rs.getMetaData().getColumnCount());
+            
+            while(rs.next())
+            {
+                int     expenseID       = rs.getInt("ID");
+                double  amount          = rs.getDouble("Amount");
+                Date    date      = rs.getDate("Date");
+                String  expenseType     = rs.getString("Type");
+                String  description     = rs.getString("Description");
+                int     memberID        = rs.getInt("ResponsibleMemberID");
+                Member  member          = null;
+                
+                if(memberID != Integer.MAX_VALUE)
+                {
+                    member = getMemberWithID(memberID);
+                }
+                
+                expenses.add(new Expense(expenseID, getExpenseTypeForName(expenseType), date, amount, description, member));
+            }
+            
+            ps.close();
+            rs.close();
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(null, ex.getLocalizedMessage(), "Unable to fetch data from table", ERROR_MESSAGE);
+        }
+        finally
+        {
+            if(connection != null) closeConnection(connection);
+        }
+        return expenses;
+    }
+    
+    
+     public static ArrayList<CashFlow> getBankTransactions() 
+     {
+         return null;
+     }   
 }

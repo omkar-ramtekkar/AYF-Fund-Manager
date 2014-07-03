@@ -15,6 +15,7 @@ import javax.swing.JPanel;
 import org.ayf.managers.ApplicationManager;
 import org.ayf.managers.ReportManager;
 import org.ayf.models.Command;
+import org.ayf.models.SideBarTableModel.Option;
 import org.ayf.reports.Report;
 import org.ayf.ui.ReportView;
 
@@ -55,19 +56,38 @@ public class ReportViewController implements ActionListener, MouseListener
     public void actionPerformed(ActionEvent e) 
     {
         Command command = (Command)e.getSource();
-        Vector<Report> reports = reportManager.getReports(command.getType());
+        
+        Option parentOption = command.getOption().getParentOption();
+        Vector<Report> reports = new Vector<Report>();
+        if(parentOption != null)
+        {
+            Report report = reportManager.getReportsForType(parentOption.getOptionType(), command.getOption().getOptionType());
+            if(report != null)
+            {
+                reports.add(report);
+            }
+        }
+        else
+        {
+            if(!command.getOption().hasSubOptions())
+            {
+                reports = reportManager.getReports(command.getType());
+            }
+        }
         
         updateReportViewWithReports(reports);
     }
     
     void updateReportViewWithReports(Vector<Report> reports)
     {
-        cleanReportView();
-        if(reports != null)
+        if(reports != null && !reports.isEmpty())
         {
+            cleanReportView();
+            
             for (Report report : reports) 
             {
                 reportView.addView(report.getView());
+                report.updateReport();
             }
         }
     }

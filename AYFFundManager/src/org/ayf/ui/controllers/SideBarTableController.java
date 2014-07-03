@@ -10,10 +10,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import static javax.swing.ListSelectionModel.MULTIPLE_INTERVAL_SELECTION;
 import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 import javax.swing.event.EventListenerList;
 import javax.swing.table.TableModel;
 import org.ayf.managers.ApplicationManager;
@@ -26,7 +28,7 @@ import org.ayf.ui.MainFrame;
  *
  * @author om
  */
-public class SideBarTableController implements MouseListener {
+public class SideBarTableController implements ActionListener, MouseListener, MouseMotionListener {
     private final JTable table;
     private final SideBarTableModel model;
     protected EventListenerList listenerList = new EventListenerList();
@@ -49,6 +51,7 @@ public class SideBarTableController implements MouseListener {
         mainFrame.getSplitPane().setSize(mainFrame.getSize());
         
         this.table.addMouseListener(this);
+        this.table.addMouseMotionListener(this);
        
         setDefaultSplitPaneSize();
     }
@@ -102,7 +105,7 @@ public class SideBarTableController implements MouseListener {
         SideBarTableModel.Option oldOption = this.model.getSelectedSubOption();
         
         //Update model with new selection
-        this.model.clickEvent(e);
+        this.model.mouseClicked(e);
         
         SideBarTableModel.Option newOption = this.model.getSelectedSubOption();
         
@@ -116,6 +119,8 @@ public class SideBarTableController implements MouseListener {
             long uniqueId = System.currentTimeMillis() ;
             fireActionPerformed(new ActionEvent(new Command(newOption, newOption.getOptionType()), (int)uniqueId, "Action"));
         }
+        
+        this.table.repaint();
     }
 
     @Override
@@ -135,6 +140,23 @@ public class SideBarTableController implements MouseListener {
 
     @Override
     public void mouseExited(MouseEvent e) {
-        
+        this.model.mouseExited(e);
+        this.table.repaint();
     }    
+
+    @Override
+    public void mouseDragged(MouseEvent e) {
+        
+    }
+
+    @Override
+    public void mouseMoved(MouseEvent e) {
+        this.model.mouseMoved(e);
+        this.table.repaint();
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        this.table.repaint();
+    }
 }

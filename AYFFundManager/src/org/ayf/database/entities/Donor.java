@@ -7,9 +7,8 @@
 package org.ayf.database.entities;
 
 import java.sql.Date;
-import java.util.Arrays;
 import java.util.Vector;
-import org.ayf.util.DateTime;
+import org.ayf.reports.ReportData;
 
 /**
  *
@@ -80,28 +79,62 @@ public class Donor extends Member
         this.paymentMode = paymentMode;
     }
 
-    @Override
-    public Object[] toArray()
+    
+    public static String getNameForColumnID(ColumnNames name)
     {
-        Vector v = new Vector(Arrays.asList(super.toArray()));
+        String columnName =  Member.getNameForColumnID(name);
+        if(columnName == null)
+        {
+            switch(name)
+            {
+                case ReceiptNumber:
+                    return "Receipt Number";
+                case Amount:
+                    return "Amount";
+                case DonationDate:
+                    return "Donation Date";
+                case DonationType:
+                    return "Donation Type";
+                case PaymentMode:
+                    return "Payment Mode";
+            }
+        }
         
-        v.add(5, getReceiptNumber());
-        v.add(6, getDonationAmount());
-        v.add(7, getDonationDate() != null ? DateTime.getFormattedDateSQL(getDonationDate()) : "");
-        v.add(8, getDonationType() != null ? getDonationType() : "");
-        v.add(9, getPaymentMode() != null ? getPaymentMode() : "");
-        return v.toArray();
+        return null;
     }
     
-    public static String[] getColumnNames()
+    public static Vector getColumnsForDetailsLevel(DetailsLevel level)
     {
-        Vector v = new Vector(Arrays.asList(Member.getColumnNames()));            
-        v.add(5, "ReceiptNumber");
-        v.add(6, "Amount");
-        v.add(7, "DonationDate");
-        v.add(8,"DonationType");
-        v.add(9, "PaymentMode");
+        Vector columnNames = Member.getColumnsForDetailsLevel(level);
+        columnNames.add(getNameForColumnID(ColumnNames.ReceiptNumber));
+        columnNames.add(getNameForColumnID(ColumnNames.Amount));
+        columnNames.add(getNameForColumnID(ColumnNames.DonationDate));
+        columnNames.add(getNameForColumnID(ColumnNames.DonationType));
+        columnNames.add(getNameForColumnID(ColumnNames.PaymentMode));
         
-        return(String[]) v.toArray();
+        return columnNames;
+    }
+    
+    @Override
+    public Vector getMemberDetailsForLevel(DetailsLevel detailLevel)
+    {
+        Vector memberDetails = super.getMemberDetailsForLevel(detailLevel);
+        memberDetails.add(getValueForField(ColumnNames.ReceiptNumber));
+        memberDetails.add(getValueForField(ColumnNames.Amount));
+        memberDetails.add(getValueForField(ColumnNames.DonationDate));
+        memberDetails.add(getValueForField(ColumnNames.DonationType));
+        memberDetails.add(getValueForField(ColumnNames.PaymentMode));
+
+        return memberDetails;
+    }
+    
+    
+    @Override
+    public ReportData getDataForDetails(DetailsLevel detailsLevel)
+    {
+        Vector columnNames = Donor.getColumnsForDetailsLevel(detailsLevel);
+        Vector rowData = getMemberDetailsForLevel(detailsLevel);
+        
+        return new ReportData(rowData, columnNames);
     }
 }

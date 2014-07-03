@@ -14,18 +14,13 @@ import org.ayf.models.Command;
  */
 public class SubscriptionReport extends Report{
 
-    public SubscriptionReport(Command.CommandType type) {
-        super(type);
-    }
-    
-    @Override
-    public void refresh() {
-        
+    public SubscriptionReport() {
+        super(Command.CommandType.None, null);
     }
 
     @Override
-    public void generate() {
-        
+    public ReportData getData() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
 }

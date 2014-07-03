@@ -38,11 +38,11 @@ class Row {
 
 // TableModel implementation that will be populated by SwingWorker.
 public class ReportTableModel extends AbstractTableModel {
-    private final String[] rsmd;
+    private final Object[] rsmd;
 
     private List<Row>               rows;
 
-    public ReportTableModel(String[] rsmd, List<Row> rows) {
+    public ReportTableModel(Object[] rsmd, List<Row> rows) {
         this.rsmd = rsmd;
         if (rows != null) {
             this.rows = rows;
@@ -66,7 +66,7 @@ public class ReportTableModel extends AbstractTableModel {
 
     public String getColumnName(int col) {
         try {
-            return rsmd[col];
+            return rsmd[col].toString();
         } catch (ArrayIndexOutOfBoundsException e) {
             e.printStackTrace();
         }

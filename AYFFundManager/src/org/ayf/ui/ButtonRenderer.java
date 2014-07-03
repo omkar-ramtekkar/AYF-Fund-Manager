@@ -2,9 +2,9 @@ package org.ayf.ui;
 
 
 import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
 import javax.swing.*;
-import javax.swing.border.Border;
-import javax.swing.border.EmptyBorder;
 import javax.swing.table.*;
 import org.ayf.models.Command;
 import org.ayf.models.SideBarTableModel;
@@ -27,11 +27,10 @@ import org.ayf.tpl.glossybutton.StandardButton;
  *  the model row number of the button that was clicked.
  *
  */
-public class ButtonRenderer implements TableCellRenderer
+public class ButtonRenderer implements TableCellRenderer, MouseMotionListener
 {
     private final StandardButton headerOptionButton;
     private final StandardButton subOptionButton;
-    private static final Border noFocusBorder = new EmptyBorder(1, 1, 1, 1);
     /**
      *  Create the ButtonColumn to be used as a renderer and editor. The
      *  renderer and editor will automatically be installed on the TableColumn
@@ -42,8 +41,13 @@ public class ButtonRenderer implements TableCellRenderer
     public ButtonRenderer(int column)
     {
             headerOptionButton = new StandardButton("");
+            headerOptionButton.setRolloverButtonTheme(Theme.STANDARD_GOLD_THEME);
+            headerOptionButton.setSelectButtonTheme(Theme.STANDARD_RED_THEME);
             headerOptionButton.setFont(new  Font("Thoma", Font.BOLD, 14));
-            subOptionButton = new StandardButton("", ButtonType.BUTTON_ROUNDED_RECTANGLUR, Theme.STANDARD_LIGHTGRAY_THEME, Theme.STANDARD_GREEN_THEME, Theme.STANDARD_GREEN_THEME);
+            subOptionButton = new StandardButton("");
+            subOptionButton.setButtonTheme(Theme.STANDARD_LIGHTGRAY_THEME);
+            subOptionButton.setRolloverButtonTheme(Theme.STANDARD_GOLD_THEME);
+            subOptionButton.setSelectButtonTheme(Theme.STANDARD_GREEN_THEME);
             subOptionButton.setDirection(-1);
     }
 
@@ -53,14 +57,13 @@ public class ButtonRenderer implements TableCellRenderer
     public Component getTableCellRendererComponent(
             JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column)
     {
-        
         JButton target = null;  
-        if(value.getClass().equals(SideBarTableModel.HeaderOption.class))
+        SideBarTableModel model = (SideBarTableModel) table.getModel();
+        SideBarTableModel.Option option = (SideBarTableModel.Option) value;
+        if(option.isHeaderOption())
         {
             headerOptionButton.setText(value.toString());
-            headerOptionButton.setSelected(true);
             target = headerOptionButton;
-            SideBarTableModel model = (SideBarTableModel) table.getModel();
             if(model.getSelectedHelderOption() == value)
             {
                 headerOptionButton.setDirection(SwingConstants.SOUTH);
@@ -80,23 +83,36 @@ public class ButtonRenderer implements TableCellRenderer
         }
         else
         {
-            if(!value.toString().equalsIgnoreCase(Command.getDisplayNameForType(Command.CommandType.None)))
+            if(!option.isNoneOption())
             {
                 this.subOptionButton.setText(value.toString());
                 target = this.subOptionButton;
-            }
-            else
-            {
-                target = null;
             }   
         }
         
         if(target != null)
         {
-            target.getModel().setSelected(isSelected);
-            target.getModel().setRollover(hasFocus);
+            target.getModel().setRollover(model.getHighlitedOption() == value);            
+            if(model.getSelectedHelderOption() == option || model.getSelectedSubOption() == option)
+            {
+                target.getModel().setSelected(true);
+            }
+            else
+            {
+                target.getModel().setSelected(false);
+            }
         }
         
         return target;
+    }
+
+    @Override
+    public void mouseDragged(MouseEvent e) {
+        
+    }
+
+    @Override
+    public void mouseMoved(MouseEvent e) {
+         e.getSource();
     }
 }

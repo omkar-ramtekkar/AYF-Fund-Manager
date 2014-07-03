@@ -14,9 +14,9 @@ import java.util.Vector;
  */
 public class ReportData {
     Vector<?> data;
-    Vector<String> columns;
+    Vector<Object> columns;
 
-    public ReportData(Vector<?> data, Vector<String> columns) {
+    public ReportData(Vector<?> data, Vector<Object> columns) {
         this.data = data;
         this.columns = columns;
     }
@@ -25,7 +25,7 @@ public class ReportData {
         return data;
     }
 
-    public Vector<String> getColumns() {
+    public Vector<Object> getColumns() {
         return columns;
     }
 }

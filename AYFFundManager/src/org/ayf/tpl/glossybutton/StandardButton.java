@@ -54,13 +54,9 @@ public class StandardButton extends JButton {
 	public StandardButton(String text) {
 		super();
 		setText(text);
-		setContentAreaFilled(false);
-		setBorderPainted(false);
 		setFont(new Font("Thoma", Font.BOLD, 12));
-		setForeground(Color.WHITE);
-		setFocusable(false);
-
-	}
+                init();
+        }
 
 	/**
 	 * Constructor which sets label of the button and the button theme.
@@ -145,9 +141,9 @@ public class StandardButton extends JButton {
 	 */
 	private void init() {
 		setFont(new Font("Thoma", Font.BOLD, 12));
-		setFocusable(false);
-		setContentAreaFilled(false);
-		setBorderPainted(false);
+		setFocusable(true);
+		setContentAreaFilled(true);
+		setBorderPainted(true);
 	}
 
         public int getDirection() {
@@ -177,7 +173,7 @@ public class StandardButton extends JButton {
 					getHeight(), this);
 
 		}
-		if (model.isPressed()) {
+		if (model.isPressed() || model.isSelected()) {
 			color = ColorUtils.getInStance().getStandardColor(
 					selectedButtonTheme, getHeight(), this);
 		}

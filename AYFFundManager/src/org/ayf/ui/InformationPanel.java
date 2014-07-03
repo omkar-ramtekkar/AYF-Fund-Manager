@@ -7,10 +7,10 @@
 package org.ayf.ui;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Vector;
 import javax.swing.DefaultComboBoxModel;
 import org.ayf.database.entities.Type;
+import org.jdesktop.swingx.prompt.PromptSupport;
 
 /**
  *
@@ -23,6 +23,28 @@ public class InformationPanel extends javax.swing.JPanel {
      */
     public InformationPanel() {
         initComponents();
+        
+        PromptSupport.setPrompt("Address Line 1", permanentAddrFirstLine);
+        PromptSupport.setPrompt("Pin Code", temporaryAddressPincodeTxt);
+        PromptSupport.setPrompt("Country", temporaryAddressCountryTxt);
+        PromptSupport.setPrompt("Address Line 2", permanentAddressSecondLine);
+        PromptSupport.setPrompt("City", permanentAddressCityTxt);
+        PromptSupport.setPrompt("Address Line 1", temporaryAddressFirstLine);
+        PromptSupport.setPrompt("Address Line 2", temporaryAddressSecondLine);
+        PromptSupport.setPrompt("City", temporaryAddressCityTxt);
+        PromptSupport.setPrompt("Mobile Number", mobileNumberTxt);
+        PromptSupport.setPrompt("Country", permanentAddressCountryTxt);
+        PromptSupport.setPrompt("Pincode", permanentAddressPincodeTxt);
+        PromptSupport.setPrompt("First Name", firstNameTxt);
+        PromptSupport.setPrompt("Last Name", lastNameTxt);
+        PromptSupport.setPrompt("Middle Name", middleNameTxt);
+        
+        PromptSupport.setPrompt("Middle Name", castTxt);
+        PromptSupport.setPrompt("Middle Name", dobDate);
+        PromptSupport.setPrompt("Middle Name", dobYear);
+        PromptSupport.setPrompt("Middle Name", educationTxt);
+        PromptSupport.setPrompt("Middle Name", emailAddressTxt);
+
     }
 
     public void setProfessionTypes(ArrayList<Type> professionTypes) {
@@ -55,9 +77,9 @@ public class InformationPanel extends javax.swing.JPanel {
         personalInformationPanel = new javax.swing.JPanel();
         jLabel7 = new javax.swing.JLabel();
         dobTxt3 = new javax.swing.JTextField();
-        dobTxt = new javax.swing.JTextField();
+        dobDate = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
-        contactTxt = new javax.swing.JTextField();
+        emailAddressTxt = new javax.swing.JTextField();
         middleNameTxt = new javax.swing.JTextField();
         jComboBox1 = new javax.swing.JComboBox();
         jLabel5 = new javax.swing.JLabel();
@@ -68,7 +90,7 @@ public class InformationPanel extends javax.swing.JPanel {
         jLabel13 = new javax.swing.JLabel();
         dobTxt2 = new javax.swing.JTextField();
         jLabel8 = new javax.swing.JLabel();
-        dobTxt1 = new javax.swing.JTextField();
+        dobYear = new javax.swing.JTextField();
         genderFemaleButton = new javax.swing.JRadioButton();
         jLabel2 = new javax.swing.JLabel();
         genderMaleButton = new javax.swing.JRadioButton();
@@ -79,29 +101,29 @@ public class InformationPanel extends javax.swing.JPanel {
         jLabel18 = new javax.swing.JLabel();
         jLabel19 = new javax.swing.JLabel();
         jCheckBox2 = new javax.swing.JCheckBox();
-        jTextField1 = new javax.swing.JTextField();
-        jTextField2 = new javax.swing.JTextField();
+        permanentAddrFirstLine = new javax.swing.JTextField();
+        permanentAddressSecondLine = new javax.swing.JTextField();
         jLabel20 = new javax.swing.JLabel();
-        jTextField3 = new javax.swing.JTextField();
+        permanentAddressCityTxt = new javax.swing.JTextField();
         jLabel21 = new javax.swing.JLabel();
         jComboBox3 = new javax.swing.JComboBox();
         jLabel22 = new javax.swing.JLabel();
-        jTextField4 = new javax.swing.JTextField();
-        jTextField5 = new javax.swing.JTextField();
+        temporaryAddressFirstLine = new javax.swing.JTextField();
+        temporaryAddressSecondLine = new javax.swing.JTextField();
         jLabel23 = new javax.swing.JLabel();
-        jTextField6 = new javax.swing.JTextField();
+        temporaryAddressCityTxt = new javax.swing.JTextField();
         jLabel24 = new javax.swing.JLabel();
         jComboBox5 = new javax.swing.JComboBox();
         jLabel25 = new javax.swing.JLabel();
         jLabel26 = new javax.swing.JLabel();
         jLabel27 = new javax.swing.JLabel();
-        jTextField7 = new javax.swing.JTextField();
+        mobileNumberTxt = new javax.swing.JTextField();
         jLabel28 = new javax.swing.JLabel();
-        jTextField9 = new javax.swing.JTextField();
+        permanentAddressPincodeTxt = new javax.swing.JTextField();
         jLabel29 = new javax.swing.JLabel();
-        jTextField10 = new javax.swing.JTextField();
-        jTextField8 = new javax.swing.JTextField();
-        jTextField11 = new javax.swing.JTextField();
+        temporaryAddressPincodeTxt = new javax.swing.JTextField();
+        permanentAddressCountryTxt = new javax.swing.JTextField();
+        temporaryAddressCountryTxt = new javax.swing.JTextField();
         otherInformationPanel = new javax.swing.JPanel();
         jLabel12 = new javax.swing.JLabel();
         professionTypeCombo = new javax.swing.JComboBox();
@@ -112,9 +134,9 @@ public class InformationPanel extends javax.swing.JPanel {
         jLabel6 = new javax.swing.JLabel();
         bloodGroupCombo = new javax.swing.JComboBox();
         jLabel16 = new javax.swing.JLabel();
-        emailTxt1 = new javax.swing.JTextField();
+        castTxt = new javax.swing.JTextField();
         jLabel17 = new javax.swing.JLabel();
-        emailTxt2 = new javax.swing.JTextField();
+        subcastTxt = new javax.swing.JTextField();
 
         setLayout(null);
 
@@ -124,7 +146,7 @@ public class InformationPanel extends javax.swing.JPanel {
 
         dobTxt3.setText("2014");
 
-        dobTxt.setText("31");
+        dobDate.setText("31");
 
         jLabel1.setText("Last Name");
 
@@ -162,7 +184,7 @@ public class InformationPanel extends javax.swing.JPanel {
 
         jLabel8.setText("Temporary Address");
 
-        dobTxt1.setText("2014");
+        dobYear.setText("2014");
 
         genderFemaleButton.setText("Female");
         genderFemaleButton.addActionListener(new java.awt.event.ActionListener() {
@@ -200,15 +222,15 @@ public class InformationPanel extends javax.swing.JPanel {
 
         jCheckBox2.setText("Single");
 
-        jTextField1.addActionListener(new java.awt.event.ActionListener() {
+        permanentAddrFirstLine.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField1ActionPerformed(evt);
+                permanentAddrFirstLineActionPerformed(evt);
             }
         });
 
-        jTextField2.addActionListener(new java.awt.event.ActionListener() {
+        permanentAddressSecondLine.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField2ActionPerformed(evt);
+                permanentAddressSecondLineActionPerformed(evt);
             }
         });
 
@@ -224,17 +246,17 @@ public class InformationPanel extends javax.swing.JPanel {
 
         jLabel22.setText("Country");
 
-        jTextField4.addActionListener(new java.awt.event.ActionListener() {
+        temporaryAddressFirstLine.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField4ActionPerformed(evt);
+                temporaryAddressFirstLineActionPerformed(evt);
             }
         });
 
         jLabel23.setText("City");
 
-        jTextField6.addActionListener(new java.awt.event.ActionListener() {
+        temporaryAddressCityTxt.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField6ActionPerformed(evt);
+                temporaryAddressCityTxtActionPerformed(evt);
             }
         });
 
@@ -252,14 +274,14 @@ public class InformationPanel extends javax.swing.JPanel {
 
         jLabel29.setText("Zip Code");
 
-        jTextField8.setText("jTextField8");
-        jTextField8.addActionListener(new java.awt.event.ActionListener() {
+        permanentAddressCountryTxt.setText("jTextField8");
+        permanentAddressCountryTxt.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField8ActionPerformed(evt);
+                permanentAddressCountryTxtActionPerformed(evt);
             }
         });
 
-        jTextField11.setText("jTextField8");
+        temporaryAddressCountryTxt.setText("jTextField8");
 
         javax.swing.GroupLayout personalInformationPanelLayout = new javax.swing.GroupLayout(personalInformationPanel);
         personalInformationPanel.setLayout(personalInformationPanelLayout);
@@ -280,11 +302,11 @@ public class InformationPanel extends javax.swing.JPanel {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addGroup(personalInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                     .addGroup(personalInformationPanelLayout.createSequentialGroup()
-                                        .addComponent(dobTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(dobDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                         .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addGap(18, 18, 18)
-                                        .addComponent(dobTxt1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addComponent(dobYear, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                                     .addGroup(personalInformationPanelLayout.createSequentialGroup()
                                         .addComponent(firstNameTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -324,7 +346,7 @@ public class InformationPanel extends javax.swing.JPanel {
                                             .addGroup(personalInformationPanelLayout.createSequentialGroup()
                                                 .addComponent(jLabel20)
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addComponent(permanentAddressCityTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                                 .addComponent(jLabel21)
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -332,16 +354,16 @@ public class InformationPanel extends javax.swing.JPanel {
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                                 .addComponent(jLabel22)
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                                .addComponent(jTextField8, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                .addComponent(permanentAddressCountryTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE))
                                             .addGroup(personalInformationPanelLayout.createSequentialGroup()
                                                 .addGroup(personalInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                                     .addGroup(personalInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                                        .addComponent(jTextField2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 299, Short.MAX_VALUE)
-                                                        .addComponent(jTextField1, javax.swing.GroupLayout.Alignment.LEADING))
+                                                        .addComponent(permanentAddressSecondLine, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 299, Short.MAX_VALUE)
+                                                        .addComponent(permanentAddrFirstLine, javax.swing.GroupLayout.Alignment.LEADING))
                                                     .addGroup(personalInformationPanelLayout.createSequentialGroup()
                                                         .addComponent(jLabel28)
                                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                        .addComponent(jTextField9, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                                        .addComponent(permanentAddressPincodeTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)))
                                                 .addGap(0, 0, Short.MAX_VALUE)))))
                                 .addContainerGap())))
                     .addGroup(personalInformationPanelLayout.createSequentialGroup()
@@ -354,13 +376,13 @@ public class InformationPanel extends javax.swing.JPanel {
                                         .addComponent(jLabel8)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                         .addGroup(personalInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                            .addComponent(jTextField5, javax.swing.GroupLayout.DEFAULT_SIZE, 304, Short.MAX_VALUE)
-                                            .addComponent(jTextField4)))
+                                            .addComponent(temporaryAddressSecondLine, javax.swing.GroupLayout.DEFAULT_SIZE, 304, Short.MAX_VALUE)
+                                            .addComponent(temporaryAddressFirstLine)))
                                     .addGroup(personalInformationPanelLayout.createSequentialGroup()
                                         .addGap(128, 128, 128)
                                         .addComponent(jLabel23)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(jTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(temporaryAddressCityTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                         .addComponent(jLabel24)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -368,7 +390,7 @@ public class InformationPanel extends javax.swing.JPanel {
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                         .addComponent(jLabel25)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(jTextField11))
+                                        .addComponent(temporaryAddressCountryTxt))
                                     .addComponent(jLabel9)
                                     .addGroup(personalInformationPanelLayout.createSequentialGroup()
                                         .addGroup(personalInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -379,10 +401,10 @@ public class InformationPanel extends javax.swing.JPanel {
                                             .addGroup(personalInformationPanelLayout.createSequentialGroup()
                                                 .addComponent(jLabel29)
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(jTextField10, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                .addComponent(temporaryAddressPincodeTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE))
                                             .addGroup(personalInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                                .addComponent(jTextField7, javax.swing.GroupLayout.PREFERRED_SIZE, 311, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addComponent(contactTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 311, javax.swing.GroupLayout.PREFERRED_SIZE)))))))
+                                                .addComponent(mobileNumberTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 311, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addComponent(emailAddressTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 311, javax.swing.GroupLayout.PREFERRED_SIZE)))))))
                         .addContainerGap())))
         );
         personalInformationPanelLayout.setVerticalGroup(
@@ -403,9 +425,9 @@ public class InformationPanel extends javax.swing.JPanel {
                             .addComponent(jLabel19))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(personalInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(dobTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(dobDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(dobTxt1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(dobYear, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel4))
                         .addGap(1, 1, 1)
                         .addGroup(personalInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -426,50 +448,50 @@ public class InformationPanel extends javax.swing.JPanel {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(personalInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel7)
-                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(permanentAddrFirstLine, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(permanentAddressSecondLine, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(personalInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel20)
-                            .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(permanentAddressCityTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel21)
                             .addComponent(jComboBox3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel22)
-                            .addComponent(jTextField8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(permanentAddressCountryTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 24, Short.MAX_VALUE)
                         .addGroup(personalInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel28)
-                            .addComponent(jTextField9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(permanentAddressPincodeTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(personalInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel8)
-                            .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(temporaryAddressFirstLine, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(1, 1, 1)
-                        .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(temporaryAddressSecondLine, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(personalInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel23)
-                            .addComponent(jTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(temporaryAddressCityTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel24)
                             .addComponent(jComboBox5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel25)
-                            .addComponent(jTextField11, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(temporaryAddressCountryTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(28, 28, 28))
                     .addGroup(personalInformationPanelLayout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addGroup(personalInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jTextField10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(temporaryAddressPincodeTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel29))))
                 .addComponent(jLabel9)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(personalInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel26)
-                    .addComponent(contactTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(emailAddressTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(personalInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel27)
-                    .addComponent(jTextField7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(mobileNumberTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
 
@@ -516,11 +538,11 @@ public class InformationPanel extends javax.swing.JPanel {
                     .addGroup(otherInformationPanelLayout.createSequentialGroup()
                         .addComponent(jLabel16, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(emailTxt1, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(castTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(otherInformationPanelLayout.createSequentialGroup()
                         .addComponent(jLabel17)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(emailTxt2, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(subcastTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(otherInformationPanelLayout.createSequentialGroup()
                         .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -533,7 +555,7 @@ public class InformationPanel extends javax.swing.JPanel {
                     .addContainerGap(210, Short.MAX_VALUE)))
         );
 
-        otherInformationPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {bloodGroupCombo, educationTxt, emailTxt1, emailTxt2, jLabel11, jLabel12, jLabel14, jLabel16, jLabel17, jLabel6, positionCombo, professionTypeCombo});
+        otherInformationPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {bloodGroupCombo, castTxt, educationTxt, jLabel11, jLabel12, jLabel14, jLabel16, jLabel17, jLabel6, positionCombo, professionTypeCombo, subcastTxt});
 
         otherInformationPanelLayout.setVerticalGroup(
             otherInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -551,11 +573,11 @@ public class InformationPanel extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(otherInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel16)
-                    .addComponent(emailTxt1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(castTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(otherInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel17)
-                    .addComponent(emailTxt2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(subcastTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(otherInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel11)
@@ -568,7 +590,7 @@ public class InformationPanel extends javax.swing.JPanel {
                     .addContainerGap(292, Short.MAX_VALUE)))
         );
 
-        otherInformationPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {bloodGroupCombo, educationTxt, emailTxt1, emailTxt2, jLabel11, jLabel12, jLabel14, jLabel16, jLabel17, jLabel6, positionCombo, professionTypeCombo});
+        otherInformationPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {bloodGroupCombo, castTxt, educationTxt, jLabel11, jLabel12, jLabel14, jLabel16, jLabel17, jLabel6, positionCombo, professionTypeCombo, subcastTxt});
 
         add(otherInformationPanel);
         otherInformationPanel.setBounds(30, 700, 330, 250);
@@ -586,17 +608,17 @@ public class InformationPanel extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_jCheckBox1ActionPerformed
 
-    private void jTextField2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField2ActionPerformed
+    private void permanentAddressSecondLineActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_permanentAddressSecondLineActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField2ActionPerformed
+    }//GEN-LAST:event_permanentAddressSecondLineActionPerformed
 
-    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
+    private void permanentAddrFirstLineActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_permanentAddrFirstLineActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField1ActionPerformed
+    }//GEN-LAST:event_permanentAddrFirstLineActionPerformed
 
-    private void jTextField4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField4ActionPerformed
+    private void temporaryAddressFirstLineActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_temporaryAddressFirstLineActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField4ActionPerformed
+    }//GEN-LAST:event_temporaryAddressFirstLineActionPerformed
 
     private void firstNameTxtActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_firstNameTxtActionPerformed
         // TODO add your handling code here:
@@ -610,17 +632,17 @@ public class InformationPanel extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_middleNameTxtActionPerformed
 
-    private void jTextField6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField6ActionPerformed
+    private void temporaryAddressCityTxtActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_temporaryAddressCityTxtActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField6ActionPerformed
+    }//GEN-LAST:event_temporaryAddressCityTxtActionPerformed
 
     private void jComboBox3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox3ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jComboBox3ActionPerformed
 
-    private void jTextField8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField8ActionPerformed
+    private void permanentAddressCountryTxtActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_permanentAddressCountryTxtActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField8ActionPerformed
+    }//GEN-LAST:event_permanentAddressCountryTxtActionPerformed
 
 
     private ArrayList<Type> professionTypes;
@@ -630,14 +652,13 @@ public class InformationPanel extends javax.swing.JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox bloodGroupCombo;
     private javax.swing.ButtonGroup buttonGroup2;
-    private javax.swing.JTextField contactTxt;
-    private javax.swing.JTextField dobTxt;
-    private javax.swing.JTextField dobTxt1;
+    private javax.swing.JTextField castTxt;
+    private javax.swing.JTextField dobDate;
     private javax.swing.JTextField dobTxt2;
     private javax.swing.JTextField dobTxt3;
+    private javax.swing.JTextField dobYear;
     private javax.swing.JTextField educationTxt;
-    private javax.swing.JTextField emailTxt1;
-    private javax.swing.JTextField emailTxt2;
+    private javax.swing.JTextField emailAddressTxt;
     private javax.swing.JTextField firstNameTxt;
     private javax.swing.JRadioButton genderFemaleButton;
     private javax.swing.JRadioButton genderMaleButton;
@@ -675,22 +696,23 @@ public class InformationPanel extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField10;
-    private javax.swing.JTextField jTextField11;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField3;
-    private javax.swing.JTextField jTextField4;
-    private javax.swing.JTextField jTextField5;
-    private javax.swing.JTextField jTextField6;
-    private javax.swing.JTextField jTextField7;
-    private javax.swing.JTextField jTextField8;
-    private javax.swing.JTextField jTextField9;
     private javax.swing.JTextField lastNameTxt;
     private javax.swing.JTextField middleNameTxt;
+    private javax.swing.JTextField mobileNumberTxt;
     private javax.swing.JPanel otherInformationPanel;
+    private javax.swing.JTextField permanentAddrFirstLine;
+    private javax.swing.JTextField permanentAddressCityTxt;
+    private javax.swing.JTextField permanentAddressCountryTxt;
+    private javax.swing.JTextField permanentAddressPincodeTxt;
+    private javax.swing.JTextField permanentAddressSecondLine;
     private javax.swing.JPanel personalInformationPanel;
     private javax.swing.JComboBox positionCombo;
     private javax.swing.JComboBox professionTypeCombo;
+    private javax.swing.JTextField subcastTxt;
+    private javax.swing.JTextField temporaryAddressCityTxt;
+    private javax.swing.JTextField temporaryAddressCountryTxt;
+    private javax.swing.JTextField temporaryAddressFirstLine;
+    private javax.swing.JTextField temporaryAddressPincodeTxt;
+    private javax.swing.JTextField temporaryAddressSecondLine;
     // End of variables declaration//GEN-END:variables
 }

@@ -11,8 +11,6 @@ package org.ayf.models;
  * @author oramtekkar
  */
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -27,9 +25,9 @@ public class JTableUpdateTask extends SwingWorker<JTable, Row> {
 
     ArrayList<Member> members   = null;
     
-    String[] columnNames = null;
+    Object[] columnNames = null;
 
-    public JTableUpdateTask(JTable table, ArrayList<Member> members, String[] columnNames){
+    public JTableUpdateTask(JTable table, ArrayList<Member> members, Object[] columnNames){
         this.table = table;
         this.members = members;
         this.columnNames = columnNames;
@@ -42,7 +40,7 @@ public class JTableUpdateTask extends SwingWorker<JTable, Row> {
         
         for (Member member : members)
         {
-            rows.add(new Row(member.toArray()));
+            rows.add(new Row(member.getMemberDetailsForLevel(Member.DetailsLevel.Complete).toArray()));
         }
         
         process(rows); 
