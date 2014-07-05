@@ -41,7 +41,7 @@ public class DatabaseManager {
     public static final String DONATIONS_TABLE_NAME         = "Donations";
     public static final String EXPENSES_TABLE_NAME          = "Expenses";
     public static final String MEMBER_TABLE_NAME            = "Members";
-    public static final String DAILYCASH_TABLE_NAME         = "DailyCash";
+    public static final String CASHFLOWS_TABLE_NAME         = "CashFlows";
     
     private static ArrayList<Type> PROFESSION_TYPES;
     private static ArrayList<Type> DONATION_TYPES;
@@ -343,11 +343,12 @@ public class DatabaseManager {
                 String  district        = rs.getString("District");
                 String  bloodGroup      = rs.getString("BloodGroup");
                 String  education       = rs.getString("Education");
+                String currentStatus    = rs.getString("Status");
                 
                 Member.Gender gender     = genderString != null ? (genderString.equals("Male") ? Member.Gender.Male : Member.Gender.Female) : Member.Gender.Male;
                 String imagePath        = rs.getString("Image");
 
-                members.add(new Member(memberID, firstName, middleName, lastName, dateOfBirth, maritalStatus, cast, subCast, district, bloodGroup, gender, permanentAddress, temporaryAddress, contactNumber, emailAddress, education, getProfessionTypeForName(profession), registerationDate, position, imagePath));
+                members.add(new Member(memberID, firstName, middleName, lastName, dateOfBirth, maritalStatus, cast, subCast, district, bloodGroup, gender, permanentAddress, temporaryAddress, contactNumber, emailAddress, education, getProfessionTypeForName(profession), registerationDate, position, imagePath, currentStatus));
             }
             
             ps.close();
@@ -404,6 +405,7 @@ public class DatabaseManager {
                 String  district        = rs.getString("District");
                 String  bloodGroup      = rs.getString("BloodGroup");
                 String  education       = rs.getString("Education");
+                String currentStatus    = rs.getString("Status");
                 
                 if(member != null)
                 {
@@ -412,7 +414,7 @@ public class DatabaseManager {
                 }
                 
                 
-                member = new Member(memberID, firstName, middleName, lastName, dateOfBirth, maritalStatus, cast, subCast, district, bloodGroup, gender, permanentAddress, temporaryAddress, contactNumber, emailAddress, education, getProfessionTypeForName(profession), registerationDate, position, imagePath);
+                member = new Member(memberID, firstName, middleName, lastName, dateOfBirth, maritalStatus, cast, subCast, district, bloodGroup, gender, permanentAddress, temporaryAddress, contactNumber, emailAddress, education, getProfessionTypeForName(profession), registerationDate, position, imagePath, currentStatus);
             }
             
             ps.close();
@@ -479,6 +481,7 @@ public class DatabaseManager {
                 String  district        = null;
                 String  bloodGroup      = null;
                 String  education       = null;
+                String currentStatus    = null;
                 if(memberID != Integer.MAX_VALUE)
                 {
                     Member member = getMemberWithID(memberID);
@@ -493,10 +496,11 @@ public class DatabaseManager {
                         district = member.getDistrict();
                         bloodGroup = member.getBloodGroup();
                         education = member.getEducation();
+                        currentStatus = member.getCurrentStatus();
                     }
                 }
                 
-                donors.add(new Donor(donationAmount, receiptNumber, donationDate, getDonationTypeForName(donationType), null/*TODO: getPaymentMode()*/ , memberID, firstName, middleName, lastName, dateOfBirth, maritalStatus, cast, subCast, district, bloodGroup, gender, permanentAddress, temporaryAddress, contactNumber, emailAddress, education, getProfessionTypeForName(profession), registerationDate, position, imagePath));
+                donors.add(new Donor(donationAmount, receiptNumber, donationDate, getDonationTypeForName(donationType), null/*TODO: getPaymentMode()*/ , memberID, firstName, middleName, lastName, dateOfBirth, maritalStatus, cast, subCast, district, bloodGroup, gender, permanentAddress, temporaryAddress, contactNumber, emailAddress, education, getProfessionTypeForName(profession), registerationDate, position, imagePath, currentStatus));
             }
             
             ps.close();
@@ -674,7 +678,7 @@ public class DatabaseManager {
             {
                 int     expenseID       = rs.getInt("ID");
                 double  amount          = rs.getDouble("Amount");
-                Date    date      = rs.getDate("Date");
+                Date    date            = rs.getDate("ExpenseDate");
                 String  expenseType     = rs.getString("Type");
                 String  description     = rs.getString("Description");
                 int     memberID        = rs.getInt("ResponsibleMemberID");
@@ -703,7 +707,7 @@ public class DatabaseManager {
     }
     
     
-     public static ArrayList<CashFlow> getBankTransactions() 
+     public static ArrayList<CashFlow> getCashFlows() 
      {
          return null;
      }   

@@ -27,7 +27,7 @@ public class AllCashFlowsReport extends Report{
 
     @Override
     public ReportData getData() {
-        ArrayList<CashFlow> transactions = DatabaseManager.getBankTransactions();
+        ArrayList<CashFlow> transactions = DatabaseManager.getCashFlows();
         
         Vector rows = new Vector(transactions.size());
         
