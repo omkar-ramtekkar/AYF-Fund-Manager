@@ -11,7 +11,7 @@ import java.util.Vector;
 import org.ayf.database.entities.Donor;
 import org.ayf.database.entities.Member;
 import org.ayf.managers.DatabaseManager;
-import org.ayf.models.Command;
+import org.ayf.command.ReportCommand;
 import org.ayf.reports.views.AllDonationsReportView;
 
 /**
@@ -21,7 +21,7 @@ import org.ayf.reports.views.AllDonationsReportView;
 public class AllDonationsReport extends Report{
 
     public AllDonationsReport() {
-        super(Command.CommandType.DetailsAllDonors);
+        super(ReportCommand.SubCommandType.DetailsAllDonors);
         
         setView(new AllDonationsReportView(this));
     }

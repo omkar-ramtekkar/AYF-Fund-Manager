@@ -15,13 +15,13 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import static javax.swing.ListSelectionModel.MULTIPLE_INTERVAL_SELECTION;
 import javax.swing.SwingUtilities;
-import javax.swing.Timer;
 import javax.swing.event.EventListenerList;
 import javax.swing.table.TableModel;
+import org.ayf.command.Command;
 import org.ayf.managers.ApplicationManager;
-import org.ayf.models.Command;
+import org.ayf.command.ReportCommand;
 import org.ayf.models.SideBarTableModel;
-import org.ayf.ui.ButtonRenderer;
+import org.ayf.ui.SideBarTableCellRenderer;
 import org.ayf.ui.MainFrame;
 
 /**
@@ -41,7 +41,7 @@ public class SideBarTableController implements ActionListener, MouseListener, Mo
         this.table.setRowHeight(45);
         
         this.table.setSelectionMode(MULTIPLE_INTERVAL_SELECTION);
-        this.table.getColumnModel().getColumn(0).setCellRenderer(new ButtonRenderer(0));
+        this.table.getColumnModel().getColumn(0).setCellRenderer(new SideBarTableCellRenderer(0));
         this.table.setTableHeader(null);
         
         MainFrame mainFrame = ApplicationManager.getSharedManager().getMainFrame();
@@ -117,7 +117,7 @@ public class SideBarTableController implements ActionListener, MouseListener, Mo
         if(newOption != null && oldOption != newOption)
         {
             long uniqueId = System.currentTimeMillis() ;
-            fireActionPerformed(new ActionEvent(new Command(newOption, newOption.getOptionType()), (int)uniqueId, "Action"));
+            fireActionPerformed(new ActionEvent(new ReportCommand(newOption, newOption.getOptionType()), (int)uniqueId, Command.CommandType.Report.toString()));
         }
         
         this.table.repaint();

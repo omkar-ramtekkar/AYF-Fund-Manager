@@ -19,6 +19,16 @@ public class ReportView extends javax.swing.JPanel {
      */
     public ReportView() {
         initComponents();
+        
+        {
+            rootPanel = new BackgroundPanel(BackgroundPanel.BackgroundStyle.Default);
+            setLayout(new java.awt.BorderLayout());
+
+            rootPanel.setLayout(new java.awt.GridLayout(2, 2));
+            jScrollPane1.setViewportView(rootPanel);
+
+            add(jScrollPane1, java.awt.BorderLayout.CENTER);
+        }
     }
     
     public void addView(JComponent view)
@@ -47,20 +57,15 @@ public class ReportView extends javax.swing.JPanel {
     private void initComponents() {
 
         jScrollPane1 = new javax.swing.JScrollPane();
-        rootPanel = new javax.swing.JPanel();
 
         setLayout(new java.awt.BorderLayout());
-
-        rootPanel.setLayout(new java.awt.GridLayout(2, 2));
-        jScrollPane1.setViewportView(rootPanel);
-
         add(jScrollPane1, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
 
+    private BackgroundPanel rootPanel;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JPanel rootPanel;
     // End of variables declaration//GEN-END:variables
 
     

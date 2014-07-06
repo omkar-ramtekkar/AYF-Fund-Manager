@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Vector;
 import org.ayf.database.entities.CashFlow;
 import org.ayf.managers.DatabaseManager;
-import org.ayf.models.Command;
+import org.ayf.command.ReportCommand;
 import org.ayf.reports.views.AllCashFlowsReportView;
 
 /**
@@ -21,17 +21,17 @@ public class AllCashFlowsReport extends Report{
 
     public AllCashFlowsReport()
     {
-        super(Command.CommandType.DetailsAllCashFlows);
+        super(ReportCommand.SubCommandType.DetailsAllCashFlows);
         setView(new AllCashFlowsReportView(this));
     }
 
     @Override
     public ReportData getData() {
-        ArrayList<CashFlow> transactions = DatabaseManager.getCashFlows();
+        ArrayList<CashFlow> cashFlows = DatabaseManager.getCashFlows();
         
-        Vector rows = new Vector(transactions.size());
+        Vector rows = new Vector(cashFlows.size());
         
-        for(CashFlow transaction : transactions)
+        for(CashFlow transaction : cashFlows)
         {
             Vector rowData = transaction.getTransactionDetailsForLevel(CashFlow.DetailsLevel.Complete);
             rows.add(rowData);

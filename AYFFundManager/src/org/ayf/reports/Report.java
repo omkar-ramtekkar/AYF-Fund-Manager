@@ -7,7 +7,7 @@
 package org.ayf.reports;
 
 import javax.swing.SwingUtilities;
-import org.ayf.models.Command;
+import org.ayf.command.ReportCommand;
 import org.ayf.reports.views.BaseReportView;
 
 /**
@@ -16,14 +16,14 @@ import org.ayf.reports.views.BaseReportView;
  */
 public abstract class Report {
     BaseReportView view;
-    Command.CommandType reportType;
+    ReportCommand.SubCommandType reportType;
 
-    public Report(Command.CommandType type, BaseReportView view) {
+    public Report(ReportCommand.SubCommandType type, BaseReportView view) {
         this.reportType = type;
         setView(view);
     }
 
-    public Report(Command.CommandType reportType) {
+    public Report(ReportCommand.SubCommandType reportType) {
         this.reportType = reportType;
     }
     
@@ -40,7 +40,7 @@ public abstract class Report {
         this.view = view;
     }
 
-    public Command.CommandType getReportType() {
+    public ReportCommand.SubCommandType getReportType() {
         return reportType;
     }
     

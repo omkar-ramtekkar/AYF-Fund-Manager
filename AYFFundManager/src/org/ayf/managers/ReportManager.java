@@ -9,7 +9,8 @@ package org.ayf.managers;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
-import org.ayf.models.Command;
+import org.ayf.command.ReportCommand;
+import org.ayf.reports.AllCashFlowsReport;
 import org.ayf.reports.AllDonationsReport;
 import org.ayf.reports.AllExpensesReport;
 import org.ayf.reports.AllMembersReport;
@@ -22,13 +23,13 @@ import org.ayf.reports.Report;
  */
 public class ReportManager
 {
-    Map<Command.CommandType, Vector<Report>> reports;
+    Map<ReportCommand.SubCommandType, Vector<Report>> reports;
     
     public ReportManager(){ initialize(); }
     
     void initialize()
     {
-        reports = new HashMap<Command.CommandType, Vector<Report>>();
+        reports = new HashMap<ReportCommand.SubCommandType, Vector<Report>>();
         initializeDashboardReports();
         initializeDetailsReports();
     }
@@ -37,7 +38,7 @@ public class ReportManager
     {
         Vector<Report> dashboardReports = new Vector();
         dashboardReports.add(new DonationReport());
-        reports.put(Command.CommandType.Dashboard, dashboardReports);
+        reports.put(ReportCommand.SubCommandType.Dashboard, dashboardReports);
     }
     
     void initializeDetailsReports()
@@ -46,17 +47,18 @@ public class ReportManager
         detailsReports.add(new AllMembersReport());
         detailsReports.add(new AllDonationsReport());
         detailsReports.add(new AllExpensesReport());
+        detailsReports.add(new AllCashFlowsReport());
         
-        reports.put(Command.CommandType.Details, detailsReports);
+        reports.put(ReportCommand.SubCommandType.Details, detailsReports);
     }
 
-    public Vector<Report> getReports(Command.CommandType type)
+    public Vector<Report> getReports(ReportCommand.SubCommandType type)
     {
         return reports.get(type);
     }
     
     
-    public Report getReportsForType(Command.CommandType type, Command.CommandType subType)
+    public Report getReportsForType(ReportCommand.SubCommandType type, ReportCommand.SubCommandType subType)
     {
         Vector<Report> typeReports = getReports(type);
         Report requestedReport = null;

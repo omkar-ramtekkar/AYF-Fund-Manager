@@ -11,7 +11,7 @@ import java.util.Arrays;
 import java.util.Vector;
 import org.ayf.database.entities.Member;
 import org.ayf.managers.DatabaseManager;
-import org.ayf.models.Command;
+import org.ayf.command.ReportCommand;
 import org.ayf.reports.views.AllMemberReportView;
 
 /**
@@ -21,7 +21,7 @@ import org.ayf.reports.views.AllMemberReportView;
 public class AllMembersReport extends Report{
 
     public AllMembersReport() {
-        super(Command.CommandType.DetailsAllMembers);
+        super(ReportCommand.SubCommandType.DetailsAllMembers);
         setView(new AllMemberReportView(this));
     }
 

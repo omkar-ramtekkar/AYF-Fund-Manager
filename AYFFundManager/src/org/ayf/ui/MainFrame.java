@@ -65,6 +65,10 @@ public class MainFrame extends javax.swing.JFrame {
     {
         rightRootView.removeAll();
         rightRootView.add(panel, BorderLayout.CENTER);
+        
+        Dimension d = rightRootView.getSize();
+        Dimension d1 = panel.getSize();
+        Dimension d3 = rightRootView.getComponent(0).getSize();
     }
     
     /**

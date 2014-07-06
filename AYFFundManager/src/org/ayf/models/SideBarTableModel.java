@@ -6,6 +6,8 @@
 
 package org.ayf.models;
 
+import org.ayf.command.Command;
+import org.ayf.command.ReportCommand;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -24,9 +26,9 @@ public final class SideBarTableModel extends AbstractTableModel implements Mouse
     {
         Option parentOption;
         boolean isSelected;
-        Command.CommandType optionType;
+        ReportCommand.SubCommandType optionType;
 
-        public Option(Command.CommandType type, Option parent) {
+        public Option(ReportCommand.SubCommandType type, Option parent) {
             this.optionType = type;
             this.parentOption = parent;
             
@@ -39,7 +41,7 @@ public final class SideBarTableModel extends AbstractTableModel implements Mouse
         
         public boolean isNoneOption()
         {
-            return getOptionType() == Command.CommandType.None;
+            return getOptionType() == ReportCommand.SubCommandType.None;
         }
         
         public boolean isHeaderOption()
@@ -47,13 +49,13 @@ public final class SideBarTableModel extends AbstractTableModel implements Mouse
             return false;
         }
 
-        public Command.CommandType getOptionType() {
+        public ReportCommand.SubCommandType getOptionType() {
             return optionType;
         }
         
         
         public String getTitle() {
-            return Command.getDisplayNameForType(getOptionType());
+            return Command.getDisplayNameForSubCommandType(getOptionType());
         }
         
         public Option getParentOption()
@@ -91,7 +93,7 @@ public final class SideBarTableModel extends AbstractTableModel implements Mouse
     {
         ArrayList<Option> subOptions;
                
-        public HeaderOption(Command.CommandType type)
+        public HeaderOption(ReportCommand.SubCommandType type)
         {
             super(type, null);
             subOptions = new ArrayList();
@@ -121,34 +123,34 @@ public final class SideBarTableModel extends AbstractTableModel implements Mouse
     {
         this.options = new ArrayList();
         
-        HeaderOption dashboardOption = new HeaderOption(Command.CommandType.Dashboard);
+        HeaderOption dashboardOption = new HeaderOption(ReportCommand.SubCommandType.Dashboard);
         this.options.add(dashboardOption);
         this.selectedHelderOption = dashboardOption;
         
-        HeaderOption detailsOption = new HeaderOption(Command.CommandType.Details);
+        HeaderOption detailsOption = new HeaderOption(ReportCommand.SubCommandType.Details);
         this.options.add(detailsOption);
-        detailsOption.addSubOption(new Option(Command.CommandType.DetailsAllMembers, detailsOption));
-        detailsOption.addSubOption(new Option(Command.CommandType.DetailsAllDonors, detailsOption));
-        detailsOption.addSubOption(new Option(Command.CommandType.DetailsAllExpenses, detailsOption));
-        detailsOption.addSubOption(new Option(Command.CommandType.DetailsAllCashFlows, detailsOption));
-        detailsOption.addSubOption(new Option(Command.CommandType.None, detailsOption));
+        detailsOption.addSubOption(new Option(ReportCommand.SubCommandType.DetailsAllMembers, detailsOption));
+        detailsOption.addSubOption(new Option(ReportCommand.SubCommandType.DetailsAllDonors, detailsOption));
+        detailsOption.addSubOption(new Option(ReportCommand.SubCommandType.DetailsAllExpenses, detailsOption));
+        detailsOption.addSubOption(new Option(ReportCommand.SubCommandType.DetailsAllCashFlows, detailsOption));
+        detailsOption.addSubOption(new Option(ReportCommand.SubCommandType.None, detailsOption));
         
         
-        HeaderOption statementsOption = new HeaderOption(Command.CommandType.Statements);
+        HeaderOption statementsOption = new HeaderOption(ReportCommand.SubCommandType.Statements);
         this.options.add(statementsOption);
-        statementsOption.addSubOption(new Option(Command.CommandType.StatementsByMember, statementsOption));
-        statementsOption.addSubOption(new Option(Command.CommandType.StatementsCashFlows, statementsOption));
-        statementsOption.addSubOption(new Option(Command.CommandType.None, statementsOption));
+        statementsOption.addSubOption(new Option(ReportCommand.SubCommandType.StatementsByMember, statementsOption));
+        statementsOption.addSubOption(new Option(ReportCommand.SubCommandType.StatementsCashFlows, statementsOption));
+        statementsOption.addSubOption(new Option(ReportCommand.SubCommandType.None, statementsOption));
         
-        HeaderOption notificationOption = new HeaderOption(Command.CommandType.Notifications);
+        HeaderOption notificationOption = new HeaderOption(ReportCommand.SubCommandType.Notifications);
         this.options.add(notificationOption);
-        notificationOption.addSubOption(new Option(Command.CommandType.NotificationsMemberSubscription, notificationOption));
-        notificationOption.addSubOption(new Option(Command.CommandType.None, notificationOption));
+        notificationOption.addSubOption(new Option(ReportCommand.SubCommandType.NotificationsMemberSubscription, notificationOption));
+        notificationOption.addSubOption(new Option(ReportCommand.SubCommandType.None, notificationOption));
         
         
-        HeaderOption miscellaneousOption = new HeaderOption(Command.CommandType.Miscellaneous);
+        HeaderOption miscellaneousOption = new HeaderOption(ReportCommand.SubCommandType.Miscellaneous);
         this.options.add(miscellaneousOption);
-        miscellaneousOption.addSubOption(new Option(Command.CommandType.None, miscellaneousOption));
+        miscellaneousOption.addSubOption(new Option(ReportCommand.SubCommandType.None, miscellaneousOption));
         
         this.filteredOption = new ArrayList(this.options);
     }

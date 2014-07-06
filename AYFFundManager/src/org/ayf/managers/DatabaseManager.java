@@ -37,6 +37,7 @@ public class DatabaseManager {
     public static final String DONATION_TYPE_TABLE_NAME     = "DonationType";
     public static final String EXPENSE_TYPE_TABLE_NAME      = "ExpenseType";
     public static final String PROFESSION_TYPE_TABLE_NAME   = "ProfessionType";
+    public static final String CASHFLOW_STATUS_TYPE_TABLE_NAME    = "CashFlowStatusType";
     public static final String MEMBER_TYPE_TABLE_NAME       = "MemberType";
     public static final String DONATIONS_TABLE_NAME         = "Donations";
     public static final String EXPENSES_TABLE_NAME          = "Expenses";
@@ -47,6 +48,7 @@ public class DatabaseManager {
     private static ArrayList<Type> DONATION_TYPES;
     private static ArrayList<Type> MEMBER_TYPES;
     private static ArrayList<Type> EXPENSE_TYPES;
+    private static ArrayList<Type> CASHFLOW_TYPES;
     
     private static void intializeDatabaseManager()
     {
@@ -63,6 +65,8 @@ public class DatabaseManager {
         getExpenseTypes();
         getDonationTypes();
         getMemberTypes();
+        getCashFlowStatusTypes();
+        
     }
     
     static 
@@ -164,6 +168,11 @@ public class DatabaseManager {
     public static Type getMemberTypeForName(String profession)
     {
         return getTypeFromValue(profession, MEMBER_TYPES);
+    }
+    
+    public static Type getCashFlowTypeForName(String status)
+    {
+        return getTypeFromValue(status, CASHFLOW_TYPES);
     }
     
     public static Type getDonationTypeForID(int id)
@@ -269,6 +278,18 @@ public class DatabaseManager {
         
         return PROFESSION_TYPES;  
     }
+    
+    
+    public static ArrayList<Type> getCashFlowStatusTypes()
+    {
+        if(CASHFLOW_TYPES == null)
+        {
+            CASHFLOW_TYPES = getTypesFromTable(CASHFLOW_STATUS_TYPE_TABLE_NAME);
+        }
+        
+        return CASHFLOW_TYPES;  
+    }
+    
     
     public static ArrayList<Type> getTypesFromTable(String tableName)
     {
@@ -709,6 +730,41 @@ public class DatabaseManager {
     
      public static ArrayList<CashFlow> getCashFlows() 
      {
-         return null;
+        Logger.getLogger(DatabaseManager.class.getName()).log(Level.INFO, "getCashFlows");
+        
+        ArrayList<CashFlow> cashFlows = new ArrayList();
+        Connection connection = null;
+        try 
+        {
+            connection = createConnection();
+            
+            PreparedStatement ps = connection.prepareStatement("SELECT * FROM " + CASHFLOWS_TABLE_NAME);
+            
+            ResultSet rs = ps.executeQuery();
+            
+            Logger.getLogger(DatabaseManager.class.getName()).log(Level.INFO, "getCashFlows : Column Count - {0}", rs.getMetaData().getColumnCount());
+            
+            while(rs.next())
+            {
+                int     expenseID       = rs.getInt("ID");
+                Date    date            = rs.getDate("TransactionDate");
+                String  status          = rs.getString("Status");
+                String  description     = rs.getString("Description");
+                
+                cashFlows.add(new CashFlow(expenseID, date, getCashFlowTypeForName(status), description));
+            }
+            
+            ps.close();
+            rs.close();
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(null, ex.getLocalizedMessage(), "Unable to fetch data from table", ERROR_MESSAGE);
+        }
+        finally
+        {
+            if(connection != null) closeConnection(connection);
+        }
+        return cashFlows;
      }   
 }

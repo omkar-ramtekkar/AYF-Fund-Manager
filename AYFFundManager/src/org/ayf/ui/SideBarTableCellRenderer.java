@@ -6,16 +6,14 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import javax.swing.*;
 import javax.swing.table.*;
-import org.ayf.models.Command;
 import org.ayf.models.SideBarTableModel;
 import org.ayf.tpl.color.util.Theme;
-import org.ayf.tpl.glossybutton.ButtonType;
 import org.ayf.tpl.glossybutton.StandardButton;
 
 
 
 /**
- *  The ButtonRenderer class provides a renderer and an editor that looks like a
+ *  The SideBarTableCellRenderer class provides a renderer and an editor that looks like a
   JButton. The renderer and editor will then be used for a specified column
  *  in the table. The TableModel will contain the String to be displayed on
  *  the button.
@@ -27,7 +25,7 @@ import org.ayf.tpl.glossybutton.StandardButton;
  *  the model row number of the button that was clicked.
  *
  */
-public class ButtonRenderer implements TableCellRenderer, MouseMotionListener
+public class SideBarTableCellRenderer implements TableCellRenderer, MouseMotionListener
 {
     private final StandardButton headerOptionButton;
     private final StandardButton subOptionButton;
@@ -38,7 +36,7 @@ public class ButtonRenderer implements TableCellRenderer, MouseMotionListener
      *
      *  @param column the column to which the button renderer/editor is added
      */
-    public ButtonRenderer(int column)
+    public SideBarTableCellRenderer(int column)
     {
             headerOptionButton = new StandardButton("");
             headerOptionButton.setRolloverButtonTheme(Theme.STANDARD_GOLD_THEME);

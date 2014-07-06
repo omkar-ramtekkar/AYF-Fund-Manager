@@ -7,7 +7,7 @@
 package org.ayf.reports;
 
 import org.ayf.managers.DatabaseManager;
-import org.ayf.models.Command;
+import org.ayf.command.ReportCommand;
 import org.ayf.reports.views.DonationReportView;
 
 /**
@@ -17,7 +17,7 @@ import org.ayf.reports.views.DonationReportView;
 public class DonationReport extends Report{
 
     public DonationReport() {
-        super(Command.CommandType.DashboardDonation);
+        super(ReportCommand.SubCommandType.DashboardDonation);
         setView(new DonationReportView(this));
     }
     
