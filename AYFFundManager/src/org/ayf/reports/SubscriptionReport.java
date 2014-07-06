@@ -6,7 +6,7 @@
 
 package org.ayf.reports;
 
-import org.ayf.models.Command;
+import org.ayf.command.ReportCommand;
 
 /**
  *
@@ -15,7 +15,7 @@ import org.ayf.models.Command;
 public class SubscriptionReport extends Report{
 
     public SubscriptionReport() {
-        super(Command.CommandType.None, null);
+        super(ReportCommand.SubCommandType.None, null);
     }
 
     @Override

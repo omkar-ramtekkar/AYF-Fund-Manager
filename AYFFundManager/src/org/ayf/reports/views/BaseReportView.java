@@ -13,13 +13,14 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumnModel;
 import org.ayf.reports.Report;
 import org.ayf.reports.ReportData;
+import org.ayf.ui.BackgroundPanel;
 import org.ayf.util.TableAutoFilterAdapter;
 
 /**
  *
  * @author om
  */
-public abstract class BaseReportView extends javax.swing.JPanel{
+public abstract class BaseReportView extends BackgroundPanel{
     
     protected Report report;
     TableAutoFilterAdapter rowFilter;
@@ -42,21 +43,31 @@ public abstract class BaseReportView extends javax.swing.JPanel{
     
     protected int getMinimumColumnWidth() 
     { 
-        return 50; 
+        return 100; 
     }
     
     private void resizeColumnWidth(JTable table) 
     {
+        int totalTableWidth = 0;
+        
         final TableColumnModel columnModel = table.getColumnModel();
-        for (int column = 0; column < table.getColumnCount(); column++) {
-            int width = 100; // Min width
-            for (int row = 0; row < table.getRowCount(); row++) {
+        
+        for (int column = 0; column < table.getColumnCount(); column++)
+        {
+            int width = getMinimumColumnWidth(); // Min width
+            
+            for (int row = 0; row < table.getRowCount(); row++) 
+            {
                 TableCellRenderer renderer = table.getCellRenderer(row, column);
                 Component comp = table.prepareRenderer(renderer, row, column);
                 width = Math.max(comp.getPreferredSize().width, width);
             }
+        
+            totalTableWidth += width;
             columnModel.getColumn(column).setPreferredWidth(width);
         }
+        
+        //table.setSize(totalTableWidth, table.getHeight());
     }
     
     protected void adjustReportTableColumns()

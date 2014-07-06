@@ -42,6 +42,7 @@ public class Member {
     Date    registerationDate;
     String  position;
     String  imagePath;
+    String currentStatus;
     
     public enum DetailsLevel
     {
@@ -53,10 +54,10 @@ public class Member {
         MemberID, FirstName, MiddleName, LastName, DateOfBirth, MaritalStatus, 
         Cast, SubCast, District, BloodGroup, Gender, Age, PermanentAddress, TemporaryAddress,
         ContactNumber, EmailAddress, Education, Profession, RegisterationDate, Position,
-        ImagePath, ReceiptNumber, Amount, DonationDate, DonationType, PaymentMode
+        ImagePath, ReceiptNumber, Amount, DonationDate, DonationType, PaymentMode, Status
     }
 
-    public Member(int memberID, String firstName, String middleName, String lastName, Date dateOfBirth, String maritalStatus, String cast, String subCast, String district, String bloodGroup, Gender gender, String permanentAddress, String temporaryAddress, String contactNumber, String emailAddress, String education, Type profession, Date registerationDate, String position, String imagePath) {
+    public Member(int memberID, String firstName, String middleName, String lastName, Date dateOfBirth, String maritalStatus, String cast, String subCast, String district, String bloodGroup, Gender gender, String permanentAddress, String temporaryAddress, String contactNumber, String emailAddress, String education, Type profession, Date registerationDate, String position, String imagePath, String currentStatus) {
         this.memberID = memberID;
         this.firstName = firstName;
         this.middleName = middleName;
@@ -77,9 +78,10 @@ public class Member {
         this.registerationDate = registerationDate;
         this.position = position;
         this.imagePath = imagePath;
+        this.currentStatus = currentStatus;
     }
 
-    public Member(int memberID, String firstName, String middleName, String lastName, Date dateOfBirth, String maritalStatus, String cast, Gender gender, Date registerationDate, String position) {
+    public Member(int memberID, String firstName, String middleName, String lastName, Date dateOfBirth, String maritalStatus, String cast, Gender gender, Date registerationDate, String position, String currentStatus) {
         this.memberID = memberID;
         this.firstName = firstName;
         this.middleName = middleName;
@@ -90,6 +92,7 @@ public class Member {
         this.gender = gender;
         this.registerationDate = registerationDate;
         this.position = position;
+        this.currentStatus = currentStatus;
     }
 
     public String getMaritalStatus() {
@@ -175,6 +178,15 @@ public class Member {
     public String getImagePath() {
         return imagePath;
     }
+
+    public String getCurrentStatus() {
+        return currentStatus;
+    }
+
+    public void setCurrentStatus(String currentStatus) {
+        this.currentStatus = currentStatus;
+    }
+    
 
     public void setPermanentAddress(String permanentAddress) {
         this.permanentAddress = permanentAddress;

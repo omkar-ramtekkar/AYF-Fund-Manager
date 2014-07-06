@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Vector;
 import org.ayf.database.entities.Expense;
 import org.ayf.managers.DatabaseManager;
-import org.ayf.models.Command;
+import org.ayf.command.ReportCommand;
 import org.ayf.reports.views.AllExpensesReportView;
 
 /**
@@ -20,7 +20,7 @@ import org.ayf.reports.views.AllExpensesReportView;
 public class AllExpensesReport extends Report{
 
     public AllExpensesReport() {
-        super(Command.CommandType.DetailsAllExpenses);
+        super(ReportCommand.SubCommandType.DetailsAllExpenses);
         setView(new AllExpensesReportView(this));
     }
 

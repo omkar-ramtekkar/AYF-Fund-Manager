@@ -10,6 +10,7 @@ import javax.swing.JTable;
 import org.ayf.models.GenericDefaultTableModel;
 import org.ayf.reports.Report;
 import org.ayf.reports.ReportData;
+import org.jdesktop.swingx.prompt.PromptSupport;
 
 /**
  *
@@ -23,6 +24,8 @@ public class AllCashFlowsReportView extends BaseReportView {
     public AllCashFlowsReportView(Report report) {
         super(report);
         initComponents();
+        PromptSupport.setPrompt("Type text to search Cash Transaction", searchTextField);
+        setupTextSearchForReportTable(searchTextField);
     }
 
     /**

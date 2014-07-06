@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package org.ayf.models;
+package org.ayf.command;
 
 /**
  *
@@ -15,6 +15,16 @@ public class Command {
     public enum CommandType
     {
         None,
+        Report,
+        Toolbar,
+        Nenubar
+    }
+    
+    public enum SubCommandType
+    {
+        None,
+        
+        //Report Commands
         Dashboard,
         Details,
         Statements,
@@ -29,10 +39,42 @@ public class Command {
         DetailsAllCashFlows,
         StatementsByMember,
         StatementsCashFlows,
-        NotificationsMemberSubscription
-    };
+        NotificationsMemberSubscription,
+        
+        //Toolbar
+        UserAdd,
+        UserDelete,
+        UserEdit,
+        UserSearch,
+        UserInfo,
+        Donate,
+        Save,
+        Download,
+        Settings
+    }
+
+    public Command(CommandType type, SubCommandType subType) {
+        this.type = type;
+        this.subType = subType;
+    }
+
+    public CommandType getType() {
+        return type;
+    }
+
+    public SubCommandType getSubType() {
+        return subType;
+    }
+
+    protected void setType(CommandType type) {
+        this.type = type;
+    }
+
+    protected void setSubType(SubCommandType subType) {
+        this.subType = subType;
+    }
     
-    public static String getDisplayNameForType(CommandType type)
+    public static String getDisplayNameForSubCommandType(SubCommandType type)
     {
         switch(type)
         {
@@ -68,24 +110,33 @@ public class Command {
                 return "Statement of Cash Flows";
             case NotificationsMemberSubscription:
                 return "Subscription Reminder";
+                
+                
+            ////////////////// Toolbar ///////////////////
+            case UserAdd:
+                return "Add Member";
+            case UserDelete:
+                return "Delete Member";
+            case UserEdit:
+                return "Edit Member";
+            case UserSearch:
+                return "Search Member";
+            case UserInfo:
+                return "Member Information";
+            case Donate:
+                return "Donate";
+            case Save:
+                return "Save";
+            case Download:
+                return "Download";
+            case Settings:
+                return "Settings";
         }
         
         return null;
     }
     
-    SideBarTableModel.Option option;
-    CommandType type;
-
-    public Command(SideBarTableModel.Option option, CommandType type) {
-        this.option = option;
-        this.type = type;
-    }
-
-    public SideBarTableModel.Option getOption() {
-        return option;
-    }
-
-    public CommandType getType() {
-        return type;
-    }
+    
+    private Command.CommandType type;
+    private Command.SubCommandType subType;
 }

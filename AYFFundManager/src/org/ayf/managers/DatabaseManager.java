@@ -37,16 +37,18 @@ public class DatabaseManager {
     public static final String DONATION_TYPE_TABLE_NAME     = "DonationType";
     public static final String EXPENSE_TYPE_TABLE_NAME      = "ExpenseType";
     public static final String PROFESSION_TYPE_TABLE_NAME   = "ProfessionType";
+    public static final String CASHFLOW_STATUS_TYPE_TABLE_NAME    = "CashFlowStatusType";
     public static final String MEMBER_TYPE_TABLE_NAME       = "MemberType";
     public static final String DONATIONS_TABLE_NAME         = "Donations";
     public static final String EXPENSES_TABLE_NAME          = "Expenses";
     public static final String MEMBER_TABLE_NAME            = "Members";
-    public static final String DAILYCASH_TABLE_NAME         = "DailyCash";
+    public static final String CASHFLOWS_TABLE_NAME         = "CashFlows";
     
     private static ArrayList<Type> PROFESSION_TYPES;
     private static ArrayList<Type> DONATION_TYPES;
     private static ArrayList<Type> MEMBER_TYPES;
     private static ArrayList<Type> EXPENSE_TYPES;
+    private static ArrayList<Type> CASHFLOW_TYPES;
     
     private static void intializeDatabaseManager()
     {
@@ -63,6 +65,8 @@ public class DatabaseManager {
         getExpenseTypes();
         getDonationTypes();
         getMemberTypes();
+        getCashFlowStatusTypes();
+        
     }
     
     static 
@@ -164,6 +168,11 @@ public class DatabaseManager {
     public static Type getMemberTypeForName(String profession)
     {
         return getTypeFromValue(profession, MEMBER_TYPES);
+    }
+    
+    public static Type getCashFlowTypeForName(String status)
+    {
+        return getTypeFromValue(status, CASHFLOW_TYPES);
     }
     
     public static Type getDonationTypeForID(int id)
@@ -270,6 +279,18 @@ public class DatabaseManager {
         return PROFESSION_TYPES;  
     }
     
+    
+    public static ArrayList<Type> getCashFlowStatusTypes()
+    {
+        if(CASHFLOW_TYPES == null)
+        {
+            CASHFLOW_TYPES = getTypesFromTable(CASHFLOW_STATUS_TYPE_TABLE_NAME);
+        }
+        
+        return CASHFLOW_TYPES;  
+    }
+    
+    
     public static ArrayList<Type> getTypesFromTable(String tableName)
     {
         Logger.getLogger(DatabaseManager.class.getName()).log(Level.INFO, "getTypesFromTable({0})", tableName);
@@ -343,11 +364,12 @@ public class DatabaseManager {
                 String  district        = rs.getString("District");
                 String  bloodGroup      = rs.getString("BloodGroup");
                 String  education       = rs.getString("Education");
+                String currentStatus    = rs.getString("Status");
                 
                 Member.Gender gender     = genderString != null ? (genderString.equals("Male") ? Member.Gender.Male : Member.Gender.Female) : Member.Gender.Male;
                 String imagePath        = rs.getString("Image");
 
-                members.add(new Member(memberID, firstName, middleName, lastName, dateOfBirth, maritalStatus, cast, subCast, district, bloodGroup, gender, permanentAddress, temporaryAddress, contactNumber, emailAddress, education, getProfessionTypeForName(profession), registerationDate, position, imagePath));
+                members.add(new Member(memberID, firstName, middleName, lastName, dateOfBirth, maritalStatus, cast, subCast, district, bloodGroup, gender, permanentAddress, temporaryAddress, contactNumber, emailAddress, education, getProfessionTypeForName(profession), registerationDate, position, imagePath, currentStatus));
             }
             
             ps.close();
@@ -404,6 +426,7 @@ public class DatabaseManager {
                 String  district        = rs.getString("District");
                 String  bloodGroup      = rs.getString("BloodGroup");
                 String  education       = rs.getString("Education");
+                String currentStatus    = rs.getString("Status");
                 
                 if(member != null)
                 {
@@ -412,7 +435,7 @@ public class DatabaseManager {
                 }
                 
                 
-                member = new Member(memberID, firstName, middleName, lastName, dateOfBirth, maritalStatus, cast, subCast, district, bloodGroup, gender, permanentAddress, temporaryAddress, contactNumber, emailAddress, education, getProfessionTypeForName(profession), registerationDate, position, imagePath);
+                member = new Member(memberID, firstName, middleName, lastName, dateOfBirth, maritalStatus, cast, subCast, district, bloodGroup, gender, permanentAddress, temporaryAddress, contactNumber, emailAddress, education, getProfessionTypeForName(profession), registerationDate, position, imagePath, currentStatus);
             }
             
             ps.close();
@@ -479,6 +502,7 @@ public class DatabaseManager {
                 String  district        = null;
                 String  bloodGroup      = null;
                 String  education       = null;
+                String currentStatus    = null;
                 if(memberID != Integer.MAX_VALUE)
                 {
                     Member member = getMemberWithID(memberID);
@@ -493,10 +517,11 @@ public class DatabaseManager {
                         district = member.getDistrict();
                         bloodGroup = member.getBloodGroup();
                         education = member.getEducation();
+                        currentStatus = member.getCurrentStatus();
                     }
                 }
                 
-                donors.add(new Donor(donationAmount, receiptNumber, donationDate, getDonationTypeForName(donationType), null/*TODO: getPaymentMode()*/ , memberID, firstName, middleName, lastName, dateOfBirth, maritalStatus, cast, subCast, district, bloodGroup, gender, permanentAddress, temporaryAddress, contactNumber, emailAddress, education, getProfessionTypeForName(profession), registerationDate, position, imagePath));
+                donors.add(new Donor(donationAmount, receiptNumber, donationDate, getDonationTypeForName(donationType), null/*TODO: getPaymentMode()*/ , memberID, firstName, middleName, lastName, dateOfBirth, maritalStatus, cast, subCast, district, bloodGroup, gender, permanentAddress, temporaryAddress, contactNumber, emailAddress, education, getProfessionTypeForName(profession), registerationDate, position, imagePath, currentStatus));
             }
             
             ps.close();
@@ -674,7 +699,7 @@ public class DatabaseManager {
             {
                 int     expenseID       = rs.getInt("ID");
                 double  amount          = rs.getDouble("Amount");
-                Date    date      = rs.getDate("Date");
+                Date    date            = rs.getDate("ExpenseDate");
                 String  expenseType     = rs.getString("Type");
                 String  description     = rs.getString("Description");
                 int     memberID        = rs.getInt("ResponsibleMemberID");
@@ -703,8 +728,43 @@ public class DatabaseManager {
     }
     
     
-     public static ArrayList<CashFlow> getBankTransactions() 
+     public static ArrayList<CashFlow> getCashFlows() 
      {
-         return null;
+        Logger.getLogger(DatabaseManager.class.getName()).log(Level.INFO, "getCashFlows");
+        
+        ArrayList<CashFlow> cashFlows = new ArrayList();
+        Connection connection = null;
+        try 
+        {
+            connection = createConnection();
+            
+            PreparedStatement ps = connection.prepareStatement("SELECT * FROM " + CASHFLOWS_TABLE_NAME);
+            
+            ResultSet rs = ps.executeQuery();
+            
+            Logger.getLogger(DatabaseManager.class.getName()).log(Level.INFO, "getCashFlows : Column Count - {0}", rs.getMetaData().getColumnCount());
+            
+            while(rs.next())
+            {
+                int     expenseID       = rs.getInt("ID");
+                Date    date            = rs.getDate("TransactionDate");
+                String  status          = rs.getString("Status");
+                String  description     = rs.getString("Description");
+                
+                cashFlows.add(new CashFlow(expenseID, date, getCashFlowTypeForName(status), description));
+            }
+            
+            ps.close();
+            rs.close();
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(null, ex.getLocalizedMessage(), "Unable to fetch data from table", ERROR_MESSAGE);
+        }
+        finally
+        {
+            if(connection != null) closeConnection(connection);
+        }
+        return cashFlows;
      }   
 }

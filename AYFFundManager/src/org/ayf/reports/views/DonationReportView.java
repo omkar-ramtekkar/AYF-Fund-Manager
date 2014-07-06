@@ -6,13 +6,9 @@
 
 package org.ayf.reports.views;
 
-import java.awt.Graphics;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.imageio.ImageIO;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 import org.ayf.reports.Report;
 import org.ayf.reports.ReportData;
@@ -30,28 +26,13 @@ public class DonationReportView extends BaseReportView {
     public DonationReportView(Report report) {
         super(report);
         initComponents();
+        setupTextSearchForReportTable(new JTextField());
     }
 
     public JTable getReportTable() {
         return reportTable;
     }
 
-    protected void paintComponent(Graphics g) 
-    {
-       super.paintComponent(g);
-
-       if(img == null)
-       {
-            try 
-            {
-                img = ImageIO.read(getClass().getResource("/org/ayf/resources/images/Background.png"));
-            } catch (IOException ex) {
-                Logger.getLogger(DonationReportView.class.getName()).log(Level.SEVERE, null, ex);
-            }
-       }
-
-       g.drawImage(img, 0, 0, null);
-    }
      
     @Override
     public void updateView(ReportData data)
