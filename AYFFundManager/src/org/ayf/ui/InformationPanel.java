@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Vector;
 import javax.swing.DefaultComboBoxModel;
 import org.ayf.database.entities.Type;
+import org.ayf.managers.ResourceManager;
 import org.jdesktop.swingx.prompt.PromptSupport;
 
 /**
@@ -44,6 +45,8 @@ public class InformationPanel extends javax.swing.JPanel {
 //        PromptSupport.setPrompt("Middle Name", dobYear);
 //        PromptSupport.setPrompt("Middle Name", educationTxt);
 //        PromptSupport.setPrompt("Middle Name", emailAddressTxt);
+        this.imageLabel.setSize(90, 90);
+        this.imageLabel.setIcon(ResourceManager.getIcon("no_photo_men", imageLabel.getSize()));
 
     }
 
@@ -121,7 +124,7 @@ public class InformationPanel extends javax.swing.JPanel {
         emailAddressTxt = new javax.swing.JTextField();
         mobileNumberTxt = new javax.swing.JTextField();
         jPanel5 = new javax.swing.JPanel();
-        jLabel18 = new javax.swing.JLabel();
+        imageLabel = new javax.swing.JLabel();
         otherInformationPanel = new javax.swing.JPanel();
         jLabel12 = new javax.swing.JLabel();
         professionTypeCombo = new javax.swing.JComboBox();
@@ -468,8 +471,7 @@ public class InformationPanel extends javax.swing.JPanel {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jLabel18.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/ayf/resources/images/no_photo_unknown.jpg"))); // NOI18N
-        jLabel18.setText("jLabel18");
+        imageLabel.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(204, 255, 204), 2, true));
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
@@ -477,14 +479,14 @@ public class InformationPanel extends javax.swing.JPanel {
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel18, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(imageLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel18, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(imageLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -676,6 +678,7 @@ public class InformationPanel extends javax.swing.JPanel {
     private javax.swing.JTextField firstNameTxt;
     private javax.swing.JRadioButton genderFemaleButton;
     private javax.swing.JRadioButton genderMaleButton;
+    private javax.swing.JLabel imageLabel;
     private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JCheckBox jCheckBox2;
     private javax.swing.JComboBox jComboBox1;
@@ -688,7 +691,6 @@ public class InformationPanel extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel17;
-    private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel20;

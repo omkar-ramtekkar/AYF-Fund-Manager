@@ -10,14 +10,15 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JFrame;
+import javax.swing.JScrollPane;
 import org.ayf.command.Command;
 import org.ayf.command.ReportCommand;
-import org.ayf.command.ToolbarCommand;
 import org.ayf.mainmenubar.MainMenuController;
 import org.ayf.models.SideBarTableModel.Option;
 import org.ayf.toolbar.ToolbarController;
 import org.ayf.ui.InformationPanel;
 import org.ayf.ui.MainFrame;
+import org.ayf.ui.MemberFrame;
 import org.ayf.ui.controllers.ReportViewController;
 import org.ayf.ui.controllers.SideBarTableController;
 
@@ -106,11 +107,9 @@ public class ApplicationManager implements ActionListener
                 }
                     break;
                 case Toolbar:
-                {
-                    ToolbarCommand toolbarCommand = (ToolbarCommand) command;
-                    handleAction(toolbarCommand);
-                }
-                case Nenubar: 
+                    handleAction(command);
+                    break;
+                case Menubar: 
                     handleAction(command);
                     break;
             }
@@ -149,14 +148,9 @@ public class ApplicationManager implements ActionListener
         }
     }
 
-    private void handleUserAddAction() {
-        JFrame addMemberFrame = new JFrame();
-        addMemberFrame.setLayout(new BorderLayout());
-        
-        InformationPanel panel = new InformationPanel();
-        addMemberFrame.add(panel, BorderLayout.CENTER);
-        
-        addMemberFrame.setVisible(true);
+    private void handleUserAddAction() 
+    {
+        new MemberFrame().setVisible(true);
     }
 
     private void handleUserDeleteAction() {

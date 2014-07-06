@@ -17,7 +17,7 @@ public class Command {
         None,
         Report,
         Toolbar,
-        Nenubar
+        Menubar
     }
     
     public enum SubCommandType
@@ -85,7 +85,7 @@ public class Command {
             case Details:
                 return "Details";
             case Statements:
-                return "statements";
+                return "Statements";
             case Notifications:
                 return "Notifications";
             case Miscellaneous:

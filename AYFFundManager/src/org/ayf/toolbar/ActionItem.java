@@ -85,9 +85,7 @@ public class ActionItem extends AbstractAction{
     {        
         long uniqueId = System.currentTimeMillis() ;
         Command command = new ToolbarCommand(Command.CommandType.Toolbar, getType());
-        ApplicationManager.getSharedManager().actionPerformed(new ActionEvent(command, (int) uniqueId, Command.CommandType.Toolbar.toString()));
-        
-        ApplicationManager.getSharedManager().getToolbarController().actionPerformed(e);
+        ApplicationManager.getSharedManager().actionPerformed(new ActionEvent(command, (int) uniqueId, Command.CommandType.Toolbar.toString()));        
     }
     
 }
