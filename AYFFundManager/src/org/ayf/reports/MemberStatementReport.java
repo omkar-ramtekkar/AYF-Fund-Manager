@@ -33,5 +33,11 @@ public class MemberStatementReport extends Report{
         this.memberID = memberID;
         updateReport();
     }
+
+    public int getMemberID() {
+        return memberID;
+    }
+    
+    
     
 }

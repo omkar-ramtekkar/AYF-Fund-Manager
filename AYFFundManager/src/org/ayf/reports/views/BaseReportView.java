@@ -59,7 +59,7 @@ public abstract class BaseReportView extends BackgroundPanel{
             String columnName = table.getColumnName(column);
             testLabel.setText(columnName);
             testLabel.setSize(testLabel.getPreferredSize());
-            int width = Math.max((int) testLabel.getPreferredSize().getWidth(), 50);
+            int width = Math.max((int) testLabel.getPreferredSize().getWidth(), table.getColumnModel().getColumn(column).getWidth());
             
             for (int row = 0; row < table.getRowCount(); row++) 
             {
