@@ -15,6 +15,7 @@ import org.ayf.reports.AllDonationsReport;
 import org.ayf.reports.AllExpensesReport;
 import org.ayf.reports.AllMembersReport;
 import org.ayf.reports.DonationReport;
+import org.ayf.reports.MemberStatementReport;
 import org.ayf.reports.Report;
 
 /**
@@ -32,6 +33,7 @@ public class ReportManager
         reports = new HashMap<ReportCommand.SubCommandType, Vector<Report>>();
         initializeDashboardReports();
         initializeDetailsReports();
+        initializeStatementsReports();
     }
     
     void initializeDashboardReports()
@@ -50,6 +52,14 @@ public class ReportManager
         detailsReports.add(new AllCashFlowsReport());
         
         reports.put(ReportCommand.SubCommandType.Details, detailsReports);
+    }
+    
+    void initializeStatementsReports()
+    {
+        Vector<Report> statementReports = new Vector();
+        statementReports.add(new MemberStatementReport());
+        
+        reports.put(ReportCommand.SubCommandType.Statements, statementReports);
     }
 
     public Vector<Report> getReports(ReportCommand.SubCommandType type)

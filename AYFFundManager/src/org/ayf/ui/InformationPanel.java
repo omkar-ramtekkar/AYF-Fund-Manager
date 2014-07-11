@@ -11,18 +11,18 @@ import java.util.Vector;
 import javax.swing.DefaultComboBoxModel;
 import org.ayf.database.entities.Type;
 import org.ayf.managers.ResourceManager;
-import org.jdesktop.swingx.prompt.PromptSupport;
 
 /**
  *
  * @author om
  */
-public class InformationPanel extends javax.swing.JPanel {
+public class InformationPanel extends BackgroundPanel {
 
     /**
      * Creates new form PersonalInformationPanel
      */
     public InformationPanel() {
+        super(BackgroundStyle.GradientBlueGray);
         initComponents();
         
 //        PromptSupport.setPrompt("Address Line 1", permanentAddrFirstLine);
@@ -139,7 +139,7 @@ public class InformationPanel extends javax.swing.JPanel {
         jLabel17 = new javax.swing.JLabel();
         subcastTxt = new javax.swing.JTextField();
 
-        setLayout(null);
+        setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         personalInformationPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Personal Information"));
 
@@ -522,8 +522,7 @@ public class InformationPanel extends javax.swing.JPanel {
                 .addContainerGap(17, Short.MAX_VALUE))
         );
 
-        add(personalInformationPanel);
-        personalInformationPanel.setBounds(10, 30, 620, 830);
+        add(personalInformationPanel, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 30, -1, -1));
 
         otherInformationPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Other Information"));
 
@@ -611,13 +610,12 @@ public class InformationPanel extends javax.swing.JPanel {
                 .addGroup(otherInformationPanelLayout.createSequentialGroup()
                     .addContainerGap()
                     .addComponent(jLabel12)
-                    .addContainerGap(192, Short.MAX_VALUE)))
+                    .addContainerGap(122, Short.MAX_VALUE)))
         );
 
         otherInformationPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {bloodGroupCombo, castTxt, educationTxt, jLabel11, jLabel12, jLabel14, jLabel16, jLabel17, jLabel6, positionCombo, professionTypeCombo, subcastTxt});
 
-        add(otherInformationPanel);
-        otherInformationPanel.setBounds(10, 860, 620, 250);
+        add(otherInformationPanel, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 860, -1, -1));
     }// </editor-fold>//GEN-END:initComponents
 
     private void genderMaleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_genderMaleButtonActionPerformed

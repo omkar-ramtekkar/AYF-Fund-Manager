@@ -7,6 +7,7 @@
 package org.ayf.ui;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 
@@ -21,7 +22,7 @@ public class MemberFrame extends javax.swing.JFrame {
      */
     public MemberFrame() {
         initComponents();
-        
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         panel = new InformationPanel();
         
         JScrollPane scrollView = new JScrollPane();
@@ -29,13 +30,7 @@ public class MemberFrame extends javax.swing.JFrame {
         
         add(scrollView, BorderLayout.CENTER);
                 
-        SwingUtilities.invokeLater(new Runnable() {
-
-            @Override
-            public void run() {
-                setSize(panel.getSize());
-            }
-        });
+        setSize(600, 600);
     }
 
     /**

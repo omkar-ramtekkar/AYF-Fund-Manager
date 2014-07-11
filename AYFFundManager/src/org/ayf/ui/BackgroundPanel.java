@@ -28,6 +28,7 @@ public class BackgroundPanel extends javax.swing.JPanel
         NatureGreen,
         TextureLightGray,
         GradientGray,
+        NewStyle
     }
     
     public BackgroundPanel() {

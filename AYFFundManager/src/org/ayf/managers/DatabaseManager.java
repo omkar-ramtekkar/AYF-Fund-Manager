@@ -766,5 +766,51 @@ public class DatabaseManager {
             if(connection != null) closeConnection(connection);
         }
         return cashFlows;
-     }   
+     }
+     
+     public static ReportData getMemberStatement(int memberID)
+     {
+        Connection conn = null;
+    
+        Vector columns = Donor.getColumnsForDetailsLevel(Member.DetailsLevel.MemberStatement);    
+        Vector rowData = new Vector();
+        
+        try 
+        {
+            conn = createConnection();
+
+            String sql = "SELECT * FROM " + DONATIONS_TABLE_NAME + " WHERE MemberID=? ORDER BY DonationDate";
+            PreparedStatement statement = conn.prepareStatement(sql);
+            statement.setInt(1, memberID);
+            
+            ResultSet rs = statement.executeQuery();
+            
+            while(rs.next())
+            {                
+                int     memberIDTest    = rs.getInt("MemberID");
+                float   donationAmount  = rs.getFloat("Amount");
+                long    receiptNumber   = rs.getLong("ReceiptNumber");
+                Date    donationDate    = rs.getDate("DonationDate");
+                String donationType     = rs.getString("DonationType");
+                String paymentMode      = rs.getString("PaymentMode");
+               
+                Donor donation = new Donor(donationAmount, receiptNumber, donationDate, getDonationTypeForName(donationType), null/*TODO*/, memberID, null, null, null, null, null, null, null, null, null, null);
+                rowData.add(donation.getMemberDetailsForLevel(Member.DetailsLevel.MemberStatement));
+            }
+            
+            rs.close();
+            statement.close();
+            
+
+        } catch (SQLException ex) {
+            Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(null, ex.getLocalizedMessage(), "Unable to get donations by type ", ERROR_MESSAGE);
+        }
+        finally
+        {
+            if(conn != null) { closeConnection(conn); }
+        }
+        
+        return new ReportData(rowData, columns);
+     }
 }

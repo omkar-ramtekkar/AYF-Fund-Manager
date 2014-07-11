@@ -7,6 +7,7 @@
 package org.ayf.reports.views;
 
 import java.awt.Component;
+import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.TableCellRenderer;
@@ -52,9 +53,13 @@ public abstract class BaseReportView extends BackgroundPanel{
         
         final TableColumnModel columnModel = table.getColumnModel();
         
+        JLabel testLabel = new JLabel();
         for (int column = 0; column < table.getColumnCount(); column++)
         {
-            int width = getMinimumColumnWidth(); // Min width
+            String columnName = table.getColumnName(column);
+            testLabel.setText(columnName);
+            testLabel.setSize(testLabel.getPreferredSize());
+            int width = Math.max((int) testLabel.getPreferredSize().getWidth(), 50);
             
             for (int row = 0; row < table.getRowCount(); row++) 
             {
@@ -64,6 +69,7 @@ public abstract class BaseReportView extends BackgroundPanel{
             }
         
             totalTableWidth += width;
+            columnModel.getColumn(column).setMinWidth(width);
             columnModel.getColumn(column).setPreferredWidth(width);
         }
         

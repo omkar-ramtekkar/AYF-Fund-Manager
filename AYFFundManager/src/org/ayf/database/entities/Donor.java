@@ -17,7 +17,7 @@ import org.ayf.reports.ReportData;
 public class Donor extends Member
 {
     private float   donationAmount;
-    private long    receiptNumber;
+    private final long    receiptNumber;
     private Date    donationDate;
     private Type    donationType;
     private Type    paymentMode;
@@ -39,8 +39,6 @@ public class Donor extends Member
         this.donationType = donationType;
         this.paymentMode = paymentMode;
     }
-
-    
     
 
     public float getDonationAmount() {
@@ -105,10 +103,20 @@ public class Donor extends Member
     
     public static Vector getColumnsForDetailsLevel(DetailsLevel level)
     {
-        Vector columnNames = Member.getColumnsForDetailsLevel(level);
+        
+        Vector columnNames;
+        if(level != Member.DetailsLevel.MemberStatement)
+        {
+            columnNames = Member.getColumnsForDetailsLevel(level);
+        }
+        else
+        {
+            columnNames = new Vector();
+        }
+        
         columnNames.add(getNameForColumnID(ColumnNames.ReceiptNumber));
-        columnNames.add(getNameForColumnID(ColumnNames.Amount));
         columnNames.add(getNameForColumnID(ColumnNames.DonationDate));
+        columnNames.add(getNameForColumnID(ColumnNames.Amount));
         columnNames.add(getNameForColumnID(ColumnNames.DonationType));
         columnNames.add(getNameForColumnID(ColumnNames.PaymentMode));
         
@@ -116,12 +124,45 @@ public class Donor extends Member
     }
     
     @Override
+    public Object getValueForField(ColumnNames fieldName)
+    {
+        Object value = super.getValueForField(fieldName);
+        if(value == null)
+        {
+            switch(fieldName)
+            {
+                case ReceiptNumber:
+                    return getReceiptNumber();
+                case Amount:
+                    return getDonationAmount();
+                case DonationDate:
+                    return getDonationDate();
+                case DonationType:
+                    return getDonationType();
+                case PaymentMode:
+                    return getPaymentMode();
+            }
+        }
+        
+        return value;
+    }
+    
+    @Override
     public Vector getMemberDetailsForLevel(DetailsLevel detailLevel)
     {
-        Vector memberDetails = super.getMemberDetailsForLevel(detailLevel);
+        Vector memberDetails;
+        if(detailLevel != Member.DetailsLevel.MemberStatement)
+        {
+            memberDetails = super.getMemberDetailsForLevel(detailLevel);
+        }
+        else
+        {
+            memberDetails = new Vector();
+        }
+        
         memberDetails.add(getValueForField(ColumnNames.ReceiptNumber));
-        memberDetails.add(getValueForField(ColumnNames.Amount));
         memberDetails.add(getValueForField(ColumnNames.DonationDate));
+        memberDetails.add(getValueForField(ColumnNames.Amount));
         memberDetails.add(getValueForField(ColumnNames.DonationType));
         memberDetails.add(getValueForField(ColumnNames.PaymentMode));
 

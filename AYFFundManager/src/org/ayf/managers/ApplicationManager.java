@@ -55,15 +55,14 @@ public class ApplicationManager implements ActionListener
     {
         this.mainFrame = new MainFrame();
 
+        this.toolbarController = new ToolbarController();        
+        this.mainMenuBarController = new MainMenuController();
+
         //Configure sidebar table
         this.sidebarTableController = new SideBarTableController();
         this.reportController = new ReportViewController();
         this.sidebarTableController.addActionListener(this);
         
-        this.toolbarController = new ToolbarController();
-        this.mainFrame.add(this.toolbarController.getToolbarView(), BorderLayout.NORTH);
-        
-        mainMenuBarController = new MainMenuController();
     }
 
     

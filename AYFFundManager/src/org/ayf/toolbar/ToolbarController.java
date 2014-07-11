@@ -6,6 +6,7 @@
 
 package org.ayf.toolbar;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
@@ -15,6 +16,7 @@ import javax.swing.JToolBar;
 import javax.swing.border.LineBorder;
 import org.ayf.command.Command;
 import org.ayf.command.ToolbarCommand;
+import org.ayf.managers.ApplicationManager;
 import org.ayf.managers.ResourceManager;
 
 /**
@@ -51,6 +53,8 @@ public class ToolbarController implements ActionListener{
             }
         };
         
+        
+        
         toolbarView.setBorder(new LineBorder(Color.LIGHT_GRAY));
         toolbarView.setBorderPainted(true);
         
@@ -64,6 +68,8 @@ public class ToolbarController implements ActionListener{
         toolbarView.add(new ActionItem("Settings", ToolbarCommand.SubCommandType.Settings, "settings"));
         
         toolbarView.setRollover(true);
+        
+        ApplicationManager.getSharedManager().getMainFrame().add(getToolbarView(), BorderLayout.NORTH);
         
     }
 

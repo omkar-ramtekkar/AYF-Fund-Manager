@@ -7,7 +7,6 @@
 package org.ayf.reports;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Vector;
 import org.ayf.database.entities.Member;
 import org.ayf.managers.DatabaseManager;

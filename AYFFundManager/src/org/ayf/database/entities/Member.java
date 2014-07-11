@@ -46,7 +46,7 @@ public class Member {
     
     public enum DetailsLevel
     {
-        OnlyIDAndName, Basic, AllPersonal, AllProfessional, AllSocial,  Complete  
+        OnlyIDAndName, Basic, AllPersonal, AllProfessional, AllSocial,  Complete, MemberStatement  
     }
     
     public enum ColumnNames
