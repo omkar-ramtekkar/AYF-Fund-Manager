@@ -6,11 +6,11 @@
 
 package org.ayf.managers;
 
-import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.JFrame;
-import javax.swing.JScrollPane;
+import java.io.File;
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileFilter;
 import org.ayf.command.Command;
 import org.ayf.command.ReportCommand;
 import org.ayf.mainmenubar.MainMenuController;
@@ -21,6 +21,7 @@ import org.ayf.ui.MainFrame;
 import org.ayf.ui.MemberFrame;
 import org.ayf.ui.controllers.ReportViewController;
 import org.ayf.ui.controllers.SideBarTableController;
+import org.ayf.util.PreferenceManager;
 
 /**
  
@@ -62,6 +63,8 @@ public class ApplicationManager implements ActionListener
         this.sidebarTableController = new SideBarTableController();
         this.reportController = new ReportViewController();
         this.sidebarTableController.addActionListener(this);
+        
+        checkAndUpdateDatabaseLocation();
         
     }
 
@@ -149,7 +152,7 @@ public class ApplicationManager implements ActionListener
 
     private void handleUserAddAction() 
     {
-        new MemberFrame().setVisible(true);
+        new MemberFrame(null, InformationPanel.Context.Registeration).setVisible(true);
     }
 
     private void handleUserDeleteAction() {
@@ -161,7 +164,7 @@ public class ApplicationManager implements ActionListener
     }
 
     private void handleUserEditAction() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        new MemberFrame(DatabaseManager.getMemberWithID(4), InformationPanel.Context.View).setVisible(true);
     }
 
     private void handleSettingsAction() {
@@ -170,5 +173,36 @@ public class ApplicationManager implements ActionListener
 
     private void handleDonateAction() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    private void checkAndUpdateDatabaseLocation()
+    {
+        String dbPath = PreferenceManager.getIntance().getString("databasePath", null);
+        if(dbPath == null)
+        {
+            JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+            fileChooser.setMultiSelectionEnabled(false);
+            fileChooser.setFileFilter(new FileFilter() {
+
+                @Override
+                public boolean accept(File f) {
+                    return (f.getName().endsWith(".mdb") || f.getName().endsWith(".accdb"));
+                }
+
+                @Override
+                public String getDescription() {
+                    return "mdb and accdb files";
+                }
+            });
+            
+            int userOption = fileChooser.showOpenDialog(this.mainFrame);
+
+            if(userOption == JFileChooser.APPROVE_OPTION)
+            {
+                File file = fileChooser.getSelectedFile();
+                PreferenceManager.getIntance().setString("databasePath", file.getAbsolutePath());
+            }
+        }
     }
 }

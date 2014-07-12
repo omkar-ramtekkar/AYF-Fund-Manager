@@ -50,7 +50,13 @@ public class Command {
         Donate,
         Save,
         Download,
-        Settings
+        Settings,
+        PrintReport,
+        ExportAsText,
+        ExportAsExcel,
+        ExportAsCSV,
+        ExportAsPDF,
+        ChangeDatabase
     }
 
     public Command(CommandType type, SubCommandType subType) {

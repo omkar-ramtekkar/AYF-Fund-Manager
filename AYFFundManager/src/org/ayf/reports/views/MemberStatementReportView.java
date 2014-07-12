@@ -6,7 +6,9 @@
 
 package org.ayf.reports.views;
 
+import java.awt.event.MouseEvent;
 import javax.swing.JTable;
+import javax.swing.ToolTipManager;
 import org.ayf.database.entities.Member;
 import org.ayf.managers.DatabaseManager;
 import org.ayf.managers.ResourceManager;
@@ -14,7 +16,10 @@ import org.ayf.models.GenericDefaultTableModel;
 import org.ayf.reports.MemberStatementReport;
 import org.ayf.reports.Report;
 import org.ayf.reports.ReportData;
+import org.ayf.ui.InformationPanel;
+import org.ayf.ui.MemberFrame;
 import org.ayf.util.DateTime;
+import org.ayf.util.Toast;
 import org.jdesktop.swingx.prompt.PromptSupport;
 
 /**
@@ -74,6 +79,17 @@ public class MemberStatementReportView extends BaseReportView {
             }
         });
 
+        memberIDTextField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                memberIDTextFieldActionPerformed(evt);
+            }
+        });
+        memberIDTextField.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                memberIDTextFieldKeyTyped(evt);
+            }
+        });
+
         showStatementButton.setText("Show Statement");
         showStatementButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -98,11 +114,11 @@ public class MemberStatementReportView extends BaseReportView {
             searchDetailsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(searchDetailsPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .add(searchDetailsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(memberIDTextField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(searchDetailsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(searchDetailsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                         .add(showStatementButton)
-                        .add(searchMemberButton)))
+                        .add(searchMemberButton))
+                    .add(memberIDTextField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .add(0, 8, Short.MAX_VALUE))
         );
 
@@ -133,7 +149,7 @@ public class MemberStatementReportView extends BaseReportView {
             .add(reportPanelLayout.createSequentialGroup()
                 .add(6, 6, 6)
                 .add(reportPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 502, Short.MAX_VALUE)
+                    .add(jScrollPane1)
                     .add(reportPanelLayout.createSequentialGroup()
                         .add(searchTextField)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
@@ -154,30 +170,24 @@ public class MemberStatementReportView extends BaseReportView {
 
         memberInformationPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Basic Details", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 3, 11))); // NOI18N
 
-        memberImageLabel.setText("jLabel1");
         memberImageLabel.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(51, 255, 255), 1, true));
         memberImageLabel.setMaximumSize(new java.awt.Dimension(88, 88));
         memberImageLabel.setMinimumSize(new java.awt.Dimension(88, 88));
         memberImageLabel.setPreferredSize(new java.awt.Dimension(88, 88));
 
-        memberFullName.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        memberFullName.setText("Omkar Nagorao Ramtekkar");
+        memberFullName.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
 
-        dateOfBirthLabel.setText("30-Jun-1999");
+        jLabel2.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel2.setText("Registeration Date      :");
 
-        jLabel2.setText("Registeration Date :");
+        jLabel3.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel3.setText("Date of Birth                  :");
 
-        jLabel3.setText("Date of Birth           :");
+        jLabel4.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel4.setText("District                          :");
 
-        registerationDateLabel.setText("30-Jun-1999");
-
-        jLabel4.setText("District                :");
-
-        districtLabel.setText("Nagpur");
-
-        jLabel6.setText("Contact Number :");
-
-        contactNumberLabel.setText("9730162294");
+        jLabel6.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel6.setText("Contact Number         :");
 
         showFullDetailsButton.setText("Full Details");
         showFullDetailsButton.addActionListener(new java.awt.event.ActionListener() {
@@ -196,27 +206,26 @@ public class MemberStatementReportView extends BaseReportView {
                 .add(18, 18, 18)
                 .add(memberInformationPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(memberInformationPanelLayout.createSequentialGroup()
-                        .add(memberInformationPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
-                            .add(jLabel3, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 103, Short.MAX_VALUE)
-                            .add(jLabel2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(memberInformationPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(registerationDateLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 103, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                            .add(dateOfBirthLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 103, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                        .add(memberInformationPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
-                            .add(jLabel6, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .add(jLabel4, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                        .add(memberInformationPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(contactNumberLabel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .add(districtLabel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .add(memberInformationPanelLayout.createSequentialGroup()
                         .add(memberFullName, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .add(18, 18, 18)
-                        .add(showFullDetailsButton)
-                        .addContainerGap())))
+                        .add(showFullDetailsButton))
+                    .add(memberInformationPanelLayout.createSequentialGroup()
+                        .add(memberInformationPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
+                            .add(jLabel3, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .add(jLabel2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .add(30, 30, 30)
+                        .add(memberInformationPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
+                            .add(dateOfBirthLabel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 113, Short.MAX_VALUE)
+                            .add(registerationDateLabel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .add(66, 66, 66)
+                        .add(memberInformationPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
+                            .add(jLabel4, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .add(jLabel6, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .add(30, 30, 30)
+                        .add(memberInformationPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
+                            .add(districtLabel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .add(contactNumberLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 131, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap())
         );
         memberInformationPanelLayout.setVerticalGroup(
             memberInformationPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -224,22 +233,27 @@ public class MemberStatementReportView extends BaseReportView {
                 .addContainerGap()
                 .add(memberInformationPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(memberInformationPanelLayout.createSequentialGroup()
-                        .add(memberInformationPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                            .add(memberFullName, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 17, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                            .add(showFullDetailsButton))
-                        .add(18, 18, 18)
-                        .add(memberInformationPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                            .add(dateOfBirthLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 17, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                            .add(jLabel3)
-                            .add(jLabel4)
-                            .add(districtLabel))
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(memberInformationPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
+                            .add(showFullDetailsButton)
+                            .add(memberInformationPanelLayout.createSequentialGroup()
+                                .add(3, 3, 3)
+                                .add(memberFullName, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 27, Short.MAX_VALUE)))
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                         .add(memberInformationPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(memberInformationPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                                .add(jLabel6)
-                                .add(contactNumberLabel))
-                            .add(memberInformationPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                                .add(jLabel2)
+                            .add(memberInformationPanelLayout.createSequentialGroup()
+                                .add(memberInformationPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                                    .add(jLabel3, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 17, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                                    .add(jLabel4, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 17, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                                    .add(districtLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 17, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                                .add(memberInformationPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                                    .add(memberInformationPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                                        .add(jLabel6, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 17, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                                        .add(contactNumberLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 17, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                                    .add(jLabel2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 17, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+                            .add(memberInformationPanelLayout.createSequentialGroup()
+                                .add(dateOfBirthLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 17, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                                 .add(registerationDateLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 17, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))))
                     .add(memberImageLabel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
@@ -304,8 +318,34 @@ public class MemberStatementReportView extends BaseReportView {
     }//GEN-LAST:event_searchMemberButtonActionPerformed
 
     private void showFullDetailsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showFullDetailsButtonActionPerformed
-        // TODO add your handling code here:
+        if(report != null)
+        {
+            if(report instanceof MemberStatementReport)
+            {
+                MemberStatementReport memberReport = (MemberStatementReport) report;
+                int memberID = memberReport.getMemberID();
+
+                if(memberID != Integer.MAX_VALUE)
+                {
+                    Member member = DatabaseManager.getMemberWithID(memberID);
+                    if(member != null)
+                    {
+                        MemberFrame memberFullInformation = new MemberFrame(member, InformationPanel.Context.View);
+                        memberFullInformation.setVisible(true);
+                    }
+                }
+            }
+        }
     }//GEN-LAST:event_showFullDetailsButtonActionPerformed
+
+    private void memberIDTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_memberIDTextFieldActionPerformed
+        // TODO add your handling code here:
+        showStatementButtonActionPerformed(evt);
+    }//GEN-LAST:event_memberIDTextFieldActionPerformed
+
+    private void memberIDTextFieldKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_memberIDTextFieldKeyTyped
+        // TODO add your handling code here:
+    }//GEN-LAST:event_memberIDTextFieldKeyTyped
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -360,7 +400,18 @@ public class MemberStatementReportView extends BaseReportView {
                         this.dateOfBirthLabel.setText(DateTime.getFormattedDateSQL(member.getDateOfBirth()));
                         this.districtLabel.setText(member.getDistrict());
                         this.memberImageLabel.setIcon(ResourceManager.getIcon("no_photo_men", this.memberImageLabel.getPreferredSize()));
-                    }   
+                    }
+                    else
+                    {
+                        this.memberFullName.setText("");
+                        this.registerationDateLabel.setText("");
+                        this.contactNumberLabel.setText("");
+                        this.dateOfBirthLabel.setText("");
+                        this.districtLabel.setText("");
+                        this.memberImageLabel.setIcon(null);
+                        
+                        Toast.showToast(this.memberIDTextField, "Member not found with this ID");
+                    }
                 }
             }
         }

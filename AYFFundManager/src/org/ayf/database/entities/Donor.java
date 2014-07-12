@@ -19,10 +19,10 @@ public class Donor extends Member
     private float   donationAmount;
     private final long    receiptNumber;
     private Date    donationDate;
-    private Type    donationType;
-    private Type    paymentMode;
+    private String    donationType;
+    private String    paymentMode;
 
-    public Donor(float donationAmount, long receiptNumber, Date donationDate, Type donationType, Type paymentMode, int memberID, String firstName, String middleName, String lastName, Date dateOfBirth, String maritalStatus, String cast, String subCast, String district, String bloodGroup, Gender gender, String permanentAddress, String temporaryAddress, String contactNumber, String emailAddress, String education, Type profession, Date registerationDate, String position, String imagePath, String currentStatus) {
+    public Donor(float donationAmount, long receiptNumber, Date donationDate, String donationType, String paymentMode, int memberID, String firstName, String middleName, String lastName, Date dateOfBirth, MaritalStatus maritalStatus, String cast, String subCast, String district, String bloodGroup, Gender gender, String permanentAddress, String temporaryAddress, String contactNumber, String emailAddress, String education, String profession, Date registerationDate, String position, String imagePath, ActiveStatus currentStatus) {
         super(memberID, firstName, middleName, lastName, dateOfBirth, maritalStatus, cast, subCast, district, bloodGroup, gender, permanentAddress, temporaryAddress, contactNumber, emailAddress, education, profession, registerationDate, position, imagePath, currentStatus);
         this.donationAmount = donationAmount;
         this.receiptNumber = receiptNumber;
@@ -31,7 +31,7 @@ public class Donor extends Member
         this.paymentMode = paymentMode;
     }
 
-    public Donor(float donationAmount, long receiptNumber, Date donationDate, Type donationType, Type paymentMode, int memberID, String firstName, String middleName, String lastName, Date dateOfBirth, String maritalStatus, String cast, Gender gender, Date registerationDate, String position, String currentStatus) {
+    public Donor(float donationAmount, long receiptNumber, Date donationDate, String donationType, String paymentMode, int memberID, String firstName, String middleName, String lastName, Date dateOfBirth, MaritalStatus maritalStatus, String cast, Gender gender, Date registerationDate, String position, ActiveStatus currentStatus) {
         super(memberID, firstName, middleName, lastName, dateOfBirth, maritalStatus, cast, gender, registerationDate, position, currentStatus);
         this.donationAmount = donationAmount;
         this.receiptNumber = receiptNumber;
@@ -53,11 +53,11 @@ public class Donor extends Member
         return donationDate;
     }
 
-    public Type getDonationType() {
+    public String getDonationType() {
         return donationType;
     }
 
-    public Type getPaymentMode() {
+    public String getPaymentMode() {
         return paymentMode;
     }
 
@@ -69,11 +69,11 @@ public class Donor extends Member
         this.donationDate = donationDate;
     }
 
-    public void setDonationType(Type donationType) {
+    public void setDonationType(String donationType) {
         this.donationType = donationType;
     }
 
-    public void setPaymentMode(Type paymentMode) {
+    public void setPaymentMode(String paymentMode) {
         this.paymentMode = paymentMode;
     }
 

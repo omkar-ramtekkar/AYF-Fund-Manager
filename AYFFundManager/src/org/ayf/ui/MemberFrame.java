@@ -9,7 +9,8 @@ package org.ayf.ui;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import javax.swing.JScrollPane;
-import javax.swing.SwingUtilities;
+import static javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED;
+import org.ayf.database.entities.Member;
 
 /**
  *
@@ -19,19 +20,61 @@ public class MemberFrame extends javax.swing.JFrame {
 
     /**
      * Creates new form MemberFrame
-     */
-    public MemberFrame() {
+     */    
+    public MemberFrame(Member member, InformationPanel.Context context) {
         initComponents();
+        
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        panel = new InformationPanel();
+        panel = new InformationPanel(member, context);
         
         JScrollPane scrollView = new JScrollPane();
         scrollView.setViewportView(panel);
-        
+        scrollView.setAutoscrolls(true);
+        scrollView.setHorizontalScrollBarPolicy(HORIZONTAL_SCROLLBAR_AS_NEEDED);
         add(scrollView, BorderLayout.CENTER);
-                
-        setSize(600, 600);
+             
+//        Dimension panelSize = panel.getPreferredSize();
+//        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+//        Insets scnMax = Toolkit.getDefaultToolkit().getScreenInsets(getGraphicsConfiguration());
+//        int taskBarSize = scnMax.bottom;
+//        
+//        panelSize.setSize(panelSize.getWidth(), Math.min(panelSize.getHeight(), (double)(screenSize.getHeight() - scnMax.bottom)));
+//        
+        setSize(new Dimension((int) panel.getPreferredSize().getWidth() + 25, 600));
+        setLocation(200, 100);
+        
+        updateTitle(context);
     }
+
+    void updateTitle(InformationPanel.Context context)
+    {
+        switch(context)
+        {
+            case View:
+                setTitle("Member Information Form");
+                return;
+            case Registeration:
+                setTitle("Member Registeration Form");
+                return;
+            case Update:
+                setTitle("Update Member Information Form");
+                return;
+        }
+    }
+    public void setMember(Member member) {
+        panel.setMember(member);
+    }
+
+    public Member getMember() {
+        return panel.getMember();
+    }
+    
+    public void setContext(InformationPanel.Context context)
+    {
+        panel.setCurrentContext(context);
+        updateTitle(context);
+    }
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -42,7 +85,7 @@ public class MemberFrame extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -51,4 +94,7 @@ public class MemberFrame extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables
+
+    private void updateInformationPanel() {
+    }
 }

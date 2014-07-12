@@ -21,11 +21,16 @@ public class MemberStatementReport extends Report{
     public MemberStatementReport() {
         super(ReportCommand.SubCommandType.StatementsByMember);
         setView(new MemberStatementReportView(this));
-        this.memberID = 1;
+        this.memberID = Integer.MAX_VALUE;
     }
 
     @Override
     public ReportData getData() {
+        if(this.memberID == Integer.MAX_VALUE)
+        {
+            return null;
+        }
+        
         return DatabaseManager.getMemberStatement(memberID);
     }
 

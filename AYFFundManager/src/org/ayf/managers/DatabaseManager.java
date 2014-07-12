@@ -37,18 +37,24 @@ public class DatabaseManager {
     public static final String DONATION_TYPE_TABLE_NAME     = "DonationType";
     public static final String EXPENSE_TYPE_TABLE_NAME      = "ExpenseType";
     public static final String PROFESSION_TYPE_TABLE_NAME   = "ProfessionType";
+    public static final String POSITION_TYPE_TABLE_NAME     = "PositionType";
+    public static final String PAYMENT_MODE_TYPE_TABLE_NAME = "PaymentModeTypes";
+
     public static final String CASHFLOW_STATUS_TYPE_TABLE_NAME    = "CashFlowStatusType";
     public static final String MEMBER_TYPE_TABLE_NAME       = "MemberType";
     public static final String DONATIONS_TABLE_NAME         = "Donations";
     public static final String EXPENSES_TABLE_NAME          = "Expenses";
     public static final String MEMBER_TABLE_NAME            = "Members";
     public static final String CASHFLOWS_TABLE_NAME         = "CashFlows";
-    
+        
     private static ArrayList<Type> PROFESSION_TYPES;
     private static ArrayList<Type> DONATION_TYPES;
     private static ArrayList<Type> MEMBER_TYPES;
     private static ArrayList<Type> EXPENSE_TYPES;
     private static ArrayList<Type> CASHFLOW_TYPES;
+    public static  ArrayList<Type> POSITION_TYPES;
+    public static  ArrayList<Type> PAYMENT_MODE_TYPES;
+    
     
     private static void intializeDatabaseManager()
     {
@@ -195,6 +201,19 @@ public class DatabaseManager {
         return getTypeFromValue(profession, EXPENSE_TYPES);
     }
     
+    
+    public static ArrayList<String> typesToStrings(ArrayList<Type> types)
+    {
+        ArrayList<String> strings = new ArrayList<String>(types.size());
+        
+        for (Type type : types)
+        {
+            strings.add(type.getStringValue());
+        }
+        
+        return strings;
+    }
+    
     private static Type getTypeFromID(int id, ArrayList<Type> types)
     {
         Type returnType = null;
@@ -279,6 +298,26 @@ public class DatabaseManager {
         return PROFESSION_TYPES;  
     }
     
+    public static ArrayList<Type> getPositionTypes()
+    {
+        if(POSITION_TYPES == null)
+        {
+            POSITION_TYPES = getTypesFromTable(POSITION_TYPE_TABLE_NAME);
+        }
+        
+        return POSITION_TYPES;
+    }
+    
+    
+    public static ArrayList<Type> getPaymentModeTypes()
+    {
+        if(PAYMENT_MODE_TYPES == null)
+        {
+            PAYMENT_MODE_TYPES = getTypesFromTable(PAYMENT_MODE_TYPE_TABLE_NAME);
+        }
+        
+        return PAYMENT_MODE_TYPES;
+    }
     
     public static ArrayList<Type> getCashFlowStatusTypes()
     {
@@ -358,18 +397,18 @@ public class DatabaseManager {
                 String  profession      = rs.getString("Profession");
                 Date    dateOfBirth     = rs.getDate("DateOfBirth");
                 String genderString     = rs.getString("Gender");
-                String  maritalStatus   = rs.getString("MaritalStatus");
+                Member.MaritalStatus  maritalStatus   = rs.getString("MaritalStatus").equalsIgnoreCase(Member.MaritalStatus.Married.toString()) ? Member.MaritalStatus.Married : Member.MaritalStatus.Single;
                 String  cast            = rs.getString("Cast");
                 String  subCast         = rs.getString("SubCast");
                 String  district        = rs.getString("District");
                 String  bloodGroup      = rs.getString("BloodGroup");
                 String  education       = rs.getString("Education");
-                String currentStatus    = rs.getString("Status");
+                Member.ActiveStatus currentStatus    = rs.getString("Status").equalsIgnoreCase(Member.ActiveStatus.Active.toString()) ? Member.ActiveStatus.Active : Member.ActiveStatus.Inactive;
                 
-                Member.Gender gender     = genderString != null ? (genderString.equals("Male") ? Member.Gender.Male : Member.Gender.Female) : Member.Gender.Male;
+                Member.Gender gender     = genderString != null ? (genderString.equalsIgnoreCase(Member.Gender.Male.toString())? Member.Gender.Male : Member.Gender.Female) : Member.Gender.Male;
                 String imagePath        = rs.getString("Image");
 
-                members.add(new Member(memberID, firstName, middleName, lastName, dateOfBirth, maritalStatus, cast, subCast, district, bloodGroup, gender, permanentAddress, temporaryAddress, contactNumber, emailAddress, education, getProfessionTypeForName(profession), registerationDate, position, imagePath, currentStatus));
+                members.add(new Member(memberID, firstName, middleName, lastName, dateOfBirth, maritalStatus, cast, subCast, district, bloodGroup, gender, permanentAddress, temporaryAddress, contactNumber, emailAddress, education, profession, registerationDate, position, imagePath, currentStatus));
             }
             
             ps.close();
@@ -420,13 +459,13 @@ public class DatabaseManager {
                 Member.Gender gender    = genderString != null ? (genderString.equals("Male") ? Member.Gender.Male : Member.Gender.Female) : Member.Gender.Male;
                 String imagePath        = rs.getString("Image");
 
-                String  maritalStatus   = rs.getString("MaritalStatus");
+                Member.MaritalStatus  maritalStatus   = rs.getString("MaritalStatus").equalsIgnoreCase(Member.MaritalStatus.Married.toString()) ? Member.MaritalStatus.Married : Member.MaritalStatus.Single;
                 String  cast            = rs.getString("Cast");
                 String  subCast         = rs.getString("SubCast");
                 String  district        = rs.getString("District");
                 String  bloodGroup      = rs.getString("BloodGroup");
                 String  education       = rs.getString("Education");
-                String currentStatus    = rs.getString("Status");
+                Member.ActiveStatus currentStatus    = rs.getString("Status").equalsIgnoreCase(Member.ActiveStatus.Active.toString()) ? Member.ActiveStatus.Active : Member.ActiveStatus.Inactive;
                 
                 if(member != null)
                 {
@@ -434,8 +473,7 @@ public class DatabaseManager {
                     break;
                 }
                 
-                
-                member = new Member(memberID, firstName, middleName, lastName, dateOfBirth, maritalStatus, cast, subCast, district, bloodGroup, gender, permanentAddress, temporaryAddress, contactNumber, emailAddress, education, getProfessionTypeForName(profession), registerationDate, position, imagePath, currentStatus);
+                member = new Member(memberID, firstName, middleName, lastName, dateOfBirth, maritalStatus, cast, subCast, district, bloodGroup, gender, permanentAddress, temporaryAddress, contactNumber, emailAddress, education, profession, registerationDate, position, imagePath, currentStatus);
             }
             
             ps.close();
@@ -496,13 +534,13 @@ public class DatabaseManager {
                 String imagePath        = null;
                 Date registerationDate  = null;
                 String position         = null;
-                String  maritalStatus   = null;
+                Member.MaritalStatus  maritalStatus   = Member.MaritalStatus.Married;
                 String  cast            = null;
                 String  subCast         = null;
                 String  district        = null;
                 String  bloodGroup      = null;
                 String  education       = null;
-                String currentStatus    = null;
+                Member.ActiveStatus currentStatus    = Member.ActiveStatus.Unknown;
                 if(memberID != Integer.MAX_VALUE)
                 {
                     Member member = getMemberWithID(memberID);
@@ -521,7 +559,7 @@ public class DatabaseManager {
                     }
                 }
                 
-                donors.add(new Donor(donationAmount, receiptNumber, donationDate, getDonationTypeForName(donationType), null/*TODO: getPaymentMode()*/ , memberID, firstName, middleName, lastName, dateOfBirth, maritalStatus, cast, subCast, district, bloodGroup, gender, permanentAddress, temporaryAddress, contactNumber, emailAddress, education, getProfessionTypeForName(profession), registerationDate, position, imagePath, currentStatus));
+                donors.add(new Donor(donationAmount, receiptNumber, donationDate, donationType, paymentMode, memberID, firstName, middleName, lastName, dateOfBirth, maritalStatus, cast, subCast, district, bloodGroup, gender, permanentAddress, temporaryAddress, contactNumber, emailAddress, education, profession, registerationDate, position, imagePath, currentStatus));
             }
             
             ps.close();
@@ -560,11 +598,11 @@ public class DatabaseManager {
                 ps.setString(7, member.getEmailAddress());
                 ps.setDate(8, member.getRegisterationDate());
                 ps.setString(9, member.getPosition());
-                ps.setString(10, member.getProfession() != null ? member.getProfession().getStringValue() : null);
+                ps.setString(10, member.getProfession() != null ? member.getProfession() : null);
                 ps.setDate(11, member.getDateOfBirth());
                 ps.setString(12, member.getGender() == Member.Gender.Male ? "Male" : "Female" );
                 ps.setString(13, member.getImagePath());
-                ps.setString(14, member.getMaritalStatus());
+                ps.setString(14, member.getMaritalStatus().toString());
                 ps.setString(15, member.getCast());
                 ps.setString(16, member.getSubCast());
                 ps.setString(17, member.getDistrict());
@@ -605,7 +643,7 @@ public class DatabaseManager {
                 ps.setString(5, donor.getTemporaryAddress());
                 ps.setString(6, donor.getContactNumber());
                 ps.setString(7, donor.getEmailAddress());
-                ps.setString(8, donor.getProfession() != null ? donor.getProfession().getStringValue() : null);
+                ps.setString(8, donor.getProfession() != null ? donor.getProfession() : null);
                 ps.setDate(9, donor.getDateOfBirth());
                 ps.setString(10, donor.getGender() == Member.Gender.Male ? "Male" : "Female" );
                 
@@ -613,8 +651,8 @@ public class DatabaseManager {
                 //Donor attributes
                 ps.setFloat(11, donor.getDonationAmount());
                 ps.setDate(12, donor.getDonationDate());
-                ps.setString(13, donor.getDonationType() != null ? donor.getDonationType().getStringValue() : null);
-                ps.setString(14, donor.getPaymentMode()!= null ? donor.getPaymentMode().getStringValue() : null);
+                ps.setString(13, donor.getDonationType() != null ? donor.getDonationType() : null);
+                ps.setString(14, donor.getPaymentMode()!= null ? donor.getPaymentMode() : null);
                 
                 bDonateSuccess = ps.executeUpdate() > 0;
                 
@@ -794,7 +832,7 @@ public class DatabaseManager {
                 String donationType     = rs.getString("DonationType");
                 String paymentMode      = rs.getString("PaymentMode");
                
-                Donor donation = new Donor(donationAmount, receiptNumber, donationDate, getDonationTypeForName(donationType), null/*TODO*/, memberID, null, null, null, null, null, null, null, null, null, null);
+                Donor donation = new Donor(donationAmount, receiptNumber, donationDate, donationType, paymentMode, memberID, null, null, null, null, null, null, null, null, null, null);
                 rowData.add(donation.getMemberDetailsForLevel(Member.DetailsLevel.MemberStatement));
             }
             

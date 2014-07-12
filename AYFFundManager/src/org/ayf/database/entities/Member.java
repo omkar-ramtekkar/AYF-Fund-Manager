@@ -23,7 +23,7 @@ public class Member {
     String  middleName;
     String  lastName;
     Date    dateOfBirth;
-    String  maritalStatus;
+    MaritalStatus  maritalStatus;
     String  cast;
     String  subCast;
     String  district;
@@ -37,12 +37,12 @@ public class Member {
     String  emailAddress;
     
     String  education;
-    Type    profession;
+    String  profession;
     
     Date    registerationDate;
     String  position;
     String  imagePath;
-    String currentStatus;
+    ActiveStatus currentStatus;
     
     public enum DetailsLevel
     {
@@ -56,8 +56,18 @@ public class Member {
         ContactNumber, EmailAddress, Education, Profession, RegisterationDate, Position,
         ImagePath, ReceiptNumber, Amount, DonationDate, DonationType, PaymentMode, Status
     }
-
-    public Member(int memberID, String firstName, String middleName, String lastName, Date dateOfBirth, String maritalStatus, String cast, String subCast, String district, String bloodGroup, Gender gender, String permanentAddress, String temporaryAddress, String contactNumber, String emailAddress, String education, Type profession, Date registerationDate, String position, String imagePath, String currentStatus) {
+    
+    public enum MaritalStatus
+    {
+        Single, Married
+    }
+    
+    public enum ActiveStatus
+    {
+        Unknown, Active, Inactive
+    }
+    
+    public Member(int memberID, String firstName, String middleName, String lastName, Date dateOfBirth, MaritalStatus maritalStatus, String cast, String subCast, String district, String bloodGroup, Gender gender, String permanentAddress, String temporaryAddress, String contactNumber, String emailAddress, String education, String profession, Date registerationDate, String position, String imagePath, ActiveStatus currentStatus) {
         this.memberID = memberID;
         this.firstName = firstName;
         this.middleName = middleName;
@@ -81,7 +91,7 @@ public class Member {
         this.currentStatus = currentStatus;
     }
 
-    public Member(int memberID, String firstName, String middleName, String lastName, Date dateOfBirth, String maritalStatus, String cast, Gender gender, Date registerationDate, String position, String currentStatus) {
+    public Member(int memberID, String firstName, String middleName, String lastName, Date dateOfBirth, MaritalStatus maritalStatus, String cast, Gender gender, Date registerationDate, String position, ActiveStatus currentStatus) {
         this.memberID = memberID;
         this.firstName = firstName;
         this.middleName = middleName;
@@ -95,7 +105,7 @@ public class Member {
         this.currentStatus = currentStatus;
     }
 
-    public String getMaritalStatus() {
+    public MaritalStatus getMaritalStatus() {
         return maritalStatus;
     }
 
@@ -163,7 +173,7 @@ public class Member {
         return position;
     }
 
-    public Type getProfession() {
+    public String getProfession() {
         return profession;
     }
 
@@ -179,11 +189,11 @@ public class Member {
         return imagePath;
     }
 
-    public String getCurrentStatus() {
+    public ActiveStatus getCurrentStatus() {
         return currentStatus;
     }
 
-    public void setCurrentStatus(String currentStatus) {
+    public void setCurrentStatus(ActiveStatus currentStatus) {
         this.currentStatus = currentStatus;
     }
     
@@ -204,7 +214,7 @@ public class Member {
         this.position = position;
     }
 
-    public void setProfession(Type profession) {
+    public void setProfession(String profession) {
         this.profession = profession;
     }
 
@@ -236,7 +246,7 @@ public class Member {
         this.dateOfBirth = dateOfBirth;
     }
 
-    public void setMaritalStatus(String maritalStatus) {
+    public void setMaritalStatus(MaritalStatus maritalStatus) {
         this.maritalStatus = maritalStatus;
     }
 
@@ -273,7 +283,7 @@ public class Member {
         switch(name)
         {
             case MemberID:
-                return "ID";
+                return "Member ID";
             case FirstName:
                 return "First Name";
             case MiddleName:
@@ -334,7 +344,7 @@ public class Member {
             case DateOfBirth:
                 return getDateOfBirth();
             case MaritalStatus:
-                return getMaritalStatus();
+                return getMaritalStatus().toString();
             case Cast:
                 return getCast();
             case SubCast:
@@ -344,7 +354,7 @@ public class Member {
             case BloodGroup:
                 return getBloodGroup();
             case Gender:
-                return getGender();
+                return getGender().toString();
             case Age:
                 return getAge();
             case PermanentAddress:
@@ -383,13 +393,13 @@ public class Member {
         
         switch(level)
         {
-            case Basic:
-                columnNames.add(getNameForColumnID(ColumnNames.District));
+            case Basic:                
                 columnNames.add(getNameForColumnID(ColumnNames.MaritalStatus));
                 columnNames.add(getNameForColumnID(ColumnNames.ContactNumber));
                 columnNames.add(getNameForColumnID(ColumnNames.EmailAddress));
                 columnNames.add(getNameForColumnID(ColumnNames.Education));
                 columnNames.add(getNameForColumnID(ColumnNames.Profession));
+                columnNames.add(getNameForColumnID(ColumnNames.District));
                 columnNames.add(getNameForColumnID(ColumnNames.RegisterationDate));
                 columnNames.add(getNameForColumnID(ColumnNames.Position));
                 break;
@@ -520,7 +530,7 @@ public class Member {
     
     @Override
     public String toString() {
-        return "Member{" + "memberID=" + memberID + ", firstName=" + firstName + ", middleName=" + middleName + ", lastName=" + lastName + ", dateOfBirth=" + dateOfBirth + ", maritalStatus=" + maritalStatus + ", cast=" + cast + ", subCast=" + subCast + ", district=" + district + ", bloodGroup=" + bloodGroup + ", gender=" + gender + ", age=" + age + ", permanentAddress=" + permanentAddress + ", temporaryAddress=" + temporaryAddress + ", contactNumber=" + contactNumber + ", emailAddress=" + emailAddress + ", education=" + education + ", profession=" + profession + ", registerationDate=" + registerationDate + ", position=" + position + ", imagePath=" + imagePath + '}';
+        return "Member{" + "memberID=" + memberID + ", firstName=" + firstName + ", middleName=" + middleName + ", lastName=" + lastName + ", dateOfBirth=" + dateOfBirth + ", maritalStatus=" + maritalStatus.toString() + ", cast=" + cast + ", subCast=" + subCast + ", district=" + district + ", bloodGroup=" + bloodGroup + ", gender=" + gender + ", age=" + age + ", permanentAddress=" + permanentAddress + ", temporaryAddress=" + temporaryAddress + ", contactNumber=" + contactNumber + ", emailAddress=" + emailAddress + ", education=" + education + ", profession=" + profession + ", registerationDate=" + registerationDate + ", position=" + position + ", imagePath=" + imagePath + '}';
     }
         
 }
