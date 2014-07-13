@@ -18,6 +18,7 @@ import org.ayf.database.entities.Member.Gender;
 import org.ayf.managers.DatabaseManager;
 import org.ayf.managers.ResourceManager;
 import org.ayf.util.DateTime;
+import org.ayf.util.Toast;
 
 /**
  *
@@ -36,6 +37,7 @@ public class InformationPanel extends BackgroundPanel {
     {
         Registeration,
         Update,
+        Search,
         View
     }
     
@@ -361,13 +363,20 @@ public class InformationPanel extends BackgroundPanel {
         updatePanel();
     }
     
-    public Member getMember()
+    public Member getMember(boolean returnNULLIfInvalid, boolean showToast)
     {
-            //header panel
+        boolean isValidMember = true;
+        //header panel
         String imagePath = this.imageLabel.getToolTipText();
 
         //basic information panel
         String firstName = this.firstNameTxt.getText();
+        
+        if(firstName.length() <= 0) 
+        { 
+            if(showToast) Toast.showToast(this.firstNameTxt, "First Name required"); 
+            if(returnNULLIfInvalid) isValidMember = false;; 
+        }
         String middleName = this.middleNameTxt.getText();
         String lastName = this.lastNameTxt.getText();
 
@@ -378,7 +387,12 @@ public class InformationPanel extends BackgroundPanel {
             String month = (String)this.dateOfBirthMonths.getSelectedItem();
             int year = Integer.parseInt(this.dobYear.getText());
             dateOfBirth = DateTime.getDate(day, month, year);
-        } catch(NumberFormatException ex) {}
+        } catch(NumberFormatException ex)
+        { 
+            if(showToast) Toast.showToast(this.dobDate, "Valid Date of Birth required"); 
+            if(returnNULLIfInvalid) isValidMember = false;;
+        }
+        
         
         
         Date registerationDate = null;
@@ -388,13 +402,23 @@ public class InformationPanel extends BackgroundPanel {
             String month = (String)this.registerationMonth.getSelectedItem();
             int year = Integer.parseInt(this.registerationYear.getText());
             registerationDate = DateTime.getDate(day, month, year);
-        } catch(NumberFormatException ex) {}
+        } catch(NumberFormatException ex)
+        { 
+            if(showToast) Toast.showToast(this.registerationDay, "Valid Registeration Date required");
+            if(returnNULLIfInvalid) isValidMember = false;
+        }
         
         Gender gender = Gender.Male;
         
         if(this.genderFemaleButton.isSelected())
         {
             gender = Gender.Female;
+        }
+        
+        if(!this.genderFemaleButton.isSelected() && !this.genderMaleButton.isSelected())
+        {
+            if(showToast) Toast.showToast(this.genderMaleButton, "Select Gender");
+            if(returnNULLIfInvalid) isValidMember = false;
         }
 
         Member.MaritalStatus maritalStatus = Member.MaritalStatus.Married;
@@ -404,6 +428,12 @@ public class InformationPanel extends BackgroundPanel {
             maritalStatus = Member.MaritalStatus.Single;
         }
 
+        if(!this.marritalStatusMarried.isSelected() && !this.marritalStatusSingle.isSelected())
+        {
+            if(showToast) Toast.showToast(this.marritalStatusSingle, "Select Marital Status");
+            if(returnNULLIfInvalid) isValidMember = false;
+        }
+        
         String permanentAddress = this.permanentAddrLine1.getText();
         String permanentCity = this.permanentAddressCityTxt.getText();
 
@@ -412,6 +442,12 @@ public class InformationPanel extends BackgroundPanel {
 
         String emailAddress = this.emailAddressTxt.getText();
         String contactNumber = this.mobileNumberTxt.getText();
+        
+        if(contactNumber.length() <= 0)
+        {
+            if(showToast) Toast.showToast(this.mobileNumberTxt, "Valid contact number required.");
+            if(returnNULLIfInvalid) isValidMember = false;
+        }
         
         String position = (String) this.positionCombo.getSelectedItem();
         
@@ -423,7 +459,14 @@ public class InformationPanel extends BackgroundPanel {
         String cast = this.castTxt.getText();
         String education = this.educationTxt.getText();
         
-        return new Member(Integer.MAX_VALUE, firstName, middleName, lastName, DateTime.toSQLDate(dateOfBirth), maritalStatus, cast, subCast, permanentCity, bloodGroup, gender, permanentAddress, temporaryAddress, contactNumber, emailAddress, education, profession, DateTime.toSQLDate(registerationDate), position, imagePath, Member.ActiveStatus.Unknown);
+        if(isValidMember)
+        {
+            return new Member(Integer.MAX_VALUE, firstName, middleName, lastName, DateTime.toSQLDate(dateOfBirth), maritalStatus, cast, subCast, permanentCity, bloodGroup, gender, permanentAddress, temporaryAddress, contactNumber, emailAddress, education, profession, DateTime.toSQLDate(registerationDate), position, imagePath, Member.ActiveStatus.Unknown);
+        }
+        else
+        {
+            return null;
+        }
     }
 
     /**
