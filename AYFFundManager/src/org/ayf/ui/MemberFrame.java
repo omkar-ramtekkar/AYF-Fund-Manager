@@ -8,8 +8,15 @@ package org.ayf.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Point;
+import java.awt.Toolkit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.SwingUtilities;
 import org.ayf.database.entities.Member;
+import org.ayf.managers.DatabaseManager;
 import org.ayf.ui.BackgroundPanel.BackgroundStyle;
+import org.ayf.util.Toast;
 
 /**
  *
@@ -129,6 +136,32 @@ public class MemberFrame extends javax.swing.JFrame {
     private void actionButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_actionButtonActionPerformed
         // TODO add your handling code here:
         Member member = getMember();
+        if(member != null)
+        {
+            boolean bRegistered = DatabaseManager.registerMember(member);
+            if(bRegistered)
+            {
+                Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+                Point centerPoint = new Point(screenSize.width / 2, screenSize.height/3);
+                this.setVisible(false);
+                Toast.showToast(this.actionButton, "Member registered successfully!", centerPoint, 2000);
+                SwingUtilities.invokeLater(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException ex) {
+                            Logger.getLogger(MemberFrame.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                        finally
+                        {
+                            dispose();
+                        }
+                    }
+                });
+            }
+        }
     }//GEN-LAST:event_actionButtonActionPerformed
 
     private InformationPanel panel;

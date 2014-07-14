@@ -6,10 +6,13 @@
 
 package org.ayf.reports.views;
 
+import java.awt.Point;
 import javax.swing.JTable;
 import org.ayf.models.GenericDefaultTableModel;
+import org.ayf.reports.AllMembersReport;
 import org.ayf.reports.Report;
 import org.ayf.reports.ReportData;
+import org.ayf.util.Toast;
 import org.jdesktop.swingx.prompt.PromptSupport;
 
 /**
@@ -21,9 +24,7 @@ public class AllMemberReportView extends BaseReportView {
     /**
      * Creates new form AllMemberReportView
      */
-    
-    Report report;
-    
+        
     public AllMemberReportView(Report report) {
         super(report);
         initComponents();
@@ -55,6 +56,7 @@ public class AllMemberReportView extends BaseReportView {
         refreshButton = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         allMembersTable = new javax.swing.JTable();
+        memberEditButton = new javax.swing.JButton();
 
         refreshButton.setText("Refresh");
         refreshButton.addActionListener(new java.awt.event.ActionListener() {
@@ -75,6 +77,13 @@ public class AllMemberReportView extends BaseReportView {
         jScrollPane1.setViewportView(allMembersTable);
         allMembersTable.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 
+        memberEditButton.setText("Edit Member Details");
+        memberEditButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                memberEditButtonActionPerformed(evt);
+            }
+        });
+
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -84,9 +93,11 @@ public class AllMemberReportView extends BaseReportView {
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(layout.createSequentialGroup()
                         .add(searchTextField)
-                        .add(18, 18, 18)
-                        .add(refreshButton))
-                    .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 366, Short.MAX_VALUE))
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(refreshButton)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(memberEditButton))
+                    .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 423, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -95,20 +106,52 @@ public class AllMemberReportView extends BaseReportView {
                 .addContainerGap()
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(searchTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(refreshButton))
+                    .add(refreshButton)
+                    .add(memberEditButton))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 210, Short.MAX_VALUE)
+                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 225, Short.MAX_VALUE)
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
 
     private void refreshButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshButtonActionPerformed
         // TODO add your handling code here:
-        if(report != null)
+        if(getReport() != null)
         {
-            report.updateReport();
+            getReport().updateReport();
         }
     }//GEN-LAST:event_refreshButtonActionPerformed
+
+    private void memberEditButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_memberEditButtonActionPerformed
+        
+        JTable reportTable = getReportTable();
+        Point point = reportTable.getLocationOnScreen();
+        point.x += (reportTable.getParent().getWidth() / 2);
+        point.y += (reportTable.getParent().getHeight()/ 2);
+
+        if(this.memberEditButton.getText().equalsIgnoreCase("Save"))
+        {
+            //Save details
+            AllMembersReport allMemberReport = (AllMembersReport) getReport();
+            String toastMessage = "Failed to save";
+            if(allMemberReport != null)
+            {
+                this.memberEditButton.setText("Edit Member Details");
+                if(allMemberReport.saveToDatabase())
+                {
+                    toastMessage = "Details saved successfully!";
+                }
+            }
+            
+            Toast.showToast(this.memberEditButton, toastMessage, point, 2000);
+            
+        }
+        else
+        {
+            this.memberEditButton.setText("Save");
+            Toast.showToast(this.memberEditButton, "Click 'Save' to save details", point, 3000);
+        }
+    }//GEN-LAST:event_memberEditButtonActionPerformed
 
     protected JTable getReportTable()
     {
@@ -118,6 +161,7 @@ public class AllMemberReportView extends BaseReportView {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTable allMembersTable;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JButton memberEditButton;
     private javax.swing.JButton refreshButton;
     private javax.swing.JTextField searchTextField;
     // End of variables declaration//GEN-END:variables

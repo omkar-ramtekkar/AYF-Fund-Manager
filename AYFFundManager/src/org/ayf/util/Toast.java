@@ -52,6 +52,7 @@ public class Toast {
                         tip.setBackground(Color.white);
                         view = PopupFactory.getSharedInstance().getPopup(component, tip , location.x + 30, location.y + component.getHeight() + 5);
                         view.show();
+                        Logger.getLogger(Toast.class.getName()).log(Level.INFO, "Showing Toast: " + message, "");
                         Thread.sleep(duration);
                     } catch (InterruptedException ex) 
                     {
@@ -60,6 +61,7 @@ public class Toast {
                     finally
                     {
                         view.hide();
+                        Logger.getLogger(Toast.class.getName()).log(Level.INFO, "Hiding Toast: " + message, "");
                     }
                 }
             }).start();

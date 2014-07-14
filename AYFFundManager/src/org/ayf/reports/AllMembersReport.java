@@ -38,4 +38,8 @@ public class AllMembersReport extends Report{
         
         return new ReportData(rows, Member.getColumnsForDetailsLevel(Member.DetailsLevel.Basic));
     }    
+
+    public boolean saveToDatabase() {
+        return true;
+    }
 }

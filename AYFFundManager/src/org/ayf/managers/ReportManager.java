@@ -40,7 +40,9 @@ public class ReportManager
     {
         Vector<Report> dashboardReports = new Vector();
         dashboardReports.add(new DonationReport());
+        
         reports.put(ReportCommand.SubCommandType.Dashboard, dashboardReports);
+        
     }
     
     void initializeDetailsReports()

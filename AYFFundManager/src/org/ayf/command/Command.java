@@ -116,6 +116,9 @@ public class Command {
                 return "Statement of Cash Flows";
             case NotificationsMemberSubscription:
                 return "Subscription Reminder";
+            case ExportAsExcel:
+                return "Export As Excel";
+                
                 
                 
             ////////////////// Toolbar ///////////////////

@@ -403,7 +403,12 @@ public class DatabaseManager {
                 String  district        = rs.getString("District");
                 String  bloodGroup      = rs.getString("BloodGroup");
                 String  education       = rs.getString("Education");
-                Member.ActiveStatus currentStatus    = rs.getString("Status").equalsIgnoreCase(Member.ActiveStatus.Active.toString()) ? Member.ActiveStatus.Active : Member.ActiveStatus.Inactive;
+                String status           = rs.getString("Status");
+                Member.ActiveStatus currentStatus = Member.ActiveStatus.Unknown;
+                if(status != null)
+                {
+                    currentStatus = rs.getString("Status").equalsIgnoreCase(Member.ActiveStatus.Active.toString()) ? Member.ActiveStatus.Active : Member.ActiveStatus.Inactive;
+                }
                 
                 Member.Gender gender     = genderString != null ? (genderString.equalsIgnoreCase(Member.Gender.Male.toString())? Member.Gender.Male : Member.Gender.Female) : Member.Gender.Male;
                 String imagePath        = rs.getString("Image");
@@ -586,7 +591,7 @@ public class DatabaseManager {
             {
                 conn = createConnection();
                 
-                String sql = "INSERT INTO "+ MEMBER_TABLE_NAME + " (FirstName, MiddleName, LastName, PermanentAddress, TemporaryAddress, ContactNumber, EmailAddress, RegisterationDate, Position, Profession, DateOfBirth, Gender, Image, MaritalStatus, Cast, SubCast, District, BloodGroup, Education) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                String sql = "INSERT INTO "+ MEMBER_TABLE_NAME + " (FirstName, MiddleName, LastName, PermanentAddress, TemporaryAddress, ContactNumber, EmailAddress, RegisterationDate, Position, Profession, DateOfBirth, Gender, Image, MaritalStatus, Cast, SubCast, District, BloodGroup, Education, Status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
                 PreparedStatement ps = conn.prepareStatement(sql);
 
                 ps.setString(1, member.getFirstName());
@@ -608,6 +613,7 @@ public class DatabaseManager {
                 ps.setString(17, member.getDistrict());
                 ps.setString(18, member.getBloodGroup());
                 ps.setString(19, member.getEducation());
+                ps.setString(20, Member.ActiveStatus.Active.toString());
                 
                 bRegistered = ps.executeUpdate() > 0;
                 conn.commit();
