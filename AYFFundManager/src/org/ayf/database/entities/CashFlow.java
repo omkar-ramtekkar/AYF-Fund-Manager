@@ -89,6 +89,19 @@ public class CashFlow {
         return null;
     }
     
+    public static Vector getColumnIDsForDetailLevel(CashFlow.DetailsLevel level)
+    {
+        Vector columnNames = new Vector(4);
+        columnNames.add((CashFlow.ColumnNames.TransactionID));
+        columnNames.add((CashFlow.ColumnNames.Date));
+        columnNames.add((CashFlow.ColumnNames.CurrentStatus));
+        columnNames.add((CashFlow.ColumnNames.Description));
+        
+        columnNames.trimToSize();
+        
+        return columnNames;
+    }
+    
     public static Vector getColumnsForDetailsLevel(CashFlow.DetailsLevel level)
     {
         Vector columnNames = new Vector(4);
@@ -122,6 +135,6 @@ public class CashFlow {
         Vector columnNames = CashFlow.getColumnsForDetailsLevel(detailsLevel);
         Vector rowData = getTransactionDetailsForLevel(detailsLevel);
         
-        return new ReportData(rowData, columnNames);
+        return new ReportData(rowData, columnNames, getColumnIDsForDetailLevel(detailsLevel));
     }
 }

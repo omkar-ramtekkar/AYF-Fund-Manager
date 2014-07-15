@@ -37,7 +37,7 @@ public class AllCashFlowsReport extends Report{
             rows.add(rowData);
         }
         
-        return new ReportData(rows, CashFlow.getColumnsForDetailsLevel(CashFlow.DetailsLevel.Complete));
+        return new ReportData(rows, CashFlow.getColumnsForDetailsLevel(CashFlow.DetailsLevel.Complete), CashFlow.getColumnIDsForDetailLevel(CashFlow.DetailsLevel.Complete));
     }
     
 }

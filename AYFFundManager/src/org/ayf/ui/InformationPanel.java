@@ -30,8 +30,8 @@ public class InformationPanel extends BackgroundPanel {
      * Creates new form PersonalInformationPanel
      */
     
-    String[] Months = { "Jan", "Feb", "March", "April", "May", "June", "July", "Aug", "Sep", "Oct", "Nov", "Dec" };
-    String[] BloodGroups = {"A+", "B+", "AB+", "O+", "A-", "B-", "AB-", "O-"};
+    public static final String[] Months = { "Jan", "Feb", "March", "April", "May", "June", "July", "Aug", "Sep", "Oct", "Nov", "Dec" };
+    public static final String[] BloodGroups = {"A+", "B+", "AB+", "O+", "A-", "B-", "AB-", "O-"};
     
     public enum Context
     {

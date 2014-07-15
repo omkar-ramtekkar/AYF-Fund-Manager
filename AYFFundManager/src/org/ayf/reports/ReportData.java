@@ -7,6 +7,7 @@
 package org.ayf.reports;
 
 import java.util.Vector;
+import org.ayf.database.entities.Member;
 
 /**
  *
@@ -15,10 +16,12 @@ import java.util.Vector;
 public class ReportData {
     Vector<?> data;
     Vector<Object> columns;
+    Vector<Member.ColumnNames> columnIDs;
 
-    public ReportData(Vector<?> data, Vector<Object> columns) {
+    public ReportData(Vector<?> data, Vector<Object> columns, Vector<Member.ColumnNames> columnIDs) {
         this.data = data;
         this.columns = columns;
+        this.columnIDs = columnIDs;
     }
 
     public Vector<?> getData() {
@@ -27,5 +30,10 @@ public class ReportData {
 
     public Vector<Object> getColumns() {
         return columns;
+    }
+    
+    public Vector<Member.ColumnNames> getColumnIDs()
+    {
+        return this.columnIDs;
     }
 }

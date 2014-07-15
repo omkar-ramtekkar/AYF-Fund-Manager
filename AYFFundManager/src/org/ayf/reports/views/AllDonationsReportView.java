@@ -110,7 +110,7 @@ public class AllDonationsReportView extends BaseReportView {
     {
         if(data != null)
         {
-            this.allMembersTable.setModel(new GenericDefaultTableModel(data.getData(), data.getColumns()));
+            this.allMembersTable.setModel(new GenericDefaultTableModel(data));
             adjustReportTableColumns();
         }
     }

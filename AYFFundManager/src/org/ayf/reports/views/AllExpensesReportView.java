@@ -107,7 +107,7 @@ public class AllExpensesReportView extends BaseReportView {
     public void updateView(ReportData data) {
         if(data != null)
         {
-            this.allExpensesTable.setModel(new GenericDefaultTableModel(data.getData(), data.getColumns()));
+            this.allExpensesTable.setModel(new GenericDefaultTableModel(data));
             adjustReportTableColumns();
         }
     }

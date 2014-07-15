@@ -36,7 +36,7 @@ public class AllMemberReportView extends BaseReportView {
     public void updateView(ReportData data) {
         if(data != null)
         {
-            GenericDefaultTableModel model = new GenericDefaultTableModel(data.getData(), data.getColumns());
+            GenericDefaultTableModel model = new GenericDefaultTableModel(data);
             this.allMembersTable.setModel(model);
 
             adjustReportTableColumns();
@@ -55,7 +55,7 @@ public class AllMemberReportView extends BaseReportView {
         searchTextField = new javax.swing.JTextField();
         refreshButton = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
-        allMembersTable = new javax.swing.JTable();
+        allMembersTable = new ReportTable();
         memberEditButton = new javax.swing.JButton();
 
         refreshButton.setText("Refresh");
@@ -128,7 +128,7 @@ public class AllMemberReportView extends BaseReportView {
         Point point = reportTable.getLocationOnScreen();
         point.x += (reportTable.getParent().getWidth() / 2);
         point.y += (reportTable.getParent().getHeight()/ 2);
-
+        
         if(this.memberEditButton.getText().equalsIgnoreCase("Save"))
         {
             //Save details
@@ -145,11 +145,22 @@ public class AllMemberReportView extends BaseReportView {
             
             Toast.showToast(this.memberEditButton, toastMessage, point, 2000);
             
+            if(getReportTable() instanceof ReportTable)
+            {
+                ReportTable table = (ReportTable) getReportTable();
+                table.setInEditMode(false);
+            }
+            
         }
         else
         {
             this.memberEditButton.setText("Save");
             Toast.showToast(this.memberEditButton, "Click 'Save' to save details", point, 3000);
+            if(getReportTable() instanceof ReportTable)
+            {
+                ReportTable table = (ReportTable) getReportTable();
+                table.setInEditMode(true);
+            }
         }
     }//GEN-LAST:event_memberEditButtonActionPerformed
 

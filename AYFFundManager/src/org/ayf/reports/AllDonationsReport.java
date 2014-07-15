@@ -38,7 +38,7 @@ public class AllDonationsReport extends Report{
             rows.add(rowData);
         }
         
-        return new ReportData(rows, Donor.getColumnsForDetailsLevel(Member.DetailsLevel.OnlyIDAndName));
+        return new ReportData(rows, Donor.getColumnsForDetailsLevel(Member.DetailsLevel.OnlyIDAndName), Donor.getColumnIDsForDetailLevel(Member.DetailsLevel.OnlyIDAndName));
     }
     
 }

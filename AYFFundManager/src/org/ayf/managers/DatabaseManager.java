@@ -720,7 +720,7 @@ public class DatabaseManager {
             if(conn != null) { closeConnection(conn); }
         }
         
-        return new ReportData(rows, columns);
+        return new ReportData(rows, columns, null);
     }
 
     
@@ -855,6 +855,6 @@ public class DatabaseManager {
             if(conn != null) { closeConnection(conn); }
         }
         
-        return new ReportData(rowData, columns);
+        return new ReportData(rowData, columns, Member.getColumnIDsForDetailLevel(Member.DetailsLevel.MemberStatement));
      }
 }

@@ -22,6 +22,7 @@ import javax.swing.table.TableColumnModel;
 import org.ayf.reports.Report;
 import org.ayf.reports.ReportData;
 import org.ayf.ui.BackgroundPanel;
+import org.ayf.util.JTableCellTabbing;
 import org.ayf.util.TableAutoFilterAdapter;
 
 /**
@@ -60,9 +61,9 @@ public abstract class BaseReportView extends BackgroundPanel{
             JTableHeader header = reportTable.getTableHeader();
             header.setFont( header.getFont().deriveFont(Font.BOLD, 13) );
             
-            reportTable.setRowSelectionAllowed(true);
+            JTableCellTabbing.setTabMapping(reportTable);
             reportTable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-            reportTable.setColumnSelectionAllowed(false);
+            reportTable.setColumnSelectionAllowed(false);        
         }                
     }
     

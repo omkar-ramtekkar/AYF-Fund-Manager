@@ -106,7 +106,7 @@ public class AllCashFlowsReportView extends BaseReportView {
     public void updateView(ReportData data) {
         if(data != null)
         {
-            this.allCashFlowsTable.setModel(new GenericDefaultTableModel(data.getData(), data.getColumns()));
+            this.allCashFlowsTable.setModel(new GenericDefaultTableModel(data));
             adjustReportTableColumns();
         }
     }

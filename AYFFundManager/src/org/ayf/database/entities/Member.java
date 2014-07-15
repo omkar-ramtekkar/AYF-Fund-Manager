@@ -15,6 +15,7 @@ import org.ayf.reports.ReportData;
  * @author om
  */
 public class Member {
+
     
     public enum Gender { Male, Female }
     
@@ -43,6 +44,14 @@ public class Member {
     String  position;
     String  imagePath;
     ActiveStatus currentStatus;
+    
+    public enum ColumnEditor
+    {
+        Date,
+        ComboBox,
+        Label,
+        Number
+    }
     
     public enum DetailsLevel
     {
@@ -380,6 +389,96 @@ public class Member {
         return null;
     }
     
+    public static ColumnEditor getColumnEditorTypeForColumnName(ColumnNames columnNames) {
+        switch(columnNames)
+        {
+            case MemberID:
+            case FirstName:
+            case MiddleName:
+            case LastName:
+            case Cast:
+            case SubCast:
+            case District:
+            case Age:
+            case PermanentAddress:
+            case TemporaryAddress:
+            case ContactNumber:
+            case EmailAddress:
+            case Education:
+            case ImagePath:
+                return ColumnEditor.Label;
+                
+            case DateOfBirth:
+            case RegisterationDate:
+            case DonationDate:
+                return ColumnEditor.Date;
+                
+            case MaritalStatus:
+            case BloodGroup:
+            case Gender:
+            case Profession:
+            case Position:
+                return ColumnEditor.ComboBox;
+        }
+        
+        return null;
+    }
+
+    
+    public static Vector getColumnIDsForDetailLevel(DetailsLevel level) {
+        Vector columnNames = new Vector();
+        
+        columnNames.add((ColumnNames.MemberID));
+        columnNames.add((ColumnNames.FirstName));
+        columnNames.add((ColumnNames.MiddleName));
+        columnNames.add((ColumnNames.LastName));
+        columnNames.add((ColumnNames.Gender));
+        columnNames.add((ColumnNames.DateOfBirth));
+        
+        switch(level)
+        {
+            case Basic:                
+                columnNames.add((ColumnNames.MaritalStatus));
+                columnNames.add((ColumnNames.ContactNumber));
+                columnNames.add((ColumnNames.EmailAddress));
+                columnNames.add((ColumnNames.Education));
+                columnNames.add((ColumnNames.Profession));
+                columnNames.add((ColumnNames.District));
+                columnNames.add((ColumnNames.RegisterationDate));
+                columnNames.add((ColumnNames.Position));
+                break;
+            case AllPersonal:
+                columnNames.add((ColumnNames.Age));
+                columnNames.add((ColumnNames.MaritalStatus));
+                columnNames.add((ColumnNames.BloodGroup));
+                columnNames.add((ColumnNames.ContactNumber));
+                columnNames.add((ColumnNames.EmailAddress));
+                columnNames.add((ColumnNames.Education));
+                columnNames.add((ColumnNames.Profession));
+                columnNames.add((ColumnNames.District));
+                columnNames.add((ColumnNames.PermanentAddress));
+                columnNames.add((ColumnNames.TemporaryAddress));
+                break;
+            case AllProfessional:
+                columnNames.add((ColumnNames.ContactNumber));
+                columnNames.add((ColumnNames.EmailAddress));
+                columnNames.add((ColumnNames.Education));
+                columnNames.add((ColumnNames.Profession));
+                break;
+            case AllSocial:
+                columnNames.add((ColumnNames.Education));
+                columnNames.add((ColumnNames.ContactNumber));
+                columnNames.add((ColumnNames.EmailAddress));
+                columnNames.add((ColumnNames.Cast));
+                columnNames.add((ColumnNames.SubCast));                
+                columnNames.add((ColumnNames.RegisterationDate));
+                columnNames.add((ColumnNames.Position));
+                break;
+        }
+        return columnNames;
+    }
+    
+    
     public static Vector getColumnsForDetailsLevel(DetailsLevel level)
     {
         Vector columnNames = new Vector();
@@ -496,7 +595,7 @@ public class Member {
         Vector columnNames = Member.getColumnsForDetailsLevel(detailsLevel);
         Vector rowData = getMemberDetailsForLevel(detailsLevel);
         
-        return new ReportData(rowData, columnNames);
+        return new ReportData(rowData, columnNames, getColumnIDsForDetailLevel(detailsLevel));
     }
     
     @Override

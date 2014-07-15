@@ -123,6 +123,27 @@ public class Donor extends Member
         return columnNames;
     }
     
+    public static Vector getColumnIDsForDetailLevel(DetailsLevel level)
+    {
+        Vector columnIDs = null;
+        if(level != Member.DetailsLevel.MemberStatement)
+        {
+            columnIDs = Member.getColumnIDsForDetailLevel(level);
+        }
+        else
+        {
+            columnIDs = new Vector();
+        }
+        
+        columnIDs.add(getNameForColumnID(ColumnNames.ReceiptNumber));
+        columnIDs.add(getNameForColumnID(ColumnNames.DonationDate));
+        columnIDs.add(getNameForColumnID(ColumnNames.Amount));
+        columnIDs.add(getNameForColumnID(ColumnNames.DonationType));
+        columnIDs.add(getNameForColumnID(ColumnNames.PaymentMode));
+        
+        return columnIDs;
+    }
+    
     @Override
     public Object getValueForField(ColumnNames fieldName)
     {
@@ -176,6 +197,6 @@ public class Donor extends Member
         Vector columnNames = Donor.getColumnsForDetailsLevel(detailsLevel);
         Vector rowData = getMemberDetailsForLevel(detailsLevel);
         
-        return new ReportData(rowData, columnNames);
+        return new ReportData(rowData, columnNames, getColumnIDsForDetailLevel(detailsLevel));
     }
 }

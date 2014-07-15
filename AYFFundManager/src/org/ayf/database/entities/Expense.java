@@ -128,6 +128,23 @@ public class Expense {
         return null;
     }
     
+    public static Vector getColumnIDsForDetailLevel(Expense.DetailsLevel level)
+    {
+        Vector columnNames = new Vector(10);
+        columnNames.add((ColumnNames.ExpenseID));
+        columnNames.add((ColumnNames.ExpenseType));
+        columnNames.add((ColumnNames.Amount));
+        columnNames.add((ColumnNames.Date));
+        columnNames.add((ColumnNames.ResponsibleMemberID));
+        columnNames.add((ColumnNames.ResponsibleMemberName));
+        columnNames.add((ColumnNames.ResponsibleMemberPosition));
+        columnNames.add((ColumnNames.Description));
+        
+        columnNames.trimToSize();
+        
+        return columnNames;
+    }
+    
     public static Vector getColumnsForDetailsLevel(Expense.DetailsLevel level)
     {
         Vector columnNames = new Vector(10);
@@ -169,6 +186,6 @@ public class Expense {
         Vector columnNames = Expense.getColumnsForDetailsLevel(detailsLevel);
         Vector rowData = getExpenseDetailsForLevel(detailsLevel);
         
-        return new ReportData(rowData, columnNames);
+        return new ReportData(rowData, columnNames, getColumnIDsForDetailLevel(detailsLevel));
     }
 }

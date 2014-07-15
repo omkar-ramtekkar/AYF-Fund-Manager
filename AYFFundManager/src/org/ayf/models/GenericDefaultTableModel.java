@@ -8,6 +8,8 @@ package org.ayf.models;
 
 import java.util.Vector;
 import javax.swing.table.DefaultTableModel;
+import org.ayf.database.entities.Member;
+import org.ayf.reports.ReportData;
 
 /**
  *
@@ -15,8 +17,17 @@ import javax.swing.table.DefaultTableModel;
  */
 public class GenericDefaultTableModel extends DefaultTableModel{
 
-    public GenericDefaultTableModel() {
+    ReportData tableData;
+    
+    public GenericDefaultTableModel(ReportData data) {
+        super(data.getData(), data.getColumns());
+        this.tableData = data; 
     }
+
+    public ReportData getTableData() {
+        return tableData;
+    }
+    
 
     public GenericDefaultTableModel(int rowCount, int columnCount) {
         super(rowCount, columnCount);
@@ -48,4 +59,23 @@ public class GenericDefaultTableModel extends DefaultTableModel{
         
         return value;
     }
+
+    @Override
+    public boolean isCellEditable(int row, int column) {
+        
+        if(getTableData().getColumnIDs().get(column).equals(Member.ColumnNames.MemberID))
+        {
+            return false;
+        }
+        else if(getTableData().getColumnIDs().get(column).equals(Member.ColumnNames.ReceiptNumber))
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
+    
+    
 }

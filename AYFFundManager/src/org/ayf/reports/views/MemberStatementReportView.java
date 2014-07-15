@@ -376,7 +376,7 @@ public class MemberStatementReportView extends BaseReportView {
     public void updateView(ReportData data) {
         if(data != null)
         {
-            getReportTable().setModel(new GenericDefaultTableModel(data.getData(), data.getColumns()));
+            getReportTable().setModel(new GenericDefaultTableModel(data));
             adjustReportTableColumns();
             
             if(report != null)

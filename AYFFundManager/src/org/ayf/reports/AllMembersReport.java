@@ -36,7 +36,7 @@ public class AllMembersReport extends Report{
             rows.add(rowData);
         }
         
-        return new ReportData(rows, Member.getColumnsForDetailsLevel(Member.DetailsLevel.Basic));
+        return new ReportData(rows, Member.getColumnsForDetailsLevel(Member.DetailsLevel.Basic), Member.getColumnIDsForDetailLevel(Member.DetailsLevel.Basic));
     }    
 
     public boolean saveToDatabase() {
