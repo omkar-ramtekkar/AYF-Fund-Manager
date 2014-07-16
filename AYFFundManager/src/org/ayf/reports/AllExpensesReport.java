@@ -11,6 +11,7 @@ import java.util.Vector;
 import org.ayf.database.entities.Expense;
 import org.ayf.managers.DatabaseManager;
 import org.ayf.command.ReportCommand;
+import org.ayf.database.entities.BaseEntity;
 import org.ayf.database.entities.Member;
 import org.ayf.database.entities.Member;
 import org.ayf.reports.views.AllExpensesReportView;
@@ -32,16 +33,8 @@ public class AllExpensesReport extends Report{
         
         ArrayList<Expense> expenses = DatabaseManager.getExpenses();
         
-        Vector rows = new Vector(expenses.size());
+        Vector rows = new Vector(expenses);
         
-        for(Expense expense : expenses)
-        {
-            Vector rowData = expense.getExpenseDetailsForLevel(Expense.DetailsLevel.Complete);
-            rows.add(rowData);
-        }
-        
-        return new ReportData(rows, Expense.getColumnsForDetailsLevel(Expense.DetailsLevel.Complete), Expense.getColumnIDsForDetailLevel(Expense.DetailsLevel.Complete));
-        
+        return new ReportData(rows, BaseEntity.DetailsLevel.Complete, Expense.class);
     }
-    
 }

@@ -63,11 +63,11 @@ public class GenericDefaultTableModel extends DefaultTableModel{
     @Override
     public boolean isCellEditable(int row, int column) {
         
-        if(getTableData().getColumnIDs().get(column).equals(Member.ColumnNames.MemberID))
+        if(getTableData().getColumnIDs().get(column).equals(Member.ColumnName.MemberID))
         {
             return false;
         }
-        else if(getTableData().getColumnIDs().get(column).equals(Member.ColumnNames.ReceiptNumber))
+        else if(getTableData().getColumnIDs().get(column).equals(Member.ColumnName.ReceiptNumber))
         {
             return false;
         }

@@ -12,6 +12,7 @@ import org.ayf.database.entities.Donor;
 import org.ayf.database.entities.Member;
 import org.ayf.managers.DatabaseManager;
 import org.ayf.command.ReportCommand;
+import org.ayf.database.entities.BaseEntity;
 import org.ayf.reports.views.AllDonationsReportView;
 
 /**
@@ -30,15 +31,9 @@ public class AllDonationsReport extends Report{
     public ReportData getData() {
         ArrayList<Donor> donors = DatabaseManager.getDonors();
         
-        Vector rows = new Vector(donors.size());
+        Vector rows = new Vector(donors);
         
-        for(Donor donor : donors)
-        {
-            Vector rowData = donor.getMemberDetailsForLevel(Member.DetailsLevel.OnlyIDAndName);
-            rows.add(rowData);
-        }
-        
-        return new ReportData(rows, Donor.getColumnsForDetailsLevel(Member.DetailsLevel.OnlyIDAndName), Donor.getColumnIDsForDetailLevel(Member.DetailsLevel.OnlyIDAndName));
+        return new ReportData(rows, BaseEntity.DetailsLevel.OnlyIDAndName, Donor.class);
     }
     
 }

@@ -23,6 +23,7 @@ import javax.swing.JOptionPane;
 import org.ayf.database.entities.Type;
 import static javax.swing.JOptionPane.ERROR_MESSAGE;
 import net.ucanaccess.jdbc.UcanaccessDriver;
+import org.ayf.database.entities.BaseEntity;
 import org.ayf.database.entities.CashFlow;
 import org.ayf.database.entities.Expense;
 import org.ayf.reports.ReportData;
@@ -680,7 +681,6 @@ public class DatabaseManager {
     
     public static ReportData getDonationBySubscription()
     {
-        boolean bRegistered = false; 
         Connection conn = null;
         
         Vector rows = new Vector();
@@ -720,7 +720,7 @@ public class DatabaseManager {
             if(conn != null) { closeConnection(conn); }
         }
         
-        return new ReportData(rows, columns, null);
+        return new ReportData(rows, columns);
     }
 
     
@@ -816,8 +816,7 @@ public class DatabaseManager {
      {
         Connection conn = null;
     
-        Vector columns = Donor.getColumnsForDetailsLevel(Member.DetailsLevel.MemberStatement);    
-        Vector rowData = new Vector();
+        Vector<BaseEntity> rowData = new Vector<BaseEntity>();
         
         try 
         {
@@ -839,7 +838,7 @@ public class DatabaseManager {
                 String paymentMode      = rs.getString("PaymentMode");
                
                 Donor donation = new Donor(donationAmount, receiptNumber, donationDate, donationType, paymentMode, memberID, null, null, null, null, null, null, null, null, null, null);
-                rowData.add(donation.getMemberDetailsForLevel(Member.DetailsLevel.MemberStatement));
+                rowData.add(donation);
             }
             
             rs.close();
@@ -855,6 +854,6 @@ public class DatabaseManager {
             if(conn != null) { closeConnection(conn); }
         }
         
-        return new ReportData(rowData, columns, Member.getColumnIDsForDetailLevel(Member.DetailsLevel.MemberStatement));
+        return new ReportData(rowData, BaseEntity.DetailsLevel.MemberStatement, Donor.class);
      }
 }

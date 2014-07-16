@@ -14,25 +14,24 @@ import org.ayf.reports.ReportData;
  *
  * @author om
  */
-public class Expense {
+public class Expense extends BaseEntity{
     long id;
     Type expenseType;
     Date date;
     double amount;
     String description;
     Member reponsibleMember; 
-    
-    public enum ColumnNames
-    {
-        ExpenseID, ExpenseType, Date, Amount, Description, ResponsibleMemberID, ResponsibleMemberName, ResponsibleMemberPosition
-    }
-    
-    public enum DetailsLevel
-    {
-        Complete
-    }
-    
 
+    @Override
+    public EditorType getColumnEditorTypeForColumnName(ColumnName columnNames) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    public Expense() {
+    }
+
+    
+    
     public Expense(long id, Type expenseType, Date date, double amount, String description, Member reponsibleMember) {
         this.id = id;
         this.expenseType = expenseType;
@@ -69,7 +68,7 @@ public class Expense {
     }
     
     
-    public static String getNameForColumnID(Expense.ColumnNames name)
+    public static String getNameForColumnID(Expense.ColumnName name)
     {
         switch(name)
         {
@@ -94,7 +93,8 @@ public class Expense {
         return null;
     }
     
-    public Object getValueForField(Expense.ColumnNames fieldName)
+    @Override
+    public Object getValueForField(ColumnName fieldName)
     {
         switch(fieldName)
         {
@@ -128,52 +128,52 @@ public class Expense {
         return null;
     }
     
-    public static Vector getColumnIDsForDetailLevel(Expense.DetailsLevel level)
+    public Vector<ColumnName> getColumnIDsForDetailLevel(DetailsLevel level)
     {
-        Vector columnNames = new Vector(10);
-        columnNames.add((ColumnNames.ExpenseID));
-        columnNames.add((ColumnNames.ExpenseType));
-        columnNames.add((ColumnNames.Amount));
-        columnNames.add((ColumnNames.Date));
-        columnNames.add((ColumnNames.ResponsibleMemberID));
-        columnNames.add((ColumnNames.ResponsibleMemberName));
-        columnNames.add((ColumnNames.ResponsibleMemberPosition));
-        columnNames.add((ColumnNames.Description));
+        Vector<ColumnName> columnNames = new Vector<ColumnName>(10);
+        columnNames.add((ColumnName.ExpenseID));
+        columnNames.add((ColumnName.ExpenseType));
+        columnNames.add((ColumnName.Amount));
+        columnNames.add((ColumnName.Date));
+        columnNames.add((ColumnName.ResponsibleMemberID));
+        columnNames.add((ColumnName.ResponsibleMemberName));
+        columnNames.add((ColumnName.ResponsibleMemberPosition));
+        columnNames.add((ColumnName.Description));
         
         columnNames.trimToSize();
         
         return columnNames;
     }
     
-    public static Vector getColumnsForDetailsLevel(Expense.DetailsLevel level)
+    public Vector getColumnsForDetailsLevel(DetailsLevel level)
     {
         Vector columnNames = new Vector(10);
-        columnNames.add(getNameForColumnID(ColumnNames.ExpenseID));
-        columnNames.add(getNameForColumnID(ColumnNames.ExpenseType));
-        columnNames.add(getNameForColumnID(ColumnNames.Amount));
-        columnNames.add(getNameForColumnID(ColumnNames.Date));
-        columnNames.add(getNameForColumnID(ColumnNames.ResponsibleMemberID));
-        columnNames.add(getNameForColumnID(ColumnNames.ResponsibleMemberName));
-        columnNames.add(getNameForColumnID(ColumnNames.ResponsibleMemberPosition));
-        columnNames.add(getNameForColumnID(ColumnNames.Description));
+        columnNames.add(getNameForColumnID(ColumnName.ExpenseID));
+        columnNames.add(getNameForColumnID(ColumnName.ExpenseType));
+        columnNames.add(getNameForColumnID(ColumnName.Amount));
+        columnNames.add(getNameForColumnID(ColumnName.Date));
+        columnNames.add(getNameForColumnID(ColumnName.ResponsibleMemberID));
+        columnNames.add(getNameForColumnID(ColumnName.ResponsibleMemberName));
+        columnNames.add(getNameForColumnID(ColumnName.ResponsibleMemberPosition));
+        columnNames.add(getNameForColumnID(ColumnName.Description));
         
         columnNames.trimToSize();
         
         return columnNames;
     }
     
-    public Vector getExpenseDetailsForLevel(Expense.DetailsLevel detailLevel)
+    public Vector<Object> toDataArray(DetailsLevel level)
     {
         Vector expenseDetails = new Vector(10);
         
-        expenseDetails.add(getValueForField(ColumnNames.ExpenseID));
-        expenseDetails.add(getValueForField(ColumnNames.ExpenseType));
-        expenseDetails.add(getValueForField(ColumnNames.Amount));
-        expenseDetails.add(getValueForField(ColumnNames.Date));
-        expenseDetails.add(getValueForField(ColumnNames.ResponsibleMemberID));
-        expenseDetails.add(getValueForField(ColumnNames.ResponsibleMemberName));
-        expenseDetails.add(getValueForField(ColumnNames.ResponsibleMemberPosition));
-        expenseDetails.add(getValueForField(ColumnNames.Description));
+        expenseDetails.add(getValueForField(ColumnName.ExpenseID));
+        expenseDetails.add(getValueForField(ColumnName.ExpenseType));
+        expenseDetails.add(getValueForField(ColumnName.Amount));
+        expenseDetails.add(getValueForField(ColumnName.Date));
+        expenseDetails.add(getValueForField(ColumnName.ResponsibleMemberID));
+        expenseDetails.add(getValueForField(ColumnName.ResponsibleMemberName));
+        expenseDetails.add(getValueForField(ColumnName.ResponsibleMemberPosition));
+        expenseDetails.add(getValueForField(ColumnName.Description));
         
         expenseDetails.trimToSize();
         
@@ -181,11 +181,12 @@ public class Expense {
     }
     
     
-    public ReportData getDataForDetails(Expense.DetailsLevel detailsLevel)
+    @Override
+    public ReportData getReportDataForDetails(DetailsLevel detailsLevel)
     {
-        Vector columnNames = Expense.getColumnsForDetailsLevel(detailsLevel);
-        Vector rowData = getExpenseDetailsForLevel(detailsLevel);
+        Vector columnNames = getColumnsForDetailsLevel(detailsLevel);
+        Vector rowData = toDataArray(detailsLevel);
         
-        return new ReportData(rowData, columnNames, getColumnIDsForDetailLevel(detailsLevel));
+        return new ReportData(rowData, columnNames);
     }
 }

@@ -17,10 +17,15 @@ import org.ayf.reports.ReportData;
 public class Donor extends Member
 {
     private float   donationAmount;
-    private final long    receiptNumber;
+    private  long    receiptNumber;
     private Date    donationDate;
     private String    donationType;
     private String    paymentMode;
+
+    public Donor() {
+    }
+    
+    
 
     public Donor(float donationAmount, long receiptNumber, Date donationDate, String donationType, String paymentMode, int memberID, String firstName, String middleName, String lastName, Date dateOfBirth, MaritalStatus maritalStatus, String cast, String subCast, String district, String bloodGroup, Gender gender, String permanentAddress, String temporaryAddress, String contactNumber, String emailAddress, String education, String profession, Date registerationDate, String position, String imagePath, ActiveStatus currentStatus) {
         super(memberID, firstName, middleName, lastName, dateOfBirth, maritalStatus, cast, subCast, district, bloodGroup, gender, permanentAddress, temporaryAddress, contactNumber, emailAddress, education, profession, registerationDate, position, imagePath, currentStatus);
@@ -78,74 +83,51 @@ public class Donor extends Member
     }
 
     
-    public static String getNameForColumnID(ColumnNames name)
-    {
-        String columnName =  Member.getNameForColumnID(name);
-        if(columnName == null)
-        {
-            switch(name)
-            {
-                case ReceiptNumber:
-                    return "Receipt Number";
-                case Amount:
-                    return "Amount";
-                case DonationDate:
-                    return "Donation Date";
-                case DonationType:
-                    return "Donation Type";
-                case PaymentMode:
-                    return "Payment Mode";
-            }
-        }
-        
-        return null;
-    }
-    
-    public static Vector getColumnsForDetailsLevel(DetailsLevel level)
+    public Vector getColumnsForDetailsLevel(DetailsLevel level)
     {
         
         Vector columnNames;
         if(level != Member.DetailsLevel.MemberStatement)
         {
-            columnNames = Member.getColumnsForDetailsLevel(level);
+            columnNames = super.getColumnsForDetailsLevel(level);
         }
         else
         {
             columnNames = new Vector();
         }
         
-        columnNames.add(getNameForColumnID(ColumnNames.ReceiptNumber));
-        columnNames.add(getNameForColumnID(ColumnNames.DonationDate));
-        columnNames.add(getNameForColumnID(ColumnNames.Amount));
-        columnNames.add(getNameForColumnID(ColumnNames.DonationType));
-        columnNames.add(getNameForColumnID(ColumnNames.PaymentMode));
+        columnNames.add(getNameForColumnID(ColumnName.ReceiptNumber));
+        columnNames.add(getNameForColumnID(ColumnName.DonationDate));
+        columnNames.add(getNameForColumnID(ColumnName.Amount));
+        columnNames.add(getNameForColumnID(ColumnName.DonationType));
+        columnNames.add(getNameForColumnID(ColumnName.PaymentMode));
         
         return columnNames;
     }
     
-    public static Vector getColumnIDsForDetailLevel(DetailsLevel level)
+    public Vector<ColumnName> getColumnIDsForDetailLevel(DetailsLevel level)
     {
-        Vector columnIDs = null;
+        Vector<ColumnName> columnIDs = null;
         if(level != Member.DetailsLevel.MemberStatement)
         {
-            columnIDs = Member.getColumnIDsForDetailLevel(level);
+            columnIDs = super.getColumnIDsForDetailLevel(level);
         }
         else
         {
-            columnIDs = new Vector();
+            columnIDs = new Vector<ColumnName>();
         }
         
-        columnIDs.add(getNameForColumnID(ColumnNames.ReceiptNumber));
-        columnIDs.add(getNameForColumnID(ColumnNames.DonationDate));
-        columnIDs.add(getNameForColumnID(ColumnNames.Amount));
-        columnIDs.add(getNameForColumnID(ColumnNames.DonationType));
-        columnIDs.add(getNameForColumnID(ColumnNames.PaymentMode));
+        columnIDs.add((ColumnName.ReceiptNumber));
+        columnIDs.add((ColumnName.DonationDate));
+        columnIDs.add((ColumnName.Amount));
+        columnIDs.add((ColumnName.DonationType));
+        columnIDs.add((ColumnName.PaymentMode));
         
         return columnIDs;
     }
     
     @Override
-    public Object getValueForField(ColumnNames fieldName)
+    public Object getValueForField(ColumnName fieldName)
     {
         Object value = super.getValueForField(fieldName);
         if(value == null)
@@ -169,34 +151,34 @@ public class Donor extends Member
     }
     
     @Override
-    public Vector getMemberDetailsForLevel(DetailsLevel detailLevel)
+    public Vector toDataArray(DetailsLevel detailLevel)
     {
         Vector memberDetails;
         if(detailLevel != Member.DetailsLevel.MemberStatement)
         {
-            memberDetails = super.getMemberDetailsForLevel(detailLevel);
+            memberDetails = super.toDataArray(detailLevel);
         }
         else
         {
             memberDetails = new Vector();
         }
         
-        memberDetails.add(getValueForField(ColumnNames.ReceiptNumber));
-        memberDetails.add(getValueForField(ColumnNames.DonationDate));
-        memberDetails.add(getValueForField(ColumnNames.Amount));
-        memberDetails.add(getValueForField(ColumnNames.DonationType));
-        memberDetails.add(getValueForField(ColumnNames.PaymentMode));
+        memberDetails.add(getValueForField(ColumnName.ReceiptNumber));
+        memberDetails.add(getValueForField(ColumnName.DonationDate));
+        memberDetails.add(getValueForField(ColumnName.Amount));
+        memberDetails.add(getValueForField(ColumnName.DonationType));
+        memberDetails.add(getValueForField(ColumnName.PaymentMode));
 
         return memberDetails;
     }
     
     
     @Override
-    public ReportData getDataForDetails(DetailsLevel detailsLevel)
+    public ReportData getReportDataForDetails(DetailsLevel detailsLevel)
     {
-        Vector columnNames = Donor.getColumnsForDetailsLevel(detailsLevel);
-        Vector rowData = getMemberDetailsForLevel(detailsLevel);
+        Vector<Object> columnNames = getColumnsForDetailsLevel(detailsLevel);
+        Vector<Object> rowData = toDataArray(detailsLevel);
         
-        return new ReportData(rowData, columnNames, getColumnIDsForDetailLevel(detailsLevel));
+        return new ReportData(rowData, columnNames);
     }
 }

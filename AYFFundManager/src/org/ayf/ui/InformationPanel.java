@@ -13,8 +13,8 @@ import java.util.Vector;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
+import org.ayf.database.entities.BaseEntity;
 import org.ayf.database.entities.Member;
-import org.ayf.database.entities.Member.Gender;
 import org.ayf.managers.DatabaseManager;
 import org.ayf.managers.ResourceManager;
 import org.ayf.util.DateTime;
@@ -408,11 +408,11 @@ public class InformationPanel extends BackgroundPanel {
             if(returnNULLIfInvalid) isValidMember = false;
         }
         
-        Gender gender = Gender.Male;
+        BaseEntity.Gender gender = BaseEntity.Gender.Female;
         
         if(this.genderFemaleButton.isSelected())
         {
-            gender = Gender.Female;
+            gender = BaseEntity.Gender.Female;
         }
         
         if(!this.genderFemaleButton.isSelected() && !this.genderMaleButton.isSelected())

@@ -6,10 +6,16 @@
 
 package org.ayf.reports.views;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JComboBox;
 import javax.swing.JTable;
 import javax.swing.table.TableCellEditor;
+import org.ayf.database.entities.BaseEntity;
 import org.ayf.database.entities.Member;
 import org.ayf.models.GenericDefaultTableModel;
 
@@ -21,7 +27,7 @@ public class ReportTable extends JTable{
 
     private boolean isInEditMode = false;
     
-    static final Member.ColumnNames[] columnIDS = Member.ColumnNames.values();
+    static final Member.ColumnName[] columnIDS = Member.ColumnName.values();
     
     @Override
     public boolean isCellEditable(int row, int column) {
@@ -43,21 +49,28 @@ public class ReportTable extends JTable{
             GenericDefaultTableModel model = (GenericDefaultTableModel) getModel();
             if(model != null)
             {
-                Member.ColumnEditor cellEditorType = Member.getColumnEditorTypeForColumnName( model.getTableData().getColumnIDs().get(column));
+                Member.ColumnName columnName = model.getTableData().getColumnIDs().get(column);
+                BaseEntity.EditorType cellEditorType = model.getTableData().getDummyEntity().getColumnEditorTypeForColumnName(columnName);
                 
-                if(cellEditorType == Member.ColumnEditor.Date)
+                if(cellEditorType == Member.EditorType.Date)
                 {
                     return super.getCellEditor(row, column);
                 }
-                else if(cellEditorType == Member.ColumnEditor.ComboBox)
-                {
-                    return new DefaultCellEditor(new JComboBox());
+                else if(cellEditorType == Member.EditorType.ComboBox)
+                {                        
+                    BaseEntity entity = model.getTableData().getDummyEntity();
+                    if(entity != null)
+                    {
+                        return new DefaultCellEditor(new JComboBox((Vector) entity.getAllValuesForColumnName(columnName)));
+                    }
+                    
+                    return null;
                 }
-                else if(cellEditorType == Member.ColumnEditor.Label)
+                else if(cellEditorType == Member.EditorType.Label)
                 {
                     return super.getCellEditor(row, column);
                 }
-                else if(cellEditorType == Member.ColumnEditor.Number)
+                else if(cellEditorType == Member.EditorType.Number)
                 {
                     return super.getCellEditor(row, column);
                 }

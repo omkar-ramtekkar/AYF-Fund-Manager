@@ -11,6 +11,7 @@ import java.util.Vector;
 import org.ayf.database.entities.Member;
 import org.ayf.managers.DatabaseManager;
 import org.ayf.command.ReportCommand;
+import org.ayf.database.entities.BaseEntity;
 import org.ayf.reports.views.AllMemberReportView;
 
 /**
@@ -28,15 +29,9 @@ public class AllMembersReport extends Report{
     public ReportData getData() {
         ArrayList<Member> members = DatabaseManager.getRegisteredMembers();
         
-        Vector rows = new Vector(members.size());
+        Vector rows = new Vector(members);
         
-        for(Member member : members)
-        {
-            Vector rowData = member.getMemberDetailsForLevel(Member.DetailsLevel.Basic);
-            rows.add(rowData);
-        }
-        
-        return new ReportData(rows, Member.getColumnsForDetailsLevel(Member.DetailsLevel.Basic), Member.getColumnIDsForDetailLevel(Member.DetailsLevel.Basic));
+        return new ReportData(rows, BaseEntity.DetailsLevel.Basic, Member.class);
     }    
 
     public boolean saveToDatabase() {

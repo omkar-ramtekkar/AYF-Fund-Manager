@@ -14,22 +14,13 @@ import org.ayf.reports.ReportData;
  *
  * @author om
  */
-public class CashFlow {
+public class CashFlow extends BaseEntity{
     int id;
     Date date;
     Type status;
     String description;
 
-    public enum ColumnNames
-    {
-        TransactionID, Date, CurrentStatus, Description
-    }
     
-    public enum DetailsLevel
-    {
-        Complete
-    }
-
     public CashFlow(int id, Date date, Type status, String description) {
         this.id = id;
         this.date = date;
@@ -55,7 +46,7 @@ public class CashFlow {
     
     
     
-    public static String getNameForColumnID(CashFlow.ColumnNames name)
+    public static String getNameForColumnID(CashFlow.ColumnName name)
     {
         switch(name)
         {
@@ -72,7 +63,7 @@ public class CashFlow {
         return null;
     }
     
-    public Object getValueForField(CashFlow.ColumnNames fieldName)
+    public Object getValueForField(CashFlow.ColumnName fieldName)
     {
         switch(fieldName)
         {
@@ -89,40 +80,41 @@ public class CashFlow {
         return null;
     }
     
-    public static Vector getColumnIDsForDetailLevel(CashFlow.DetailsLevel level)
+    @Override
+    public Vector<ColumnName> getColumnIDsForDetailLevel(CashFlow.DetailsLevel level)
     {
         Vector columnNames = new Vector(4);
-        columnNames.add((CashFlow.ColumnNames.TransactionID));
-        columnNames.add((CashFlow.ColumnNames.Date));
-        columnNames.add((CashFlow.ColumnNames.CurrentStatus));
-        columnNames.add((CashFlow.ColumnNames.Description));
+        columnNames.add((CashFlow.ColumnName.TransactionID));
+        columnNames.add((CashFlow.ColumnName.Date));
+        columnNames.add((CashFlow.ColumnName.CurrentStatus));
+        columnNames.add((CashFlow.ColumnName.Description));
         
         columnNames.trimToSize();
         
         return columnNames;
     }
     
-    public static Vector getColumnsForDetailsLevel(CashFlow.DetailsLevel level)
+    public Vector<Object> getColumnsForDetailsLevel(CashFlow.DetailsLevel level)
     {
         Vector columnNames = new Vector(4);
-        columnNames.add(getNameForColumnID(CashFlow.ColumnNames.TransactionID));
-        columnNames.add(getNameForColumnID(CashFlow.ColumnNames.Date));
-        columnNames.add(getNameForColumnID(CashFlow.ColumnNames.CurrentStatus));
-        columnNames.add(getNameForColumnID(CashFlow.ColumnNames.Description));
+        columnNames.add(getNameForColumnID(CashFlow.ColumnName.TransactionID));
+        columnNames.add(getNameForColumnID(CashFlow.ColumnName.Date));
+        columnNames.add(getNameForColumnID(CashFlow.ColumnName.CurrentStatus));
+        columnNames.add(getNameForColumnID(CashFlow.ColumnName.Description));
         
         columnNames.trimToSize();
         
         return columnNames;
     }
     
-    public Vector getTransactionDetailsForLevel(CashFlow.DetailsLevel detailLevel)
+    public Vector<Object> toDataArray(DetailsLevel level)
     {
         Vector transactionDetails = new Vector(10);
         
-        transactionDetails.add(getValueForField(CashFlow.ColumnNames.TransactionID));
-        transactionDetails.add(getValueForField(CashFlow.ColumnNames.Date));
-        transactionDetails.add(getValueForField(CashFlow.ColumnNames.CurrentStatus));
-        transactionDetails.add(getValueForField(CashFlow.ColumnNames.Description));
+        transactionDetails.add(getValueForField(CashFlow.ColumnName.TransactionID));
+        transactionDetails.add(getValueForField(CashFlow.ColumnName.Date));
+        transactionDetails.add(getValueForField(CashFlow.ColumnName.CurrentStatus));
+        transactionDetails.add(getValueForField(CashFlow.ColumnName.Description));
         
         transactionDetails.trimToSize();
         
@@ -130,11 +122,27 @@ public class CashFlow {
     }
     
     
-    public ReportData getDataForDetails(CashFlow.DetailsLevel detailsLevel)
+    @Override
+    public ReportData getReportDataForDetails(DetailsLevel detailsLevel)
     {
-        Vector columnNames = CashFlow.getColumnsForDetailsLevel(detailsLevel);
-        Vector rowData = getTransactionDetailsForLevel(detailsLevel);
+        Vector<BaseEntity> entity = new Vector<BaseEntity>();
+        entity.add(this);
+        return new ReportData(entity, detailsLevel, this.getClass());
+    }
+
+    @Override
+    public EditorType getColumnEditorTypeForColumnName(ColumnName columnName) {
+        switch(columnName)
+        {
+            case TransactionID:
+            case Description:
+                return EditorType.Label;
+            case Date:
+                return EditorType.Date;
+            case CurrentStatus:
+                return EditorType.ComboBox;
+        }
         
-        return new ReportData(rowData, columnNames, getColumnIDsForDetailLevel(detailsLevel));
+        return null;
     }
 }
