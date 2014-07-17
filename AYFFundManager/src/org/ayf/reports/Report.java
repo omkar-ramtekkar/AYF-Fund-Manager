@@ -8,6 +8,8 @@ package org.ayf.reports;
 
 import javax.swing.SwingUtilities;
 import org.ayf.command.ReportCommand;
+import org.ayf.database.entities.Member;
+import org.ayf.managers.DatabaseManager;
 import org.ayf.reports.views.BaseReportView;
 
 /**
@@ -90,6 +92,16 @@ public abstract class Report {
         }
         
         return true;
+    }
+    
+    public boolean saveReportDataToDatabase(ReportData data)
+    {
+        if(data != null && data.getEntities() != null)
+        {
+            return DatabaseManager.updateEntities(data.getEntities(), data.getDummyEntity().getClass());
+        }
+        
+        return false;
     }
     
     @Override

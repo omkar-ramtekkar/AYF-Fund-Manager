@@ -12,8 +12,6 @@ import org.ayf.database.entities.Expense;
 import org.ayf.managers.DatabaseManager;
 import org.ayf.command.ReportCommand;
 import org.ayf.database.entities.BaseEntity;
-import org.ayf.database.entities.Member;
-import org.ayf.database.entities.Member;
 import org.ayf.reports.views.AllExpensesReportView;
 
 /**
@@ -31,9 +29,9 @@ public class AllExpensesReport extends Report{
     @Override
     public ReportData getData() {
         
-        ArrayList<Expense> expenses = DatabaseManager.getExpenses();
+        ArrayList<BaseEntity> expenses = DatabaseManager.getAllEntities(Expense.class);
         
-        Vector rows = new Vector(expenses);
+        Vector<BaseEntity> rows = new Vector<BaseEntity>(expenses);
         
         return new ReportData(rows, BaseEntity.DetailsLevel.Complete, Expense.class);
     }

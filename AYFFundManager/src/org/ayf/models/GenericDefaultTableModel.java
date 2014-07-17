@@ -75,7 +75,7 @@ public class GenericDefaultTableModel extends DefaultTableModel{
     @Override
     public boolean isCellEditable(int row, int column) {
         
-        if(getTableData().getColumnIDs().get(column).equals(Member.ColumnName.MemberID))
+        if(getTableData().getColumnIDs().get(column).equals(Member.ColumnName.ID))
         {
             return false;
         }

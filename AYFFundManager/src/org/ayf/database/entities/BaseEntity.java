@@ -30,12 +30,12 @@ public abstract class BaseEntity {
     
     public enum DetailsLevel
     {
-        None, OnlyIDAndName, Basic, AllPersonal, AllProfessional, AllSocial,  Complete, MemberStatement  
+        None, OnlyIDAndName, Basic, AllPersonal, AllProfessional, AllSocial,  Complete, MemberStatement, Database  
     }
     
     public enum ColumnName
     {
-        MemberID, FirstName, MiddleName, LastName, DateOfBirth, MaritalStatus, 
+        ID, FirstName, MiddleName, LastName, DateOfBirth, MaritalStatus, 
         Cast, SubCast, District, BloodGroup, Gender, Age, PermanentAddress, TemporaryAddress,
         ContactNumber, EmailAddress, Education, Profession, RegisterationDate, Position,
         ImagePath, ReceiptNumber, DonationDate, DonationType, PaymentMode, Status, ExpenseID, ExpenseType, Date, Amount, Description, ResponsibleMemberID, ResponsibleMemberName, ResponsibleMemberPosition,
@@ -108,4 +108,16 @@ public abstract class BaseEntity {
     public abstract Object getValueForField(ColumnName fieldName);
     public abstract ReportData getReportDataForDetails(DetailsLevel detailsLevel);
     public abstract void setValueForField(ColumnName fieldName, Object value);
+    
+    public int getID() 
+    {
+        return id;
+    }
+    
+    protected void setID(int id)
+    {
+        this.id = id;
+    }
+    
+    private int id;
 }

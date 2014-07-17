@@ -17,8 +17,6 @@ import org.ayf.util.DateTime;
  */
 public class Member extends BaseEntity 
 {
-
-    int     memberID;
     String  firstName;
     String  middleName;
     String  lastName;
@@ -49,7 +47,7 @@ public class Member extends BaseEntity
     
     
     public Member(int memberID, String firstName, String middleName, String lastName, Date dateOfBirth, MaritalStatus maritalStatus, String cast, String subCast, String district, String bloodGroup, Gender gender, String permanentAddress, String temporaryAddress, String contactNumber, String emailAddress, String education, String profession, Date registerationDate, String position, String imagePath, ActiveStatus currentStatus) {
-        this.memberID = memberID;
+        this.setID(memberID);
         this.firstName = firstName;
         this.middleName = middleName;
         this.lastName = lastName;
@@ -73,7 +71,7 @@ public class Member extends BaseEntity
     }
 
     public Member(int memberID, String firstName, String middleName, String lastName, Date dateOfBirth, MaritalStatus maritalStatus, String cast, Gender gender, Date registerationDate, String position, ActiveStatus currentStatus) {
-        this.memberID = memberID;
+        this.setID(memberID);
         this.firstName = firstName;
         this.middleName = middleName;
         this.lastName = lastName;
@@ -110,9 +108,6 @@ public class Member extends BaseEntity
         return education;
     }
 
-    public int getMemberID() {
-        return memberID;
-    }
 
     public String getFirstName() {
         return firstName;
@@ -207,10 +202,6 @@ public class Member extends BaseEntity
         this.imagePath = imagePath;
     }
 
-    public void setMemberID(int memberID) {
-        this.memberID = memberID;
-    }
-
     public void setFirstName(String firstName) {
         this.firstName = firstName;
     }
@@ -263,7 +254,7 @@ public class Member extends BaseEntity
     {
         switch(name)
         {
-            case MemberID:
+            case ID:
                 return "Member ID";
             case FirstName:
                 return "First Name";
@@ -324,8 +315,8 @@ public class Member extends BaseEntity
     {
         switch(fieldName)
         {
-            case MemberID:
-                return getMemberID();
+            case ID:
+                return getID();
             case FirstName:
                 return getFirstName();
             case MiddleName:
@@ -375,7 +366,7 @@ public class Member extends BaseEntity
     public  EditorType getColumnEditorTypeForColumnName(ColumnName columnNames) {
         switch(columnNames)
         {
-            case MemberID:
+            case ID:
             case FirstName:
             case MiddleName:
             case LastName:
@@ -412,7 +403,7 @@ public class Member extends BaseEntity
     public Vector<ColumnName> getColumnIDsForDetailLevel(DetailsLevel level) {
         Vector<ColumnName> columnNames = new Vector<ColumnName>(20);
         
-        columnNames.add((ColumnName.MemberID));
+        columnNames.add((ColumnName.ID));
         columnNames.add((ColumnName.FirstName));
         columnNames.add((ColumnName.MiddleName));
         columnNames.add((ColumnName.LastName));
@@ -458,6 +449,21 @@ public class Member extends BaseEntity
                 columnNames.add((ColumnName.RegisterationDate));
                 columnNames.add((ColumnName.Position));
                 break;
+            case Database:
+                columnNames.remove(ColumnName.ID);
+                columnNames.add((ColumnName.MaritalStatus));
+                columnNames.add((ColumnName.ContactNumber));
+                columnNames.add((ColumnName.EmailAddress));
+                columnNames.add((ColumnName.Education));
+                columnNames.add((ColumnName.Profession));
+                columnNames.add((ColumnName.District));
+                columnNames.add((ColumnName.RegisterationDate));
+                columnNames.add((ColumnName.Position));
+                columnNames.add((ColumnName.Cast));
+                columnNames.add((ColumnName.SubCast)); 
+                //columnNames.add(getNameForColumnID(ColumnName.ImagePath)); 
+                columnNames.add((ColumnName.BloodGroup));
+                columnNames.add((ColumnName.Status));
         }
         
         columnNames.trimToSize();
@@ -469,7 +475,7 @@ public class Member extends BaseEntity
     {
         Vector columnNames = new Vector(20);
         
-        columnNames.add(getNameForColumnID(ColumnName.MemberID));
+        columnNames.add(getNameForColumnID(ColumnName.ID));
         columnNames.add(getNameForColumnID(ColumnName.FirstName));
         columnNames.add(getNameForColumnID(ColumnName.MiddleName));
         columnNames.add(getNameForColumnID(ColumnName.LastName));
@@ -515,7 +521,23 @@ public class Member extends BaseEntity
                 columnNames.add(getNameForColumnID(ColumnName.RegisterationDate));
                 columnNames.add(getNameForColumnID(ColumnName.Position));
                 break;
+            case Database:
+                //columnNames.remove(memberID);
+                columnNames.add(getNameForColumnID(ColumnName.MaritalStatus));
+                columnNames.add(getNameForColumnID(ColumnName.ContactNumber));
+                columnNames.add(getNameForColumnID(ColumnName.EmailAddress));
+                columnNames.add(getNameForColumnID(ColumnName.Education));
+                columnNames.add(getNameForColumnID(ColumnName.Profession));
+                columnNames.add(getNameForColumnID(ColumnName.District));
+                columnNames.add(getNameForColumnID(ColumnName.RegisterationDate));
+                columnNames.add(getNameForColumnID(ColumnName.Position));
+                columnNames.add(getNameForColumnID(ColumnName.Cast));
+                columnNames.add(getNameForColumnID(ColumnName.SubCast)); 
+                columnNames.add(getNameForColumnID(ColumnName.ImagePath)); 
+                columnNames.add(getNameForColumnID(ColumnName.BloodGroup));
+                columnNames.add(getNameForColumnID(ColumnName.Status));
         }
+        
         columnNames.trimToSize();
         
         return columnNames;
@@ -525,7 +547,7 @@ public class Member extends BaseEntity
     {
         Vector memberDetails = new Vector(20);
         
-        memberDetails.add(getValueForField(ColumnName.MemberID));
+        memberDetails.add(getValueForField(ColumnName.ID));
         memberDetails.add(getValueForField(ColumnName.FirstName));
         memberDetails.add(getValueForField(ColumnName.MiddleName));
         memberDetails.add(getValueForField(ColumnName.LastName));
@@ -590,7 +612,7 @@ public class Member extends BaseEntity
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 47 * hash + this.memberID;
+        hash = 47 * hash + this.getID();
         hash = 47 * hash + (this.dateOfBirth != null ? this.dateOfBirth.hashCode() : 0);
         hash = 47 * hash + (this.gender != null ? this.gender.hashCode() : 0);
         return hash;
@@ -607,7 +629,7 @@ public class Member extends BaseEntity
             return false;
         }
         final Member other = (Member) obj;
-        if (this.memberID != other.memberID) {
+        if (this.getID() != other.getID()) {
             return false;
         }
         if (this.dateOfBirth.equals(other.dateOfBirth)) {
@@ -618,7 +640,7 @@ public class Member extends BaseEntity
     
     @Override
     public String toString() {
-        return "Member{" + "memberID=" + memberID + ", firstName=" + firstName + ", middleName=" + middleName + ", lastName=" + lastName + ", dateOfBirth=" + dateOfBirth + ", maritalStatus=" + maritalStatus.toString() + ", cast=" + cast + ", subCast=" + subCast + ", district=" + district + ", bloodGroup=" + bloodGroup + ", gender=" + gender + ", age=" + age + ", permanentAddress=" + permanentAddress + ", temporaryAddress=" + temporaryAddress + ", contactNumber=" + contactNumber + ", emailAddress=" + emailAddress + ", education=" + education + ", profession=" + profession + ", registerationDate=" + registerationDate + ", position=" + position + ", imagePath=" + imagePath + '}';
+        return "Member{" + "memberID=" + getID() + ", firstName=" + firstName + ", middleName=" + middleName + ", lastName=" + lastName + ", dateOfBirth=" + dateOfBirth + ", maritalStatus=" + maritalStatus.toString() + ", cast=" + cast + ", subCast=" + subCast + ", district=" + district + ", bloodGroup=" + bloodGroup + ", gender=" + gender + ", age=" + age + ", permanentAddress=" + permanentAddress + ", temporaryAddress=" + temporaryAddress + ", contactNumber=" + contactNumber + ", emailAddress=" + emailAddress + ", education=" + education + ", profession=" + profession + ", registerationDate=" + registerationDate + ", position=" + position + ", imagePath=" + imagePath + '}';
     }
 
     @Override

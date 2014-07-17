@@ -136,7 +136,7 @@ public class AllMemberReportView extends BaseReportView {
             if(allMemberReport != null)
             {
                 this.memberEditButton.setText("Edit Member Details");
-                if(allMemberReport.saveToDatabase())
+                if(saveReportDataToDatabase())
                 {
                     toastMessage = "Details saved successfully!";
                 }

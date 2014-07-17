@@ -23,7 +23,6 @@ public class AYFMain {
     public static void main(String[] args) {
         try 
         {
-            DatabaseManager.getRegisteredMembers();
             UIManager.setLookAndFeel("com.seaglasslookandfeel.SeaGlassLookAndFeel");
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(AYFMain.class.getName()).log(Level.SEVERE, null, ex);

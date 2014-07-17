@@ -27,14 +27,10 @@ public class AllMembersReport extends Report{
 
     @Override
     public ReportData getData() {
-        ArrayList<Member> members = DatabaseManager.getRegisteredMembers();
+        ArrayList<BaseEntity> members = DatabaseManager.getAllEntities(Member.class);
         
-        Vector rows = new Vector(members);
+        Vector<BaseEntity> rows = new Vector<BaseEntity>(members);
         
         return new ReportData(rows, BaseEntity.DetailsLevel.Basic, Member.class);
-    }    
-
-    public boolean saveToDatabase() {
-        return true;
     }
 }

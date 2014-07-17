@@ -28,9 +28,9 @@ public class AllCashFlowsReport extends Report{
 
     @Override
     public ReportData getData() {
-        ArrayList<CashFlow> cashFlows = DatabaseManager.getCashFlows();
+        ArrayList<BaseEntity> cashFlows = DatabaseManager.getAllEntities(CashFlow.class);
         
-        Vector rows = new Vector(cashFlows);
+        Vector<BaseEntity> rows = new Vector<BaseEntity>(cashFlows);
         
         return new ReportData(rows, BaseEntity.DetailsLevel.Complete, CashFlow.class);
     }

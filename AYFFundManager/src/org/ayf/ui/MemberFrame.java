@@ -10,9 +10,11 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Toolkit;
+import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.SwingUtilities;
+import org.ayf.database.entities.BaseEntity;
 import org.ayf.database.entities.Member;
 import org.ayf.managers.DatabaseManager;
 import org.ayf.ui.BackgroundPanel.BackgroundStyle;
@@ -138,7 +140,9 @@ public class MemberFrame extends javax.swing.JFrame {
         Member member = getMember();
         if(member != null)
         {
-            boolean bRegistered = DatabaseManager.registerMember(member);
+            Vector<BaseEntity> entity = new Vector<BaseEntity>();
+            entity.add(member);
+            boolean bRegistered = DatabaseManager.insertEntity(entity, Member.class);
             if(bRegistered)
             {
                 Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();

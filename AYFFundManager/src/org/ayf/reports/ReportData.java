@@ -19,15 +19,15 @@ import org.ayf.database.entities.BaseEntity.DetailsLevel;
  */
 public class ReportData 
 {
-    Vector<Object> data;
-    Vector<Object> columns;
+    protected Vector<Object> data;
+    protected Vector<Object> columns;
     //TDS cert.
     
-    DetailsLevel detailLevel;
-    Vector<BaseEntity> entities;
+    protected DetailsLevel detailLevel;
+    protected Vector<BaseEntity> entities;
     
-    Vector<ColumnName> columnIDs;
-    BaseEntity dummyEntity;
+    protected Vector<ColumnName> columnIDs;
+    protected BaseEntity dummyEntity;
     
 
     public ReportData(Vector<BaseEntity> data, DetailsLevel detailLevel, Class<?> entityClass) {

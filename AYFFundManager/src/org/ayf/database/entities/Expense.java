@@ -133,7 +133,7 @@ public class Expense extends BaseEntity{
             case ResponsibleMemberID:
                 if(getReponsibleMember() != null)
                 {
-                    return getReponsibleMember().getMemberID();
+                    return getReponsibleMember().getID();
                 }
                 return Integer.MAX_VALUE;
             case ResponsibleMemberName:

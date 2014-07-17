@@ -19,6 +19,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumnModel;
+import org.ayf.models.GenericDefaultTableModel;
 import org.ayf.reports.Report;
 import org.ayf.reports.ReportData;
 import org.ayf.ui.BackgroundPanel;
@@ -174,5 +175,20 @@ public abstract class BaseReportView extends BackgroundPanel{
         {
             report.updateReport();
         }
+    }
+    
+    public boolean saveReportDataToDatabase()
+    {
+        JTable table = getReportTable();
+        if(table != null && getReport() != null)
+        {
+            if(table.getModel() instanceof GenericDefaultTableModel)
+            {
+                GenericDefaultTableModel model = (GenericDefaultTableModel) table.getModel();
+                return getReport().saveReportDataToDatabase(model.getTableData());
+            }
+        }
+        
+        return false;
     }
 }
