@@ -9,6 +9,7 @@ package org.ayf.database.entities;
 import java.sql.Date;
 import java.util.Vector;
 import org.ayf.reports.ReportData;
+import org.ayf.util.DateTime;
 
 /**
  *
@@ -81,6 +82,8 @@ public class Donor extends Member
     public void setPaymentMode(String paymentMode) {
         this.paymentMode = paymentMode;
     }
+    
+    
 
     
     public Vector getColumnsForDetailsLevel(DetailsLevel level)
@@ -149,6 +152,30 @@ public class Donor extends Member
         
         return value;
     }
+
+    @Override
+    public void setValueForField(ColumnName fieldName, Object value) {
+        
+        switch(fieldName)
+        {
+            case Amount:
+                setDonationAmount(Double.valueOf(value.toString()).floatValue());
+                break;
+            case DonationDate:
+                setDonationDate(DateTime.toSQLDate((String)value));
+                break;
+            case DonationType:
+                setDonationType((String) value);
+                break;
+            case PaymentMode:
+                setPaymentMode((String) value);
+                break;
+            default:
+                super.setValueForField(fieldName, value);
+        }
+    }
+    
+    
     
     @Override
     public Vector toDataArray(DetailsLevel detailLevel)

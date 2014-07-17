@@ -9,6 +9,7 @@ package org.ayf.database.entities;
 import java.sql.Date;
 import java.util.Vector;
 import org.ayf.reports.ReportData;
+import org.ayf.util.DateTime;
 
 /**
  *
@@ -16,7 +17,7 @@ import org.ayf.reports.ReportData;
  */
 public class Expense extends BaseEntity{
     long id;
-    Type expenseType;
+    String expenseType;
     Date date;
     double amount;
     String description;
@@ -32,7 +33,7 @@ public class Expense extends BaseEntity{
 
     
     
-    public Expense(long id, Type expenseType, Date date, double amount, String description, Member reponsibleMember) {
+    public Expense(long id, String expenseType, Date date, double amount, String description, Member reponsibleMember) {
         this.id = id;
         this.expenseType = expenseType;
         this.date = date;
@@ -47,7 +48,7 @@ public class Expense extends BaseEntity{
         return id;
     }
 
-    public Type getExpenseType() {
+    public String getExpenseType() {
         return expenseType;
     }
 
@@ -66,6 +67,27 @@ public class Expense extends BaseEntity{
     public Member getReponsibleMember() {
         return reponsibleMember;
     }
+
+    public void setExpenseType(String expenseType) {
+        this.expenseType = expenseType;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
+
+    public void setAmount(double amount) {
+        this.amount = amount;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setReponsibleMember(Member reponsibleMember) {
+        this.reponsibleMember = reponsibleMember;
+    }
+    
     
     
     public static String getNameForColumnID(Expense.ColumnName name)
@@ -113,6 +135,7 @@ public class Expense extends BaseEntity{
                 {
                     return getReponsibleMember().getMemberID();
                 }
+                return Integer.MAX_VALUE;
             case ResponsibleMemberName:
                 if(getReponsibleMember() != null)
                 {
@@ -126,6 +149,23 @@ public class Expense extends BaseEntity{
         }
         
         return null;
+    }
+    
+    public void setValueForField(ColumnName fieldName, Object value)
+    {
+        switch(fieldName)
+        {
+            case ExpenseType:
+                setExpenseType((String) value);
+            case Date:
+                setDate(DateTime.toSQLDate((String)value));
+            case Amount:
+                setAmount((Double.valueOf(value.toString())));
+            case Description:
+                setDescription((String) value);
+            case ResponsibleMemberID:
+                break;
+        }
     }
     
     public Vector<ColumnName> getColumnIDsForDetailLevel(DetailsLevel level)

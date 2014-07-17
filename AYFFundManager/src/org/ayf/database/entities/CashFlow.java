@@ -9,6 +9,7 @@ package org.ayf.database.entities;
 import java.sql.Date;
 import java.util.Vector;
 import org.ayf.reports.ReportData;
+import org.ayf.util.DateTime;
 
 /**
  *
@@ -17,11 +18,11 @@ import org.ayf.reports.ReportData;
 public class CashFlow extends BaseEntity{
     int id;
     Date date;
-    Type status;
+    String status;
     String description;
 
     
-    public CashFlow(int id, Date date, Type status, String description) {
+    public CashFlow(int id, Date date, String status, String description) {
         this.id = id;
         this.date = date;
         this.status = status;
@@ -36,13 +37,30 @@ public class CashFlow extends BaseEntity{
         return date;
     }
 
-    public Type getStatus() {
+    public String getStatus() {
         return status;
     }
 
     public String getDescription() {
         return description;
     }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+    
     
     
     
@@ -78,6 +96,19 @@ public class CashFlow extends BaseEntity{
         }
         
         return null;
+    }
+    
+    public void setValueForField(ColumnName fieldName, Object value)
+    {
+        switch(fieldName)
+        {
+            case Date:
+                setDate(DateTime.toSQLDate((String)value));
+            case CurrentStatus:
+                setStatus((String) value);;
+            case Description:
+                setDescription((String)value);
+        }
     }
     
     @Override

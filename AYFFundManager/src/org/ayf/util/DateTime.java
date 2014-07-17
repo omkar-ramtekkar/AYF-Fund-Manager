@@ -7,9 +7,13 @@
 package org.ayf.util;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -19,6 +23,8 @@ public class DateTime {
    
     private static final DateFormat timeFormat = new SimpleDateFormat("hh:mm:ss");
     private static final DateFormat dateFormat = new SimpleDateFormat(" dd-MMM-yyyy ");
+    
+        public static final String[] Months = { "Jan", "Feb", "March", "April", "May", "June", "July", "Aug", "Sep", "Oct", "Nov", "Dec" };
 
     public static String getFormattedDate()
     {
@@ -70,53 +76,14 @@ public class DateTime {
     public static Date getDate(int day, String month, int year)
     {
         int monthIndex = -1;
-        if(month.equalsIgnoreCase("jan"))
+        
+        for (int i=0; i<Months.length; ++i)
         {
-            monthIndex = 1;
-        }
-        else if(month.equalsIgnoreCase("feb"))
-        {
-            monthIndex = 2;
-        }
-        else if(month.equalsIgnoreCase("mar"))
-        {
-            monthIndex = 3;
-        }
-        else if(month.equalsIgnoreCase("april"))
-        {
-            monthIndex = 4;
-        }
-        else if(month.equalsIgnoreCase("may"))
-        {
-            monthIndex = 5;
-        }
-        else if(month.equalsIgnoreCase("june"))
-        {
-            monthIndex = 6;
-        }
-        else if(month.equalsIgnoreCase("july"))
-        {
-            monthIndex = 7;
-        }
-        else if(month.equalsIgnoreCase("aug"))
-        {
-            monthIndex = 8;
-        }
-        else if(month.equalsIgnoreCase("sep"))
-        {
-            monthIndex = 9;
-        }
-        else if(month.equalsIgnoreCase("oct"))
-        {
-            monthIndex = 10;
-        }
-        else if(month.equalsIgnoreCase("nov"))
-        {
-            monthIndex = 11;
-        }
-        else if(month.equalsIgnoreCase("dec"))
-        {
-            monthIndex = 12;
+            if(Months[i].equalsIgnoreCase(month))
+            {
+                monthIndex = i + 1;
+                break;
+            }
         }
         
         return getDate(day, monthIndex, year);
@@ -127,5 +94,39 @@ public class DateTime {
         if(date == null) return null;
         
         return new java.sql.Date(date.getTime());
+    }
+    
+    public static java.sql.Date toSQLDate(String dateString)
+    {
+        java.sql.Date date = null;
+        if(dateString != null && dateString.length() > 0)
+        {
+            try {
+                date = toSQLDate(dateFormat.parse(dateString));
+                return date;
+            } catch (ParseException ex) {}
+            
+            try {
+                date = toSQLDate(new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH).parse(dateString));
+                return date;
+            } catch (ParseException ex) {}
+            
+            try {
+                date = toSQLDate(new SimpleDateFormat("dd-MM-yy", Locale.ENGLISH).parse(dateString));
+                return date;
+            } catch (ParseException ex) {}
+            
+            try {
+                date = toSQLDate(new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH).parse(dateString));
+                return date;
+            } catch (ParseException ex) {}
+            
+            try {
+                date = toSQLDate(new SimpleDateFormat("dd/MMM/yyyy", Locale.ENGLISH).parse(dateString));
+                return date;
+            } catch (ParseException ex) {}
+        }
+        
+        return null;
     }
 }

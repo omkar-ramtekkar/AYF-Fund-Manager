@@ -107,4 +107,5 @@ public abstract class BaseEntity {
     public abstract Vector<Object> toDataArray(DetailsLevel level);
     public abstract Object getValueForField(ColumnName fieldName);
     public abstract ReportData getReportDataForDetails(DetailsLevel detailsLevel);
+    public abstract void setValueForField(ColumnName fieldName, Object value);
 }

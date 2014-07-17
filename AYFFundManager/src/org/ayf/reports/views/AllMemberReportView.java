@@ -123,11 +123,10 @@ public class AllMemberReportView extends BaseReportView {
     }//GEN-LAST:event_refreshButtonActionPerformed
 
     private void memberEditButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_memberEditButtonActionPerformed
+        Point point = new Point();
+        point.x = (int) this.jScrollPane1.getVisibleRect().getCenterX();
+        point.y = (int) this.jScrollPane1.getVisibleRect().getCenterY();
         
-        JTable reportTable = getReportTable();
-        Point point = reportTable.getLocationOnScreen();
-        point.x += (reportTable.getParent().getWidth() / 2);
-        point.y += (reportTable.getParent().getHeight()/ 2);
         
         if(this.memberEditButton.getText().equalsIgnoreCase("Save"))
         {
@@ -144,23 +143,13 @@ public class AllMemberReportView extends BaseReportView {
             }
             
             Toast.showToast(this.memberEditButton, toastMessage, point, 2000);
-            
-            if(getReportTable() instanceof ReportTable)
-            {
-                ReportTable table = (ReportTable) getReportTable();
-                table.setInEditMode(false);
-            }
-            
+            finishEditingReportTable();
         }
         else
         {
             this.memberEditButton.setText("Save");
             Toast.showToast(this.memberEditButton, "Click 'Save' to save details", point, 3000);
-            if(getReportTable() instanceof ReportTable)
-            {
-                ReportTable table = (ReportTable) getReportTable();
-                table.setInEditMode(true);
-            }
+            startEditingReportTable();
         }
     }//GEN-LAST:event_memberEditButtonActionPerformed
 

@@ -55,7 +55,7 @@ public class DonationReportView extends BaseReportView {
 
         jLabel1 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        reportTable = new javax.swing.JTable();
+        reportTable = new ReportTable();
         jLabel3 = new javax.swing.JLabel();
         refreshButton = new javax.swing.JButton();
 
@@ -65,13 +65,10 @@ public class DonationReportView extends BaseReportView {
 
         reportTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+
             }
         ));
         jScrollPane1.setViewportView(reportTable);

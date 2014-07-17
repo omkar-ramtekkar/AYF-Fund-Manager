@@ -40,7 +40,7 @@ public class AllCashFlowsReportView extends BaseReportView {
         searchTextField = new javax.swing.JTextField();
         refreshButton = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
-        allCashFlowsTable = new javax.swing.JTable();
+        allCashFlowsTable = new ReportTable();
 
         refreshButton.setText("Refresh");
         refreshButton.addActionListener(new java.awt.event.ActionListener() {

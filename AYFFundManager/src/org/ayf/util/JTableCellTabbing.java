@@ -13,6 +13,7 @@ import javax.swing.ActionMap;
 import javax.swing.InputMap;
 import javax.swing.JTable;
 import javax.swing.KeyStroke;
+import org.ayf.reports.views.ReportTable;
 
 /**
  *
@@ -75,7 +76,14 @@ public class JTableCellTabbing {
 
                 // Move cell selection
                 table.changeSelection(row, col, false, false);
-                table.editCellAt(row, col);
+                if(table instanceof ReportTable)
+                {
+                    ReportTable reportTable = (ReportTable) table;
+                    if(reportTable.isInEditMode())
+                    {
+                        reportTable.editCellAt(row, col);
+                    }
+                }
             }            
         });
 
@@ -114,7 +122,14 @@ public class JTableCellTabbing {
 
                 // Move cell selection
                 table.changeSelection(row, col, false, false);
-                table.editCellAt(row, col);
+                if(table instanceof ReportTable)
+                {
+                    ReportTable reportTable = (ReportTable) table;
+                    if(reportTable.isInEditMode())
+                    {
+                        reportTable.editCellAt(row, col);
+                    }
+                }
             }            
         }); 
     }

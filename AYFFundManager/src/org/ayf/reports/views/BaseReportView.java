@@ -67,6 +67,29 @@ public abstract class BaseReportView extends BackgroundPanel{
         }                
     }
     
+    protected void startEditingReportTable()
+    {
+        if(getReportTable() instanceof ReportTable)
+        {
+            ReportTable table = (ReportTable) getReportTable();
+            table.setInEditMode(true);
+            table.changeSelection(table.getSelectedRow(), 0, false, false);
+        }
+    }
+    
+    protected void finishEditingReportTable()
+    {
+        if(getReportTable() instanceof ReportTable)
+        {
+            ReportTable table = (ReportTable) getReportTable();
+            table.setInEditMode(false);
+            if(table.isEditing())
+            {
+                table.getCellEditor().stopCellEditing();
+            }
+        }
+    }
+    
     
     public abstract void updateView(ReportData data);
     

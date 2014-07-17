@@ -9,6 +9,7 @@ package org.ayf.database.entities;
 import java.sql.Date;
 import java.util.Vector;
 import org.ayf.reports.ReportData;
+import org.ayf.util.DateTime;
 
 /**
  *
@@ -334,7 +335,7 @@ public class Member extends BaseEntity
             case DateOfBirth:
                 return getDateOfBirth();
             case MaritalStatus:
-                return getMaritalStatus().toString();
+                return getMaritalStatus();
             case Cast:
                 return getCast();
             case SubCast:
@@ -344,7 +345,7 @@ public class Member extends BaseEntity
             case BloodGroup:
                 return getBloodGroup();
             case Gender:
-                return getGender().toString();
+                return getGender();
             case Age:
                 return getAge();
             case PermanentAddress:
@@ -618,6 +619,70 @@ public class Member extends BaseEntity
     @Override
     public String toString() {
         return "Member{" + "memberID=" + memberID + ", firstName=" + firstName + ", middleName=" + middleName + ", lastName=" + lastName + ", dateOfBirth=" + dateOfBirth + ", maritalStatus=" + maritalStatus.toString() + ", cast=" + cast + ", subCast=" + subCast + ", district=" + district + ", bloodGroup=" + bloodGroup + ", gender=" + gender + ", age=" + age + ", permanentAddress=" + permanentAddress + ", temporaryAddress=" + temporaryAddress + ", contactNumber=" + contactNumber + ", emailAddress=" + emailAddress + ", education=" + education + ", profession=" + profession + ", registerationDate=" + registerationDate + ", position=" + position + ", imagePath=" + imagePath + '}';
+    }
+
+    @Override
+    public void setValueForField(ColumnName fieldName, Object value) {
+        switch(fieldName)
+        {
+             case FirstName:
+                setFirstName((String) value);
+                 break;
+            case MiddleName:
+                setMiddleName((String) value);
+                break;
+            case LastName:
+                setLastName((String) value);
+                break;
+            case DateOfBirth:
+                setDateOfBirth(DateTime.toSQLDate((String)value));
+                break;
+            case MaritalStatus:
+                setMaritalStatus(MaritalStatus.valueOf(value.toString()));
+                break;
+            case Cast:
+                setCast((String) value);
+                break;
+            case SubCast:
+                setSubCast((String) value);
+                break;
+            case District:
+                setDistrict((String) value);
+                break;
+            case BloodGroup:
+                setBloodGroup((String) value);
+                break;
+            case Gender:
+                setGender(Gender.valueOf(value.toString()));
+                break;
+            case PermanentAddress:
+                setPermanentAddress((String) value);
+                break;
+            case TemporaryAddress:
+                setTemporaryAddress((String) value);
+                break;
+            case ContactNumber:
+                setContactNumber((String) value);
+                break;
+            case EmailAddress:
+                setEmailAddress((String) value);
+                break;
+            case Education:
+                setEducation((String) value);
+                break;
+            case Profession:
+                setProfession((String) value);
+                break;
+            case RegisterationDate:
+                setRegisterationDate(DateTime.toSQLDate((String)value));
+                break;
+            case Position:
+                setPosition((String) value);
+                break;
+            case ImagePath:
+                setImagePath((String) value);
+                break;
+        }
     }
         
 }

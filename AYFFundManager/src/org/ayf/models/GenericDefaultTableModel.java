@@ -8,6 +8,7 @@ package org.ayf.models;
 
 import java.util.Vector;
 import javax.swing.table.DefaultTableModel;
+import org.ayf.database.entities.BaseEntity;
 import org.ayf.database.entities.Member;
 import org.ayf.reports.ReportData;
 
@@ -58,6 +59,17 @@ public class GenericDefaultTableModel extends DefaultTableModel{
         }
         
         return value;
+    }
+    
+    @Override
+    public void setValueAt(Object aValue, int row, int column) {
+        super.setValueAt(aValue, row, column);
+        
+        if(this.getTableData().getEntities() != null)
+        {
+            BaseEntity entity = this.getTableData().getEntities().get(row);
+            entity.setValueForField(getTableData().getColumnIDs().get(column), aValue);
+        }
     }
 
     @Override

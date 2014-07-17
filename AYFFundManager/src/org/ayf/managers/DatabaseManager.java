@@ -754,7 +754,7 @@ public class DatabaseManager {
                     member = getMemberWithID(memberID);
                 }
                 
-                expenses.add(new Expense(expenseID, getExpenseTypeForName(expenseType), date, amount, description, member));
+                expenses.add(new Expense(expenseID, expenseType, date, amount, description, member));
             }
             
             ps.close();
@@ -795,7 +795,7 @@ public class DatabaseManager {
                 String  status          = rs.getString("Status");
                 String  description     = rs.getString("Description");
                 
-                cashFlows.add(new CashFlow(expenseID, date, getCashFlowTypeForName(status), description));
+                cashFlows.add(new CashFlow(expenseID, date, status, description));
             }
             
             ps.close();

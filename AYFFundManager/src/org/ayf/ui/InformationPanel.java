@@ -30,7 +30,6 @@ public class InformationPanel extends BackgroundPanel {
      * Creates new form PersonalInformationPanel
      */
     
-    public static final String[] Months = { "Jan", "Feb", "March", "April", "May", "June", "July", "Aug", "Sep", "Oct", "Nov", "Dec" };
     public static final String[] BloodGroups = {"A+", "B+", "AB+", "O+", "A-", "B-", "AB-", "O-"};
     
     public enum Context
@@ -223,12 +222,12 @@ public class InformationPanel extends BackgroundPanel {
             Vector<String> dobMonth = new Vector<String>();
             if(getCurrentContext() == Context.View)
             {
-                dobMonth.add(Months[DateTime.getMonth(member.getDateOfBirth())]);
+                dobMonth.add(DateTime.Months[DateTime.getMonth(member.getDateOfBirth())]);
                 setDateOfBirthMonthComboBox(dobMonth);
             }
             else
             {
-                dobMonth.addAll(Arrays.asList(Months));
+                dobMonth.addAll(Arrays.asList(DateTime.Months));
                 setDateOfBirthMonthComboBox(dobMonth);            
                 this.dateOfBirthMonths.setSelectedIndex(DateTime.getMonth(member.getDateOfBirth()));
             }
@@ -239,12 +238,12 @@ public class InformationPanel extends BackgroundPanel {
             Vector<String> registerationMonth = new Vector<String>(1);
             if(getCurrentContext() == Context.View)
             {
-                registerationMonth.add(Months[DateTime.getMonth(member.getRegisterationDate())]);
+                registerationMonth.add(DateTime.Months[DateTime.getMonth(member.getRegisterationDate())]);
                 setRegisterationMonthComboBox(registerationMonth);
             }
             else
             {
-                registerationMonth.addAll(Arrays.asList(Months));
+                registerationMonth.addAll(Arrays.asList(DateTime.Months));
                 setRegisterationMonthComboBox(registerationMonth);
                 this.registerationMonth.setSelectedIndex(DateTime.getMonth(member.getRegisterationDate()));
             }
@@ -349,8 +348,8 @@ public class InformationPanel extends BackgroundPanel {
             }
             
             setBloodGroups(new Vector<String>(Arrays.asList(BloodGroups)));
-            setRegisterationMonthComboBox(new Vector<String>(Arrays.asList(Months)));
-            setDateOfBirthMonthComboBox(new Vector<String>(Arrays.asList(Months)));
+            setRegisterationMonthComboBox(new Vector<String>(Arrays.asList(DateTime.Months)));
+            setDateOfBirthMonthComboBox(new Vector<String>(Arrays.asList(DateTime.Months)));
             setPositionTypes(new Vector<String>(DatabaseManager.typesToStrings(DatabaseManager.getPositionTypes())));
             setProfessionTypes(new Vector<String>(DatabaseManager.typesToStrings(DatabaseManager.getProfessionTypes())));
         }
