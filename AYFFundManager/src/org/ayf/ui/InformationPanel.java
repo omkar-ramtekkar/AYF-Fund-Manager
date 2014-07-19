@@ -373,7 +373,7 @@ public class InformationPanel extends BackgroundPanel {
         
         if(firstName.length() <= 0) 
         { 
-            if(showToast) Toast.showToast(this.firstNameTxt, "First Name required"); 
+            if(showToast) Toast.showToast(this.firstNameTxt, "First Name required", false); 
             if(returnNULLIfInvalid) isValidMember = false;; 
         }
         String middleName = this.middleNameTxt.getText();
@@ -388,7 +388,7 @@ public class InformationPanel extends BackgroundPanel {
             dateOfBirth = DateTime.getDate(day, month, year);
         } catch(NumberFormatException ex)
         { 
-            if(showToast) Toast.showToast(this.dobDate, "Valid Date of Birth required"); 
+            if(showToast) Toast.showToast(this.dobDate, "Valid Date of Birth required", false); 
             if(returnNULLIfInvalid) isValidMember = false;;
         }
         
@@ -403,7 +403,7 @@ public class InformationPanel extends BackgroundPanel {
             registerationDate = DateTime.getDate(day, month, year);
         } catch(NumberFormatException ex)
         { 
-            if(showToast) Toast.showToast(this.registerationDay, "Valid Registeration Date required");
+            if(showToast) Toast.showToast(this.registerationDay, "Valid Registeration Date required", false);
             if(returnNULLIfInvalid) isValidMember = false;
         }
         
@@ -416,7 +416,7 @@ public class InformationPanel extends BackgroundPanel {
         
         if(!this.genderFemaleButton.isSelected() && !this.genderMaleButton.isSelected())
         {
-            if(showToast) Toast.showToast(this.genderMaleButton, "Select Gender");
+            if(showToast) Toast.showToast(this.genderMaleButton, "Select Gender", false);
             if(returnNULLIfInvalid) isValidMember = false;
         }
 
@@ -429,7 +429,7 @@ public class InformationPanel extends BackgroundPanel {
 
         if(!this.marritalStatusMarried.isSelected() && !this.marritalStatusSingle.isSelected())
         {
-            if(showToast) Toast.showToast(this.marritalStatusSingle, "Select Marital Status");
+            if(showToast) Toast.showToast(this.marritalStatusSingle, "Select Marital Status", false);
             if(returnNULLIfInvalid) isValidMember = false;
         }
         
@@ -444,7 +444,7 @@ public class InformationPanel extends BackgroundPanel {
         
         if(contactNumber.length() <= 0)
         {
-            if(showToast) Toast.showToast(this.mobileNumberTxt, "Valid contact number required.");
+            if(showToast) Toast.showToast(this.mobileNumberTxt, "Valid contact number required.", false);
             if(returnNULLIfInvalid) isValidMember = false;
         }
         
@@ -1181,11 +1181,11 @@ public class InformationPanel extends BackgroundPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void genderMaleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_genderMaleButtonActionPerformed
-        
+        this.genderFemaleButton.setSelected(false);
     }//GEN-LAST:event_genderMaleButtonActionPerformed
 
     private void genderFemaleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_genderFemaleButtonActionPerformed
-        
+        this.genderMaleButton.setSelected(false);
     }//GEN-LAST:event_genderFemaleButtonActionPerformed
 
     private void permanentAddressLine2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_permanentAddressLine2ActionPerformed
@@ -1217,11 +1217,11 @@ public class InformationPanel extends BackgroundPanel {
     }//GEN-LAST:event_temporaryAddressLine1ActionPerformed
 
     private void marritalStatusSingleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_marritalStatusSingleActionPerformed
-        
+        this.marritalStatusMarried.setSelected(false);
     }//GEN-LAST:event_marritalStatusSingleActionPerformed
 
     private void marritalStatusMarriedActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_marritalStatusMarriedActionPerformed
-        
+        this.marritalStatusSingle.setSelected(false);
     }//GEN-LAST:event_marritalStatusMarriedActionPerformed
 
     private void imageLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_imageLabelMouseClicked

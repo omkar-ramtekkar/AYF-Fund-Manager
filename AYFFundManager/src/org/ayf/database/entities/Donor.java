@@ -7,6 +7,7 @@
 package org.ayf.database.entities;
 
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.Vector;
 import org.ayf.reports.ReportData;
 import org.ayf.util.DateTime;
@@ -88,22 +89,43 @@ public class Donor extends Member
     
     public Vector getColumnsForDetailsLevel(DetailsLevel level)
     {
-        
-        Vector columnNames;
-        if(level != Member.DetailsLevel.MemberStatement)
+        Vector columnNames = new Vector();
+        switch(level)
         {
-            columnNames = super.getColumnsForDetailsLevel(level);
+            case Database:
+                columnNames.add(getNameForColumnID(ColumnName.MemberID));
+                columnNames.add(getNameForColumnID(ColumnName.FirstName));
+                columnNames.add(getNameForColumnID(ColumnName.MiddleName));
+                columnNames.add(getNameForColumnID(ColumnName.LastName));
+                columnNames.add(getNameForColumnID(ColumnName.PermanentAddress));
+                columnNames.add(getNameForColumnID(ColumnName.TemporaryAddress));
+                columnNames.add(getNameForColumnID(ColumnName.ContactNumber));
+                columnNames.add(getNameForColumnID(ColumnName.EmailAddress));
+                columnNames.add(getNameForColumnID(ColumnName.Profession));
+                columnNames.add(getNameForColumnID(ColumnName.DateOfBirth));
+                columnNames.add(getNameForColumnID(ColumnName.Gender));
+                columnNames.add(getNameForColumnID(ColumnName.ReceiptNumber));
+                columnNames.add(getNameForColumnID(ColumnName.DonationDate));
+                columnNames.add(getNameForColumnID(ColumnName.Amount));
+                columnNames.add(getNameForColumnID(ColumnName.DonationType));
+                columnNames.add(getNameForColumnID(ColumnName.PaymentMode));
+                break;
+            default:
+            {
+                if(level != Member.DetailsLevel.MemberStatement)
+                {
+                    columnNames = super.getColumnsForDetailsLevel(level);
+                }
+                
+                columnNames.add(getNameForColumnID(ColumnName.ReceiptNumber));
+                columnNames.add(getNameForColumnID(ColumnName.DonationDate));
+                columnNames.add(getNameForColumnID(ColumnName.Amount));
+                columnNames.add(getNameForColumnID(ColumnName.DonationType));
+                columnNames.add(getNameForColumnID(ColumnName.PaymentMode));
+
+                return columnNames;
+            }
         }
-        else
-        {
-            columnNames = new Vector();
-        }
-        
-        columnNames.add(getNameForColumnID(ColumnName.ReceiptNumber));
-        columnNames.add(getNameForColumnID(ColumnName.DonationDate));
-        columnNames.add(getNameForColumnID(ColumnName.Amount));
-        columnNames.add(getNameForColumnID(ColumnName.DonationType));
-        columnNames.add(getNameForColumnID(ColumnName.PaymentMode));
         
         return columnNames;
     }
@@ -132,25 +154,23 @@ public class Donor extends Member
     @Override
     public Object getValueForField(ColumnName fieldName)
     {
-        Object value = super.getValueForField(fieldName);
-        if(value == null)
+        switch(fieldName)
         {
-            switch(fieldName)
-            {
-                case ReceiptNumber:
-                    return getReceiptNumber();
-                case Amount:
-                    return getDonationAmount();
-                case DonationDate:
-                    return getDonationDate();
-                case DonationType:
-                    return getDonationType();
-                case PaymentMode:
-                    return getPaymentMode();
-            }
+            case ReceiptNumber:
+                return getReceiptNumber();
+            case Amount:
+                return getDonationAmount();
+            case DonationDate:
+                return getDonationDate();
+            case DonationType:
+                return getDonationType();
+            case PaymentMode:
+                return getPaymentMode();
+            default:
+                super.getValueForField(fieldName);
         }
         
-        return value;
+        return null;
     }
 
     @Override
@@ -162,7 +182,18 @@ public class Donor extends Member
                 setDonationAmount(Double.valueOf(value.toString()).floatValue());
                 break;
             case DonationDate:
-                setDonationDate(DateTime.toSQLDate((String)value));
+                if(value instanceof Date)
+                {
+                    setDonationDate((Date) value);
+                }
+                else if(value instanceof Timestamp)
+                {
+                    setDonationDate((new Date(((Timestamp)value).getTime())));
+                }
+                else
+                {
+                    setDonationDate(DateTime.toSQLDate((String)value));
+                }
                 break;
             case DonationType:
                 setDonationType((String) value);

@@ -6,7 +6,6 @@
 
 package org.ayf.reports.views;
 
-import java.awt.Point;
 import javax.swing.JTable;
 import org.ayf.models.GenericDefaultTableModel;
 import org.ayf.reports.AllMembersReport;
@@ -123,32 +122,30 @@ public class AllMemberReportView extends BaseReportView {
     }//GEN-LAST:event_refreshButtonActionPerformed
 
     private void memberEditButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_memberEditButtonActionPerformed
-        Point point = new Point();
-        point.x = (int) this.jScrollPane1.getVisibleRect().getCenterX();
-        point.y = (int) this.jScrollPane1.getVisibleRect().getCenterY();
-        
         
         if(this.memberEditButton.getText().equalsIgnoreCase("Save"))
         {
             //Save details
             AllMembersReport allMemberReport = (AllMembersReport) getReport();
             String toastMessage = "Failed to save";
+            boolean success = false;
             if(allMemberReport != null)
             {
                 this.memberEditButton.setText("Edit Member Details");
                 if(saveReportDataToDatabase())
                 {
                     toastMessage = "Details saved successfully!";
+                    success = true;
                 }
             }
             
-            Toast.showToast(this.memberEditButton, toastMessage, point, 2000);
+            Toast.showToast(this.memberEditButton, toastMessage, success);
             finishEditingReportTable();
         }
         else
         {
             this.memberEditButton.setText("Save");
-            Toast.showToast(this.memberEditButton, "Click 'Save' to save details", point, 3000);
+            Toast.showToast(this.memberEditButton, "Click 'Save' to save details", true);
             startEditingReportTable();
         }
     }//GEN-LAST:event_memberEditButtonActionPerformed

@@ -7,6 +7,7 @@
 package org.ayf.database.entities;
 
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.Vector;
 import org.ayf.reports.ReportData;
 import org.ayf.util.DateTime;
@@ -103,11 +104,27 @@ public class CashFlow extends BaseEntity{
         switch(fieldName)
         {
             case Date:
-                setDate(DateTime.toSQLDate((String)value));
+                if(value instanceof Date)
+                {
+                    setDate((Date) value);
+                }
+                else if(value instanceof Timestamp)
+                {
+                    setDate((new Date(((Timestamp)value).getTime())));
+                }
+                else
+                {
+                    setDate(DateTime.toSQLDate((String)value));
+                }
+                break;
             case CurrentStatus:
-                setStatus((String) value);;
+                setStatus((String) value);
+                break;
             case Description:
                 setDescription((String)value);
+                break;
+            default:
+                super.setValueForField(fieldName, value);
         }
     }
     

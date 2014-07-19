@@ -39,7 +39,7 @@ public abstract class BaseEntity {
         Cast, SubCast, District, BloodGroup, Gender, Age, PermanentAddress, TemporaryAddress,
         ContactNumber, EmailAddress, Education, Profession, RegisterationDate, Position,
         ImagePath, ReceiptNumber, DonationDate, DonationType, PaymentMode, Status, ExpenseID, ExpenseType, Date, Amount, Description, ResponsibleMemberID, ResponsibleMemberName, ResponsibleMemberPosition,
-        TransactionID, CurrentStatus
+        TransactionID, CurrentStatus, MemberID
         
     }
     
@@ -107,7 +107,15 @@ public abstract class BaseEntity {
     public abstract Vector<Object> toDataArray(DetailsLevel level);
     public abstract Object getValueForField(ColumnName fieldName);
     public abstract ReportData getReportDataForDetails(DetailsLevel detailsLevel);
-    public abstract void setValueForField(ColumnName fieldName, Object value);
+    
+    public void setValueForField(ColumnName fieldName, Object value)
+    {
+        switch(fieldName)
+        {
+            case ID:
+                setID(Integer.valueOf(value.toString()));
+        }
+    }
     
     public int getID() 
     {

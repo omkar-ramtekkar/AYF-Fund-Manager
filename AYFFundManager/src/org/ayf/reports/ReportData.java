@@ -113,4 +113,15 @@ public class ReportData
     public BaseEntity getDummyEntity() {
         return this.dummyEntity;
     }
+    
+    public Object getEntityValue(int row, int column)
+    {
+        if(getEntities() != null)
+        {
+            ColumnName columnName = getColumnIDs().get(column);
+            return getEntities().get(row).getValueForField(columnName);
+        }
+        
+        return null;
+    }
 }

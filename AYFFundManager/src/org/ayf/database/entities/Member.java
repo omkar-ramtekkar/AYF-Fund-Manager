@@ -7,6 +7,7 @@
 package org.ayf.database.entities;
 
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.Vector;
 import org.ayf.reports.ReportData;
 import org.ayf.util.DateTime;
@@ -83,6 +84,18 @@ public class Member extends BaseEntity
         this.position = position;
         this.currentStatus = currentStatus;
     }
+
+    @Override
+    protected void setID(int id) {
+        super.setID(id); //To change body of generated methods, choose Tools | Templates.
+        
+        if(id != Integer.MAX_VALUE) //Valid ID
+        {
+            //TODO initialize member
+        }
+    }
+    
+    
 
     public MaritalStatus getMaritalStatus() {
         return maritalStatus;
@@ -461,7 +474,9 @@ public class Member extends BaseEntity
                 columnNames.add((ColumnName.Position));
                 columnNames.add((ColumnName.Cast));
                 columnNames.add((ColumnName.SubCast)); 
-                //columnNames.add(getNameForColumnID(ColumnName.ImagePath)); 
+                columnNames.add((ColumnName.ImagePath)); 
+                columnNames.add((ColumnName.PermanentAddress));
+                columnNames.add((ColumnName.TemporaryAddress));
                 columnNames.add((ColumnName.BloodGroup));
                 columnNames.add((ColumnName.Status));
         }
@@ -657,7 +672,18 @@ public class Member extends BaseEntity
                 setLastName((String) value);
                 break;
             case DateOfBirth:
-                setDateOfBirth(DateTime.toSQLDate((String)value));
+                if(value instanceof Date)
+                {
+                    setDateOfBirth((Date) value);
+                }
+                else if(value instanceof Timestamp)
+                {
+                    setDateOfBirth((new Date(((Timestamp)value).getTime())));
+                }
+                else
+                {
+                    setDateOfBirth(DateTime.toSQLDate((String)value));
+                }
                 break;
             case MaritalStatus:
                 setMaritalStatus(MaritalStatus.valueOf(value.toString()));
@@ -696,7 +722,18 @@ public class Member extends BaseEntity
                 setProfession((String) value);
                 break;
             case RegisterationDate:
-                setRegisterationDate(DateTime.toSQLDate((String)value));
+                if(value instanceof Date)
+                {
+                    setRegisterationDate((Date) value);
+                }
+                else if(value instanceof Timestamp)
+                {
+                    setRegisterationDate((new Date(((Timestamp)value).getTime())));
+                }
+                else
+                {
+                    setRegisterationDate(DateTime.toSQLDate((String)value));
+                }
                 break;
             case Position:
                 setPosition((String) value);
@@ -704,6 +741,8 @@ public class Member extends BaseEntity
             case ImagePath:
                 setImagePath((String) value);
                 break;
+            default:
+                super.setValueForField(fieldName, value);
         }
     }
         

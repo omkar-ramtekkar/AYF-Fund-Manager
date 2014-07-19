@@ -8,7 +8,6 @@ package org.ayf.reports;
 
 import javax.swing.SwingUtilities;
 import org.ayf.command.ReportCommand;
-import org.ayf.database.entities.Member;
 import org.ayf.managers.DatabaseManager;
 import org.ayf.reports.views.BaseReportView;
 
@@ -98,7 +97,11 @@ public abstract class Report {
     {
         if(data != null && data.getEntities() != null)
         {
-            return DatabaseManager.updateEntities(data.getEntities(), data.getDummyEntity().getClass());
+            if(DatabaseManager.updateEntities(data.getEntities(), data.getDummyEntity().getClass()))
+            {
+                updateReport();
+                return true;
+            }
         }
         
         return false;

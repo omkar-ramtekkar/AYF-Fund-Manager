@@ -634,6 +634,9 @@ public class DatabaseManager {
                             }catch(Exception ex){ ex.printStackTrace(); }
                         }
                         
+                        int id = rs.getInt(BaseEntity.ColumnName.ID.toString());
+                        
+                        entity.setValueForField(BaseEntity.ColumnName.ID, id);
                         entities.add(entity);
                     }
                     
@@ -739,7 +742,7 @@ public class DatabaseManager {
                         {
                             ps.setFloat(i, (Long) value);
                         }
-                        else if(value instanceof Date)
+                        else if(value instanceof Date || columnName.toString().contains("Date"))
                         {
                             ps.setDate(i, (Date) value);
                         }
@@ -751,7 +754,7 @@ public class DatabaseManager {
                             }
                             else
                             {
-                                ps.setString(i, null);
+                                ps.setString(i, "");
                             }
                         }
                         

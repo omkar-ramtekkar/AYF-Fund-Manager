@@ -142,13 +142,13 @@ public class MemberFrame extends javax.swing.JFrame {
         {
             Vector<BaseEntity> entity = new Vector<BaseEntity>();
             entity.add(member);
-            boolean bRegistered = DatabaseManager.insertEntity(entity, Member.class);
+            boolean bRegistered = DatabaseManager.insertEntities(entity, Member.class);
             if(bRegistered)
             {
                 Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
                 Point centerPoint = new Point(screenSize.width / 2, screenSize.height/3);
                 this.setVisible(false);
-                Toast.showToast(this.actionButton, "Member registered successfully!", centerPoint, 2000);
+                Toast.showToast("Member registered successfully!", centerPoint, true);
                 SwingUtilities.invokeLater(new Runnable() {
 
                     @Override

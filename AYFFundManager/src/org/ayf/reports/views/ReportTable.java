@@ -6,14 +6,19 @@
 
 package org.ayf.reports.views;
 
+import java.awt.Label;
+import java.awt.Point;
 import java.util.Vector;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JComboBox;
+import javax.swing.JLabel;
 import javax.swing.JTable;
+import javax.swing.SwingUtilities;
 import javax.swing.table.TableCellEditor;
 import org.ayf.database.entities.BaseEntity;
 import org.ayf.database.entities.Member;
 import org.ayf.models.GenericDefaultTableModel;
+import org.ayf.util.Toast;
 
 /**
  *
@@ -76,6 +81,26 @@ public class ReportTable extends JTable{
         return super.getCellEditor(row, column);
     }
 
+    @Override
+    public void setValueAt(Object aValue, int row, int column) 
+    {
+        GenericDefaultTableModel model = (GenericDefaultTableModel) getModel();
+        
+        Object oldValue = model.getEntityValue(row, column);
+        super.setValueAt(aValue, row, column);
+        Object newValue = model.getEntityValue(row, column);
+        
+        if(newValue == null || newValue.toString().equalsIgnoreCase(""))
+        {
+            Point point = new Point();
+            point.x = (int) getCellRect(row, column, true).getCenterX();
+            point.y = (int) getCellRect(row, column, true).getCenterY();
+            SwingUtilities.convertPointToScreen(point, this);
+            Toast.showToast("Invalid " + model.getTableData().getColumns().get(column), point, false);
+        }
+    }
+
+    
     public boolean isInEditMode() {
         return isInEditMode;
     }

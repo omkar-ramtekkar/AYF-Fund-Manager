@@ -6,11 +6,14 @@
 
 package org.ayf.models;
 
+import java.sql.Date;
 import java.util.Vector;
 import javax.swing.table.DefaultTableModel;
 import org.ayf.database.entities.BaseEntity;
 import org.ayf.database.entities.Member;
 import org.ayf.reports.ReportData;
+import org.ayf.util.DateTime;
+import org.ayf.util.Toast;
 
 /**
  *
@@ -57,19 +60,36 @@ public class GenericDefaultTableModel extends DefaultTableModel{
         {
             return "";
         }
+        else if(value instanceof Date)
+        {
+            return DateTime.getFormattedDateSQL((Date) value);
+        }
         
         return value;
     }
     
     @Override
     public void setValueAt(Object aValue, int row, int column) {
+        
         super.setValueAt(aValue, row, column);
         
         if(this.getTableData().getEntities() != null)
         {
             BaseEntity entity = this.getTableData().getEntities().get(row);
-            entity.setValueForField(getTableData().getColumnIDs().get(column), aValue);
+            BaseEntity.ColumnName columnName = getTableData().getColumnIDs().get(column);
+            entity.setValueForField(columnName, aValue);
+            super.setValueAt(entity.getValueForField(columnName), row, column);
         }
+    }
+    
+    public Object getEntityValue(int row, int column)
+    {
+        if(getTableData().getEntities() != null)
+        {
+            return getTableData().getEntityValue(row, column);
+        }
+        
+        return null;
     }
 
     @Override

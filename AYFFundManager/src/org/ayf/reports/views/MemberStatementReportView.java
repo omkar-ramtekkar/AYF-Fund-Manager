@@ -410,7 +410,7 @@ public class MemberStatementReportView extends BaseReportView {
                         this.districtLabel.setText("");
                         this.memberImageLabel.setIcon(null);
                         
-                        Toast.showToast(this.memberIDTextField, "Member not found with this ID");
+                        Toast.showToast(this.memberIDTextField, "Member not found with this ID", false);
                     }
                 }
             }
