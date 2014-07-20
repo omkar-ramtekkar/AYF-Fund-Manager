@@ -42,7 +42,7 @@ public class DatabaseManager {
     public static final String PAYMENT_MODE_TYPE_TABLE_NAME = "PaymentModeTypes";
     public static final String STATUS_TYPE_TABLE_NAME       = "StatusType";
 
-    public static final String CASHFLOW_STATUS_TYPE_TABLE_NAME    = "CashFlowStatusType";
+    public static final String CASHFLOW_STATUS_TYPE_TABLE_NAME    = "StatusType";
     public static final String MEMBER_TYPE_TABLE_NAME       = "MemberType";
     public static final String DONATIONS_TABLE_NAME         = "Donations";
     public static final String EXPENSES_TABLE_NAME          = "Expenses";

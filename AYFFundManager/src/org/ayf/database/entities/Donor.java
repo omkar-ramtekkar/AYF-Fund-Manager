@@ -93,6 +93,7 @@ public class Donor extends Member
         switch(level)
         {
             case Database:
+                columnNames.add(getNameForColumnID(ColumnName.ID));
                 columnNames.add(getNameForColumnID(ColumnName.MemberUniqueID));
                 columnNames.add(getNameForColumnID(ColumnName.FirstName));
                 columnNames.add(getNameForColumnID(ColumnName.MiddleName));
