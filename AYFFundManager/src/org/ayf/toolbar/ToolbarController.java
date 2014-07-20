@@ -12,6 +12,7 @@ import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
+import javax.swing.Box;
 import javax.swing.JToolBar;
 import javax.swing.border.LineBorder;
 import org.ayf.command.Command;
@@ -53,10 +54,12 @@ public class ToolbarController implements ActionListener{
             }
         };
         
-        
-        
         toolbarView.setBorder(new LineBorder(Color.LIGHT_GRAY));
         toolbarView.setBorderPainted(true);
+        
+        toolbarView.add(new ActionItem("Home", ToolbarCommand.SubCommandType.Home, "home"));
+        toolbarView.addSeparator();
+        toolbarView.addSeparator();
         
         toolbarView.add(new ActionItem("Add Member", ToolbarCommand.SubCommandType.UserAdd, "user_add"));
         toolbarView.add(new ActionItem("Remove Member", ToolbarCommand.SubCommandType.UserDelete, "user_remove"));
@@ -66,6 +69,10 @@ public class ToolbarController implements ActionListener{
         toolbarView.add(new ActionItem("Donate", Command.SubCommandType.Donate, "donate"));
         toolbarView.addSeparator();
         toolbarView.add(new ActionItem("Settings", ToolbarCommand.SubCommandType.Settings, "settings"));
+        
+        toolbarView.add( Box.createHorizontalGlue() );
+        
+        
         
         toolbarView.setRollover(true);
         

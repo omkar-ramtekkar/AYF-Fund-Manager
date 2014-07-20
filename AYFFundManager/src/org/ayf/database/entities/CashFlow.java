@@ -23,8 +23,10 @@ public class CashFlow extends BaseEntity{
     String description;
 
     
+    public CashFlow(){}
+    
     public CashFlow(int id, Date date, String status, String description) {
-        this.id = id;
+        setID(id);
         this.date = date;
         this.status = status;
         this.description = description;
@@ -70,11 +72,15 @@ public class CashFlow extends BaseEntity{
         switch(name)
         {
             case TransactionID:
-                return "ID";
+            case ID:
+                return "Transaction ID";
+            case UniqueID:
+                return "Unique ID";
             case Date:
-                return "Date";
-            case CurrentStatus:
-                return "Status";
+            case TransactionDate:
+                return "Transaction Date";
+            case Status:
+                return "Transaction Status";
             case Description:
                 return "Description of Transaction";
         }
@@ -86,11 +92,13 @@ public class CashFlow extends BaseEntity{
     {
         switch(fieldName)
         {
+            case ID:
             case TransactionID:
                 return getId();
             case Date:
+            case TransactionDate:
                 return getDate();
-            case CurrentStatus:
+            case Status:
                 return getStatus();
             case Description:
                 return getDescription();
@@ -101,9 +109,16 @@ public class CashFlow extends BaseEntity{
     
     public void setValueForField(ColumnName fieldName, Object value)
     {
+        if(value == null) return ;
+        
         switch(fieldName)
         {
+            case TransactionID:
+            case ID :
+                setID(Integer.parseInt(value.toString()));
+                break;
             case Date:
+            case TransactionDate:
                 if(value instanceof Date)
                 {
                     setDate((Date) value);
@@ -117,7 +132,7 @@ public class CashFlow extends BaseEntity{
                     setDate(DateTime.toSQLDate((String)value));
                 }
                 break;
-            case CurrentStatus:
+            case Status:
                 setStatus((String) value);
                 break;
             case Description:
@@ -132,9 +147,9 @@ public class CashFlow extends BaseEntity{
     public Vector<ColumnName> getColumnIDsForDetailLevel(CashFlow.DetailsLevel level)
     {
         Vector columnNames = new Vector(4);
-        columnNames.add((CashFlow.ColumnName.TransactionID));
-        columnNames.add((CashFlow.ColumnName.Date));
-        columnNames.add((CashFlow.ColumnName.CurrentStatus));
+        columnNames.add((CashFlow.ColumnName.ID));
+        columnNames.add((CashFlow.ColumnName.TransactionDate));
+        columnNames.add((CashFlow.ColumnName.Status));
         columnNames.add((CashFlow.ColumnName.Description));
         
         columnNames.trimToSize();
@@ -145,9 +160,9 @@ public class CashFlow extends BaseEntity{
     public Vector<Object> getColumnsForDetailsLevel(CashFlow.DetailsLevel level)
     {
         Vector columnNames = new Vector(4);
-        columnNames.add(getNameForColumnID(CashFlow.ColumnName.TransactionID));
-        columnNames.add(getNameForColumnID(CashFlow.ColumnName.Date));
-        columnNames.add(getNameForColumnID(CashFlow.ColumnName.CurrentStatus));
+        columnNames.add(getNameForColumnID(CashFlow.ColumnName.ID));
+        columnNames.add(getNameForColumnID(CashFlow.ColumnName.TransactionDate));
+        columnNames.add(getNameForColumnID(CashFlow.ColumnName.Status));
         columnNames.add(getNameForColumnID(CashFlow.ColumnName.Description));
         
         columnNames.trimToSize();
@@ -159,9 +174,9 @@ public class CashFlow extends BaseEntity{
     {
         Vector transactionDetails = new Vector(10);
         
-        transactionDetails.add(getValueForField(CashFlow.ColumnName.TransactionID));
-        transactionDetails.add(getValueForField(CashFlow.ColumnName.Date));
-        transactionDetails.add(getValueForField(CashFlow.ColumnName.CurrentStatus));
+        transactionDetails.add(getValueForField(CashFlow.ColumnName.ID));
+        transactionDetails.add(getValueForField(CashFlow.ColumnName.TransactionDate));
+        transactionDetails.add(getValueForField(CashFlow.ColumnName.Status));
         transactionDetails.add(getValueForField(CashFlow.ColumnName.Description));
         
         transactionDetails.trimToSize();
@@ -183,11 +198,13 @@ public class CashFlow extends BaseEntity{
         switch(columnName)
         {
             case TransactionID:
+            case ID:
             case Description:
                 return EditorType.Label;
             case Date:
+            case TransactionDate:
                 return EditorType.Date;
-            case CurrentStatus:
+            case Status:
                 return EditorType.ComboBox;
         }
         

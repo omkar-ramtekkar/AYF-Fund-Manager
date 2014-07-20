@@ -38,8 +38,8 @@ public abstract class BaseEntity {
         ID, FirstName, MiddleName, LastName, DateOfBirth, MaritalStatus, 
         Cast, SubCast, District, BloodGroup, Gender, Age, PermanentAddress, TemporaryAddress,
         ContactNumber, EmailAddress, Education, Profession, RegisterationDate, Position,
-        ImagePath, ReceiptNumber, DonationDate, DonationType, PaymentMode, Status, ExpenseID, ExpenseType, Date, Amount, Description, ResponsibleMemberID, ResponsibleMemberName, ResponsibleMemberPosition,
-        TransactionID, CurrentStatus, MemberID
+        ImagePath, ReceiptNumber, DonationDate, DonationType, PaymentMode, Status, ExpenseID, ExpenseType, Date, ExpenseDate, Amount, Description, ResponsibleMember, ResponsibleMemberName, ResponsibleMemberPosition,
+        TransactionID, MemberID, TransactionDate, UniqueID, MemberUniqueID
         
     }
     
@@ -96,6 +96,16 @@ public abstract class BaseEntity {
                 Vector<String> values = new Vector<String>(DatabaseManager.typesToStrings(DatabaseManager.getPaymentModeTypes()));
                 return values;
             }
+            case ExpenseType:
+            {
+                Vector<String> values = new Vector<String>(DatabaseManager.typesToStrings(DatabaseManager.getExpenseTypes()));
+                return values;
+            }
+            case Status:
+            {
+                Vector<String> values = new Vector<String>(DatabaseManager.typesToStrings(DatabaseManager.getStatusTypes()));
+                return values;
+            }
         }
         
         return null;
@@ -105,15 +115,33 @@ public abstract class BaseEntity {
     public abstract Vector<ColumnName> getColumnIDsForDetailLevel(DetailsLevel level);
     public abstract Vector<Object> getColumnsForDetailsLevel(DetailsLevel level);
     public abstract Vector<Object> toDataArray(DetailsLevel level);
-    public abstract Object getValueForField(ColumnName fieldName);
     public abstract ReportData getReportDataForDetails(DetailsLevel detailsLevel);
     
+    public Object getValueForField(ColumnName fieldName)
+    {
+        switch(fieldName)
+        {
+            case ID:
+                return getID();
+            case MemberUniqueID:
+            case UniqueID:
+                return getUniqueID();
+        }
+        
+        return null;
+    }
+
     public void setValueForField(ColumnName fieldName, Object value)
     {
         switch(fieldName)
         {
             case ID:
                 setID(Integer.valueOf(value.toString()));
+                break;
+            case MemberUniqueID:
+            case UniqueID:
+                setUniqueID(value.toString());
+                break;
         }
     }
     
@@ -126,6 +154,17 @@ public abstract class BaseEntity {
     {
         this.id = id;
     }
+
+    public String getUniqueID() {
+        return uniqueID;
+    }
+
+    public void setUniqueID(String uniqueID) {
+        this.uniqueID = uniqueID;
+    }
     
-    private int id;
+    
+    
+    private int id = Integer.MAX_VALUE;
+    private String uniqueID = null;
 }

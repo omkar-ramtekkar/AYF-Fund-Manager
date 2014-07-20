@@ -93,7 +93,7 @@ public class Donor extends Member
         switch(level)
         {
             case Database:
-                columnNames.add(getNameForColumnID(ColumnName.MemberID));
+                columnNames.add(getNameForColumnID(ColumnName.MemberUniqueID));
                 columnNames.add(getNameForColumnID(ColumnName.FirstName));
                 columnNames.add(getNameForColumnID(ColumnName.MiddleName));
                 columnNames.add(getNameForColumnID(ColumnName.LastName));
@@ -114,8 +114,10 @@ public class Donor extends Member
             {
                 if(level != Member.DetailsLevel.MemberStatement)
                 {
-                    columnNames = super.getColumnsForDetailsLevel(level);
+                    columnNames.addAll(super.getColumnsForDetailsLevel(level));
                 }
+                
+                columnNames.remove(getNameForColumnID(ColumnName.ImagePath));
                 
                 columnNames.add(getNameForColumnID(ColumnName.ReceiptNumber));
                 columnNames.add(getNameForColumnID(ColumnName.DonationDate));
@@ -132,22 +134,46 @@ public class Donor extends Member
     
     public Vector<ColumnName> getColumnIDsForDetailLevel(DetailsLevel level)
     {
-        Vector<ColumnName> columnIDs = null;
-        if(level != Member.DetailsLevel.MemberStatement)
-        {
-            columnIDs = super.getColumnIDsForDetailLevel(level);
-        }
-        else
-        {
-            columnIDs = new Vector<ColumnName>();
-        }
+        Vector<ColumnName> columnIDs = new Vector<ColumnName>();
         
-        columnIDs.add((ColumnName.ReceiptNumber));
-        columnIDs.add((ColumnName.DonationDate));
-        columnIDs.add((ColumnName.Amount));
-        columnIDs.add((ColumnName.DonationType));
-        columnIDs.add((ColumnName.PaymentMode));
-        
+        switch(level)
+        {
+            case Database:
+                columnIDs.add((ColumnName.MemberUniqueID));
+                columnIDs.add((ColumnName.FirstName));
+                columnIDs.add((ColumnName.MiddleName));
+                columnIDs.add((ColumnName.LastName));
+                columnIDs.add((ColumnName.PermanentAddress));
+                columnIDs.add((ColumnName.TemporaryAddress));
+                columnIDs.add((ColumnName.ContactNumber));
+                columnIDs.add((ColumnName.EmailAddress));
+                columnIDs.add((ColumnName.Profession));
+                columnIDs.add((ColumnName.DateOfBirth));
+                columnIDs.add((ColumnName.Gender));
+                columnIDs.add((ColumnName.ReceiptNumber));
+                columnIDs.add((ColumnName.DonationDate));
+                columnIDs.add((ColumnName.Amount));
+                columnIDs.add((ColumnName.DonationType));
+                columnIDs.add((ColumnName.PaymentMode));
+                columnIDs.add((ColumnName.ImagePath));
+                break;
+            default:
+            {
+                if(level != Member.DetailsLevel.MemberStatement)
+                {
+                    columnIDs.addAll(super.getColumnIDsForDetailLevel(level));
+                }
+                
+                columnIDs.remove(ColumnName.ImagePath);
+                
+                columnIDs.add((ColumnName.ReceiptNumber));
+                columnIDs.add((ColumnName.DonationDate));
+                columnIDs.add((ColumnName.Amount));
+                columnIDs.add((ColumnName.DonationType));
+                columnIDs.add((ColumnName.PaymentMode));
+            }
+        }
+
         return columnIDs;
     }
     

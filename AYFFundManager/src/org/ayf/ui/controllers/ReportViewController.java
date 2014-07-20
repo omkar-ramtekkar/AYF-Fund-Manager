@@ -12,6 +12,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.Vector;
 import javax.swing.JPanel;
+import org.ayf.command.Command;
 import org.ayf.managers.ApplicationManager;
 import org.ayf.managers.ReportManager;
 import org.ayf.command.ReportCommand;
@@ -73,6 +74,26 @@ public class ReportViewController implements ActionListener, MouseListener
             {
                 reports = reportManager.getReports(command.getSubType());
             }
+        }
+        
+        updateReportViewWithReports(reports);
+    }
+    
+    public void openReport(Command.SubCommandType type, Command.SubCommandType subType)
+    {
+        Vector<Report> reports = null;
+        if(type != null && subType != null)
+        {
+            reports = new Vector<Report>();
+            Report report = reportManager.getReportsForType(type, subType);
+            if(report != null)
+            {
+                reports.add(report);
+            }
+        }
+        else if(type != null)
+        {
+            reports = reportManager.getReports(type);
         }
         
         updateReportViewWithReports(reports);

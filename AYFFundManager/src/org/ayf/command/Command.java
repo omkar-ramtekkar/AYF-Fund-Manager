@@ -42,6 +42,7 @@ public class Command {
         NotificationsMemberSubscription,
         
         //Toolbar
+        Home,
         UserAdd,
         UserDelete,
         UserEdit,

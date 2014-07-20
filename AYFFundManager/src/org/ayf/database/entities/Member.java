@@ -269,6 +269,9 @@ public class Member extends BaseEntity
         {
             case ID:
                 return "Member ID";
+            case MemberUniqueID:
+            case UniqueID:
+                return "Registeration Number";
             case FirstName:
                 return "First Name";
             case MiddleName:
@@ -319,6 +322,8 @@ public class Member extends BaseEntity
                 return "Donation Type";
             case PaymentMode:
                 return "Payment Mode";
+            case Status:
+                return "Active Status";
         }
         
         return null;
@@ -328,8 +333,6 @@ public class Member extends BaseEntity
     {
         switch(fieldName)
         {
-            case ID:
-                return getID();
             case FirstName:
                 return getFirstName();
             case MiddleName:
@@ -370,9 +373,11 @@ public class Member extends BaseEntity
                 return getPosition();
             case ImagePath:
                 return getImagePath();
-        }
-        
-        return null;
+            case Status:
+                return getCurrentStatus();
+            default:
+                return super.getValueForField(fieldName);
+        }        
     }
     
     @Override
@@ -380,6 +385,7 @@ public class Member extends BaseEntity
         switch(columnNames)
         {
             case ID:
+            case UniqueID:
             case FirstName:
             case MiddleName:
             case LastName:
@@ -405,6 +411,7 @@ public class Member extends BaseEntity
             case Gender:
             case Profession:
             case Position:
+            case Status:
                 return EditorType.ComboBox;
         }
         
@@ -417,6 +424,8 @@ public class Member extends BaseEntity
         Vector<ColumnName> columnNames = new Vector<ColumnName>(20);
         
         columnNames.add((ColumnName.ID));
+        columnNames.add(ColumnName.MemberUniqueID);
+        columnNames.add((ColumnName.Status));
         columnNames.add((ColumnName.FirstName));
         columnNames.add((ColumnName.MiddleName));
         columnNames.add((ColumnName.LastName));
@@ -434,6 +443,8 @@ public class Member extends BaseEntity
                 columnNames.add((ColumnName.District));
                 columnNames.add((ColumnName.RegisterationDate));
                 columnNames.add((ColumnName.Position));
+                
+                
                 break;
             case AllPersonal:
                 columnNames.add((ColumnName.Age));
@@ -491,11 +502,13 @@ public class Member extends BaseEntity
         Vector columnNames = new Vector(20);
         
         columnNames.add(getNameForColumnID(ColumnName.ID));
+        columnNames.add(getNameForColumnID(ColumnName.MemberUniqueID));
         columnNames.add(getNameForColumnID(ColumnName.FirstName));
         columnNames.add(getNameForColumnID(ColumnName.MiddleName));
         columnNames.add(getNameForColumnID(ColumnName.LastName));
         columnNames.add(getNameForColumnID(ColumnName.Gender));
         columnNames.add(getNameForColumnID(ColumnName.DateOfBirth));
+        columnNames.add(getNameForColumnID(ColumnName.Status));
         
         switch(level)
         {
@@ -537,7 +550,6 @@ public class Member extends BaseEntity
                 columnNames.add(getNameForColumnID(ColumnName.Position));
                 break;
             case Database:
-                //columnNames.remove(memberID);
                 columnNames.add(getNameForColumnID(ColumnName.MaritalStatus));
                 columnNames.add(getNameForColumnID(ColumnName.ContactNumber));
                 columnNames.add(getNameForColumnID(ColumnName.EmailAddress));
@@ -563,12 +575,14 @@ public class Member extends BaseEntity
         Vector memberDetails = new Vector(20);
         
         memberDetails.add(getValueForField(ColumnName.ID));
+        memberDetails.add(getValueForField(ColumnName.MemberUniqueID));
         memberDetails.add(getValueForField(ColumnName.FirstName));
         memberDetails.add(getValueForField(ColumnName.MiddleName));
         memberDetails.add(getValueForField(ColumnName.LastName));
         memberDetails.add(getValueForField(ColumnName.Gender));
         memberDetails.add(getValueForField(ColumnName.DateOfBirth));
-        
+        memberDetails.add(getValueForField(ColumnName.Status));
+       
         switch(level)
         {
             case Basic:
@@ -660,6 +674,11 @@ public class Member extends BaseEntity
 
     @Override
     public void setValueForField(ColumnName fieldName, Object value) {
+        
+        if(value == null) return;
+        
+        if(value.toString().equalsIgnoreCase("")) return;
+        
         switch(fieldName)
         {
              case FirstName:
@@ -740,6 +759,9 @@ public class Member extends BaseEntity
                 break;
             case ImagePath:
                 setImagePath((String) value);
+                break;
+            case Status:
+                setCurrentStatus(ActiveStatus.valueOf(value.toString()));
                 break;
             default:
                 super.setValueForField(fieldName, value);

@@ -14,6 +14,7 @@ import javax.swing.filechooser.FileFilter;
 import org.ayf.command.Command;
 import org.ayf.command.ReportCommand;
 import org.ayf.mainmenubar.MainMenuController;
+import org.ayf.models.SideBarTableModel;
 import org.ayf.models.SideBarTableModel.Option;
 import org.ayf.toolbar.ToolbarController;
 import org.ayf.ui.InformationPanel;
@@ -96,17 +97,7 @@ public class ApplicationManager implements ActionListener
             switch(command.getType())
             {
                 case Report:
-                {
-                    ReportCommand reportCommand = (ReportCommand)command;
-                    Option categoryOption = reportCommand.getOption().getParentOption();
-
-                    if(categoryOption == null)
-                    {
-                        categoryOption = reportCommand.getOption();
-                    }
-
                     getReportController().actionPerformed(e);
-                }
                     break;
                 case Toolbar:
                     handleAction(command);
@@ -146,6 +137,9 @@ public class ApplicationManager implements ActionListener
                 case Donate:
                     handleDonateAction();
                     break;
+                case Home:
+                    sidebarTableController.selectOption(Command.SubCommandType.Dashboard, null);
+                    
             }
         }
     }

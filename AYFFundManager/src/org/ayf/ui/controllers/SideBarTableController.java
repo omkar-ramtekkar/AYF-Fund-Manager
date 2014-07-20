@@ -6,6 +6,7 @@
 
 package org.ayf.ui.controllers;
 
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -117,10 +118,16 @@ public class SideBarTableController implements ActionListener, MouseListener, Mo
         if(newOption != null && oldOption != newOption)
         {
             long uniqueId = System.currentTimeMillis() ;
-            fireActionPerformed(new ActionEvent(new ReportCommand(newOption, newOption.getOptionType()), (int)uniqueId, Command.CommandType.Report.toString()));
+               fireActionPerformed(new ActionEvent(new ReportCommand(newOption, newOption.getOptionType()), (int)uniqueId, Command.CommandType.Report.toString()));
         }
         
         this.table.repaint();
+    }
+    
+    public void selectOption(Command.SubCommandType type, Command.SubCommandType subType)
+    {
+        Rectangle rect = table.getCellRect(0, 0, false);        
+        mouseClicked(new MouseEvent(table, 0, 0, 0, (int)rect.getCenterX(), (int)rect.getCenterY(), 1, false, MouseEvent.BUTTON1));
     }
 
     @Override

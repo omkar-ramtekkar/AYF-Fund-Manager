@@ -29,9 +29,9 @@ public class AllDonationsReport extends Report{
 
     @Override
     public ReportData getData() {
-        ArrayList<Donor> donors = DatabaseManager.getDonors();
+        ArrayList<BaseEntity> donors = DatabaseManager.getAllEntities(Donor.class);
         
-        Vector rows = new Vector(donors);
+        Vector<BaseEntity> rows = new Vector<BaseEntity>(donors);
         
         return new ReportData(rows, BaseEntity.DetailsLevel.OnlyIDAndName, Donor.class);
     }
