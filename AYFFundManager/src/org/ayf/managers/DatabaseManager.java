@@ -376,219 +376,6 @@ public class DatabaseManager {
         return types;
     }
     
-    public static ArrayList<Member> getRegisteredMembers()
-    {
-        Logger.getLogger(DatabaseManager.class.getName()).log(Level.INFO, "getRegisteredMembers");
-        
-        ArrayList<Member> members = new ArrayList();
-        Connection connection = null;
-        try {
-            connection = createConnection();
-            
-            PreparedStatement ps = connection.prepareStatement("SELECT * FROM " + MEMBER_TABLE_NAME);
-            
-            ResultSet rs = ps.executeQuery();
-            
-            Logger.getLogger(DatabaseManager.class.getName()).log(Level.INFO, "getRegisteredMembers : Column Count - {0}", rs.getMetaData().getColumnCount());
-            
-            while(rs.next())
-            {
-                int     memberID        = rs.getInt("ID");
-                String  firstName       = rs.getString("FirstName");
-                String  middleName      = rs.getString("MiddleName");
-                String  lastName        = rs.getString("LastName");
-                String  permanentAddress= rs.getString("PermanentAddress");
-                String  temporaryAddress= rs.getString("TemporaryAddress");
-                String  contactNumber   = rs.getString("ContactNumber");
-                String  emailAddress    = rs.getString("EmailAddress");
-                Date    registerationDate = rs.getDate("RegisterationDate");
-                String  position        = rs.getString("Position");
-                String  profession      = rs.getString("Profession");
-                Date    dateOfBirth     = rs.getDate("DateOfBirth");
-                String genderString     = rs.getString("Gender");
-                Member.MaritalStatus  maritalStatus   = rs.getString("MaritalStatus").equalsIgnoreCase(Member.MaritalStatus.Married.toString()) ? Member.MaritalStatus.Married : Member.MaritalStatus.Single;
-                String  cast            = rs.getString("Cast");
-                String  subCast         = rs.getString("SubCast");
-                String  district        = rs.getString("District");
-                String  bloodGroup      = rs.getString("BloodGroup");
-                String  education       = rs.getString("Education");
-                String status           = rs.getString("Status");
-                Member.ActiveStatus currentStatus = Member.ActiveStatus.Unknown;
-                if(status != null)
-                {
-                    currentStatus = rs.getString("Status").equalsIgnoreCase(Member.ActiveStatus.Active.toString()) ? Member.ActiveStatus.Active : Member.ActiveStatus.Inactive;
-                }
-                
-                Member.Gender gender     = genderString != null ? (genderString.equalsIgnoreCase(Member.Gender.Male.toString())? Member.Gender.Male : Member.Gender.Female) : Member.Gender.Male;
-                String imagePath        = rs.getString("Image");
-
-                members.add(new Member(memberID, firstName, middleName, lastName, dateOfBirth, maritalStatus, cast, subCast, district, bloodGroup, gender, permanentAddress, temporaryAddress, contactNumber, emailAddress, education, profession, registerationDate, position, imagePath, currentStatus));
-            }
-            
-            ps.close();
-            rs.close();            
-        } catch (SQLException ex) {
-            Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, ex);
-            JOptionPane.showMessageDialog(null, ex.getLocalizedMessage(), "Unable to fetch data from table", ERROR_MESSAGE);
-        }
-        finally
-        {
-            if(connection != null) closeConnection(connection);
-        }
-        return members;
-    }
-    
-    public static Member getMemberWithID(int id)
-    {
-        Logger.getLogger(DatabaseManager.class.getName()).log(Level.INFO, "getMemberWithID{0}", id);
-        
-        Member member = null;
-        
-        Connection connection = null;
-        try {
-            connection = createConnection();
-            
-            PreparedStatement ps = connection.prepareStatement("SELECT * FROM "+ MEMBER_TABLE_NAME +" WHERE ID=?");
-            ps.setInt(1, id);
-            
-            ResultSet rs = ps.executeQuery();
-            
-            Logger.getLogger(DatabaseManager.class.getName()).log(Level.INFO, "getRegisteredMembers : Column Count - {0}", rs.getMetaData().getColumnCount());
-            
-            while(rs.next())
-            {
-                int     memberID        = rs.getInt("ID");
-                String  firstName       = rs.getString("FirstName");
-                String  middleName      = rs.getString("MiddleName");
-                String  lastName        = rs.getString("LastName");
-                String  permanentAddress= rs.getString("PermanentAddress");
-                String  temporaryAddress= rs.getString("TemporaryAddress");
-                String  contactNumber   = rs.getString("ContactNumber");
-                String  emailAddress    = rs.getString("EmailAddress");
-                Date    registerationDate = rs.getDate("RegisterationDate");
-                String  position        = rs.getString("Position");
-                String  profession      = rs.getString("Profession");
-                Date    dateOfBirth     = rs.getDate("DateOfBirth");
-                String genderString     = rs.getString("Gender");
-                Member.Gender gender    = genderString != null ? (genderString.equals("Male") ? Member.Gender.Male : Member.Gender.Female) : Member.Gender.Male;
-                String imagePath        = rs.getString("Image");
-
-                Member.MaritalStatus  maritalStatus   = rs.getString("MaritalStatus").equalsIgnoreCase(Member.MaritalStatus.Married.toString()) ? Member.MaritalStatus.Married : Member.MaritalStatus.Single;
-                String  cast            = rs.getString("Cast");
-                String  subCast         = rs.getString("SubCast");
-                String  district        = rs.getString("District");
-                String  bloodGroup      = rs.getString("BloodGroup");
-                String  education       = rs.getString("Education");
-                Member.ActiveStatus currentStatus    = rs.getString("Status").equalsIgnoreCase(Member.ActiveStatus.Active.toString()) ? Member.ActiveStatus.Active : Member.ActiveStatus.Inactive;
-                
-                if(member != null)
-                {
-                    Logger.getLogger(DatabaseManager.class.getName()).log(Level.INFO, "getMemberWithID : Multiple members found with same memberID={0}", id);
-                    break;
-                }
-                
-                member = new Member(memberID, firstName, middleName, lastName, dateOfBirth, maritalStatus, cast, subCast, district, bloodGroup, gender, permanentAddress, temporaryAddress, contactNumber, emailAddress, education, profession, registerationDate, position, imagePath, currentStatus);
-            }
-            
-            ps.close();
-            rs.close();
-            
-        } catch (NullPointerException ex) {
-            Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, ex);
-            JOptionPane.showMessageDialog(null, ex.getLocalizedMessage(), "Unable to fetch data from table", ERROR_MESSAGE);
-        } catch (SQLException ex) {
-            Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, ex);
-            JOptionPane.showMessageDialog(null, ex.getLocalizedMessage(), "Unable to fetch data from table", ERROR_MESSAGE);
-        }
-        finally
-        {
-            if(connection != null) closeConnection(connection);
-        }
-        
-        return member;
-    }
-    
-    public static ArrayList<Donor> getDonors()
-    {
-        Logger.getLogger(DatabaseManager.class.getName()).log(Level.INFO, "getDonors");
-        
-        ArrayList<Donor> donors = new ArrayList();
-        Connection connection = null;
-        try {
-            connection = createConnection();
-            
-            PreparedStatement ps = connection.prepareStatement("SELECT * FROM " + DONATIONS_TABLE_NAME);
-            
-            ResultSet rs = ps.executeQuery();
-            
-            Logger.getLogger(DatabaseManager.class.getName()).log(Level.INFO, "getDonors : Column Count - {0}", rs.getMetaData().getColumnCount());
-            
-            while(rs.next())
-            {
-                int     memberID        = rs.getInt("MemberID");
-                String  firstName       = rs.getString("FirstName");
-                String  middleName      = rs.getString("MiddleName");
-                String  lastName        = rs.getString("LastName");
-                String  permanentAddress= rs.getString("PermanentAddress");
-                String  temporaryAddress= rs.getString("TemporaryAddress");
-                String  contactNumber   = rs.getString("ContactNumber");
-                String  emailAddress    = rs.getString("EmailAddress");                
-                String  profession      = rs.getString("Profession");
-                Date    dateOfBirth     = rs.getDate("DateOfBirth");
-                String genderString     = rs.getString("Gender");
-                Member.Gender gender    = genderString != null ? (genderString.equals("Male") ? Member.Gender.Male : Member.Gender.Female) : Member.Gender.Male;
-                float   donationAmount  = rs.getFloat("Amount");
-                long    receiptNumber   = rs.getLong("ReceiptNumber");
-                Date    donationDate    = rs.getDate("DonationDate");
-                String donationType     = rs.getString("DonationType");
-                String paymentMode      = rs.getString("PaymentMode");
-                
-                //Member properties
-                String imagePath        = null;
-                Date registerationDate  = null;
-                String position         = null;
-                Member.MaritalStatus  maritalStatus   = Member.MaritalStatus.Married;
-                String  cast            = null;
-                String  subCast         = null;
-                String  district        = null;
-                String  bloodGroup      = null;
-                String  education       = null;
-                Member.ActiveStatus currentStatus    = Member.ActiveStatus.Unknown;
-                if(memberID != Integer.MAX_VALUE)
-                {
-                    Member member = getMemberWithID(memberID);
-                    if(member != null)
-                    {
-                        registerationDate = member.getRegisterationDate();
-                        imagePath = member.getImagePath();
-                        position = member.getPosition();
-                        maritalStatus = member.getMaritalStatus();
-                        cast = member.getCast();
-                        subCast = member.getSubCast();
-                        district = member.getDistrict();
-                        bloodGroup = member.getBloodGroup();
-                        education = member.getEducation();
-                        currentStatus = member.getCurrentStatus();
-                    }
-                }
-                
-                donors.add(new Donor(donationAmount, receiptNumber, donationDate, donationType, paymentMode, memberID, firstName, middleName, lastName, dateOfBirth, maritalStatus, cast, subCast, district, bloodGroup, gender, permanentAddress, temporaryAddress, contactNumber, emailAddress, education, profession, registerationDate, position, imagePath, currentStatus));
-            }
-            
-            ps.close();
-            rs.close();
-            
-        } catch (SQLException ex) {
-            Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, ex);
-            JOptionPane.showMessageDialog(null, ex.getLocalizedMessage(), "Unable to fetch data from table", ERROR_MESSAGE);
-        }
-        finally
-        {
-            if(connection != null) closeConnection(connection);
-        }
-        return donors;
-    }
-    
     public static ArrayList<BaseEntity> getAllEntities(Class<?> entityClass)
     {
         ArrayList<BaseEntity> entities = new ArrayList<BaseEntity>();
@@ -667,6 +454,104 @@ public class DatabaseManager {
         
         return entities;
     }
+    
+    public static ArrayList<BaseEntity> getEntitiesWithCondition(Vector<BaseEntity.ColumnName> conditionColumns, Vector<Object> conditionValues, Class<?> entityClass)
+    {
+        ArrayList<BaseEntity> entities = new ArrayList<BaseEntity>();
+        
+        if(entityClass != null)
+        {
+            Connection conn = null;
+            conn = createConnection();
+                
+            StringBuilder sqlQuery = new StringBuilder("SELECT * FROM ");
+            String tableName = null;
+                
+            if(entityClass.equals(Member.class))
+            {
+                tableName = MEMBER_TABLE_NAME;
+            }
+            else if(entityClass.equals(Donor.class))
+            {
+                tableName = DONATIONS_TABLE_NAME;
+            }
+            else if(entityClass.equals(Expense.class))
+            {
+                tableName = EXPENSES_TABLE_NAME;
+            }
+            else if(entityClass.equals(CashFlow.class))
+            {
+                tableName = CASHFLOWS_TABLE_NAME;
+            }
+            
+            if(tableName != null)
+            {
+                sqlQuery.append(tableName);
+                sqlQuery.append(" WHERE ");
+                
+                StringBuilder conditionString = new StringBuilder();
+                
+                for(int i=0; i<conditionValues.size(); ++i)
+                {
+                    if(conditionColumns.lastElement() == conditionColumns.get(i))
+                    {
+                        conditionString.append(conditionColumns.get(i)).append("=").append(conditionValues.get(i));
+                    }
+                    else
+                    {
+                        conditionString.append(conditionColumns.get(i)).append("=").append(conditionValues.get(i)).append(" AND ");
+                    }
+                }
+                
+                sqlQuery.append(conditionString);
+                
+                sqlQuery.trimToSize();
+                
+                ResultSet rs = null;
+                Statement statement = null;
+                try 
+                {
+                    statement = conn.createStatement();
+                    rs = statement.executeQuery(sqlQuery.toString());
+                    BaseEntity dummyEntity = (BaseEntity) entityClass.newInstance();
+                    Vector<BaseEntity.ColumnName> columns = dummyEntity.getColumnIDsForDetailLevel(BaseEntity.DetailsLevel.Database);
+
+                    while(rs.next())
+                    {
+                        BaseEntity entity = (BaseEntity) entityClass.newInstance();
+                        
+                        for (BaseEntity.ColumnName columnName : columns) 
+                        {
+                            try
+                            {
+                                Object value = rs.getObject(columnName.toString());
+                                entity.setValueForField(columnName, value);
+                            }catch(Exception ex){ ex.printStackTrace(); }
+                        }
+                        
+                        int id = rs.getInt(BaseEntity.ColumnName.ID.toString());
+                        
+                        entity.setValueForField(BaseEntity.ColumnName.ID, id);
+                        entities.add(entity);
+                    }
+                    
+                    if(rs != null) rs.close();
+                    if(statement != null) statement.close();
+                    
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+                finally
+                {
+                    closeConnection(conn);
+                }
+            }
+            
+        }
+        
+        return entities;
+    }
+    
     
     public static boolean updateEntities(Vector<BaseEntity> entities, Class<?> entityClass)
     {
@@ -921,6 +806,7 @@ public class DatabaseManager {
         return bInserted;
     }
     
+    
     public static boolean registerMember(Member member)
     {
         boolean bRegistered = false; 
@@ -1062,49 +948,66 @@ public class DatabaseManager {
         return new ReportData(rows, columns);
     }
     
-    public static ReportData getMemberStatement(int memberID)
+    public static ReportData getMemberStatement(String memberRegNumber)
     {
-        Connection conn = null;
-    
-        Vector<BaseEntity> rowData = new Vector<BaseEntity>();
+        Vector<BaseEntity.ColumnName> column = new Vector<BaseEntity.ColumnName>();
+        column.add(BaseEntity.ColumnName.UniqueID);
         
-        try 
-        {
-            conn = createConnection();
-
-            String sql = "SELECT * FROM " + DONATIONS_TABLE_NAME + " WHERE MemberID=? ORDER BY DonationDate";
-            PreparedStatement statement = conn.prepareStatement(sql);
-            statement.setInt(1, memberID);
-            
-            ResultSet rs = statement.executeQuery();
-            
-            while(rs.next())
-            {                
-                int     memberIDTest    = rs.getInt("MemberID");
-                float   donationAmount  = rs.getFloat("Amount");
-                long    receiptNumber   = rs.getLong("ReceiptNumber");
-                Date    donationDate    = rs.getDate("DonationDate");
-                String donationType     = rs.getString("DonationType");
-                String paymentMode      = rs.getString("PaymentMode");
-               
-                Donor donation = new Donor(donationAmount, receiptNumber, donationDate, donationType, paymentMode, memberID, null, null, null, null, null, null, null, null, null, null);
-                rowData.add(donation);
-            }
-            
-            rs.close();
-            statement.close();
-            
-
-        } catch (SQLException ex) {
-            Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, ex);
-            JOptionPane.showMessageDialog(null, ex.getLocalizedMessage(), "Unable to get donations by type ", ERROR_MESSAGE);
-        }
-        finally
-        {
-            if(conn != null) { closeConnection(conn); }
-        }
+        Vector<Object> value = new Vector<Object>();
+        value.add(memberRegNumber);
         
-        return new ReportData(rowData, BaseEntity.DetailsLevel.MemberStatement, Donor.class);
+        ArrayList<BaseEntity> entities =  getEntitiesWithCondition(column, value, Donor.class);
+        
+        if(entities != null && entities.isEmpty() == false)
+        {
+            return new ReportData(new Vector<BaseEntity>(entities), BaseEntity.DetailsLevel.MemberStatement, Donor.class);
+        }
+        else
+        {
+            return null;
+        }
      }
+
+    public static BaseEntity getEntityWithUniqueID(String uniqueID, Class<?> entityClass)
+    {
+        if(uniqueID == null || uniqueID.length() == 0) return null;
+        
+        Vector<BaseEntity.ColumnName> column = new Vector<BaseEntity.ColumnName>();
+        column.add(BaseEntity.ColumnName.UniqueID);
+        
+        Vector<Object> value = new Vector<Object>();
+        value.add(uniqueID);
+        
+        ArrayList<BaseEntity> entities =  getEntitiesWithCondition(column, value, entityClass);
+        
+        if(entities != null && entities.isEmpty() == false)
+        {
+            return entities.get(0);
+        }
+        else
+        {
+            return null;
+        }
+     }
+    
+    public static Member getMemberWithID(int memberID) 
+    {
+        Vector<BaseEntity.ColumnName> column = new Vector<BaseEntity.ColumnName>();
+        column.add(BaseEntity.ColumnName.ID);
+        
+        Vector<Object> value = new Vector<Object>();
+        value.add(memberID);
+        
+        ArrayList<BaseEntity> entities =  getEntitiesWithCondition(column, value, Member.class);
+        
+        if(entities != null && entities.isEmpty() == false)
+        {
+            return (Member)entities.get(0);
+        }
+        else
+        {
+            return null;
+        }
+    }
 
 }

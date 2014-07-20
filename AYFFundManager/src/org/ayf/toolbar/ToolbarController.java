@@ -12,7 +12,9 @@ import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
+import javax.swing.Action;
 import javax.swing.Box;
+import javax.swing.JButton;
 import javax.swing.JToolBar;
 import javax.swing.border.LineBorder;
 import org.ayf.command.Command;
@@ -51,6 +53,14 @@ public class ToolbarController implements ActionListener{
                 }
 
                 super.paintComponent(g);
+            }
+            
+            @Override
+            protected JButton createActionComponent(Action a)
+            {
+                JButton button = super.createActionComponent(a);
+                button.setSize(128, 128);
+                return button;
             }
         };
         

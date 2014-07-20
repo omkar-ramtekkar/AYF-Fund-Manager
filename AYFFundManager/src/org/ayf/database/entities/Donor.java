@@ -8,7 +8,9 @@ package org.ayf.database.entities;
 
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Vector;
+import org.ayf.managers.DatabaseManager;
 import org.ayf.reports.ReportData;
 import org.ayf.util.DateTime;
 
@@ -94,7 +96,7 @@ public class Donor extends Member
         {
             case Database:
                 columnNames.add(getNameForColumnID(ColumnName.ID));
-                columnNames.add(getNameForColumnID(ColumnName.MemberUniqueID));
+                columnNames.add(getNameForColumnID(ColumnName.UniqueID));
                 columnNames.add(getNameForColumnID(ColumnName.FirstName));
                 columnNames.add(getNameForColumnID(ColumnName.MiddleName));
                 columnNames.add(getNameForColumnID(ColumnName.LastName));
@@ -140,7 +142,7 @@ public class Donor extends Member
         switch(level)
         {
             case Database:
-                columnIDs.add((ColumnName.MemberUniqueID));
+                columnIDs.add((ColumnName.UniqueID));
                 columnIDs.add((ColumnName.FirstName));
                 columnIDs.add((ColumnName.MiddleName));
                 columnIDs.add((ColumnName.LastName));
@@ -198,6 +200,41 @@ public class Donor extends Member
         }
         
         return null;
+    }
+    
+    @Override
+    protected void setID(int id)
+    {
+        super.setID(id);
+    }
+
+    public void setUniqueID(String uniqueID) 
+    {
+        super.setUniqueID(uniqueID);
+        
+        if(getUniqueID() != null && getUniqueID().length() > 0)
+        {
+            Vector<Object> value = new Vector<Object>(1);
+            value.add(getUniqueID());
+            
+            Vector<ColumnName> column = new Vector<ColumnName>(1);
+            column.add(ColumnName.UniqueID);
+            
+            
+            ArrayList<BaseEntity> entity = DatabaseManager.getEntitiesWithCondition(column, value, Member.class);
+            
+            if(entity != null && entity.size() > 0)
+            {
+                BaseEntity baseEntity = entity.get(0);
+                
+                Vector<ColumnName> columns = baseEntity.getColumnIDsForDetailLevel(DetailsLevel.Database);
+                
+                for (ColumnName columnName : columns) 
+                {
+                    this.setValueForField(columnName, baseEntity.getValueForField(columnName));
+                }
+            }
+        }
     }
 
     @Override

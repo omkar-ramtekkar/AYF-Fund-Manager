@@ -158,7 +158,7 @@ public class ApplicationManager implements ActionListener
     }
 
     private void handleUserEditAction() {
-        new MemberFrame(DatabaseManager.getMemberWithID(4), InformationPanel.Context.View).setVisible(true);
+        
     }
 
     private void handleSettingsAction() {

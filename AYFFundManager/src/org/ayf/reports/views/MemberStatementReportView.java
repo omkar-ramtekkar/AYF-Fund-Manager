@@ -300,8 +300,8 @@ public class MemberStatementReportView extends BaseReportView {
                 if(report instanceof MemberStatementReport)
                 {
                     MemberStatementReport memberReport = (MemberStatementReport) report;
-                    int memberID = Integer.parseInt(memberIDTextField.getText().trim());
-                    memberReport.setMemberID(memberID);
+                    String memberRegNumber = memberIDTextField.getText().trim();
+                    memberReport.setMemberRegisterationNumber(memberRegNumber);
                 }
             }
         }
@@ -323,11 +323,11 @@ public class MemberStatementReportView extends BaseReportView {
             if(report instanceof MemberStatementReport)
             {
                 MemberStatementReport memberReport = (MemberStatementReport) report;
-                int memberID = memberReport.getMemberID();
+                String memberRegNumber = memberReport.getMemberRegisterationNumber();
 
-                if(memberID != Integer.MAX_VALUE)
+                if(memberRegNumber != null)
                 {
-                    Member member = DatabaseManager.getMemberWithID(memberID);
+                    Member member = (Member) DatabaseManager.getEntityWithUniqueID(memberRegNumber, Member.class);
                     if(member != null)
                     {
                         MemberFrame memberFullInformation = new MemberFrame(member, InformationPanel.Context.View);
@@ -384,9 +384,8 @@ public class MemberStatementReportView extends BaseReportView {
                 if(report instanceof MemberStatementReport)
                 {
                     MemberStatementReport memberReport = (MemberStatementReport) report;
-                    int memberID = memberReport.getMemberID();
                     
-                    Member member = DatabaseManager.getMemberWithID(memberID);
+                    Member member = (Member) DatabaseManager.getEntityWithUniqueID(memberReport.getMemberRegisterationNumber(), Member.class);
                     
                     if(member != null)
                     {

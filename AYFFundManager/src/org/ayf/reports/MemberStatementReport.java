@@ -16,31 +16,31 @@ import org.ayf.reports.views.MemberStatementReportView;
  */
 public class MemberStatementReport extends Report{
     
-    int memberID;
+    String memberRegisterationNumber;
 
     public MemberStatementReport() {
         super(ReportCommand.SubCommandType.StatementsByMember);
         setView(new MemberStatementReportView(this));
-        this.memberID = Integer.MAX_VALUE;
+        setMemberRegisterationNumber(null);
     }
 
     @Override
     public ReportData getData() {
-        if(this.memberID == Integer.MAX_VALUE)
+        if(getMemberRegisterationNumber() == null || getMemberRegisterationNumber().length() == 0)
         {
             return null;
         }
         
-        return DatabaseManager.getMemberStatement(memberID);
+        return DatabaseManager.getMemberStatement(getMemberRegisterationNumber());
     }
 
-    public void setMemberID(int memberID) {
-        this.memberID = memberID;
+    public void setMemberRegisterationNumber(String memberRegisterationNumber) {
+        this.memberRegisterationNumber = memberRegisterationNumber;
         updateReport();
     }
 
-    public int getMemberID() {
-        return memberID;
+    public String getMemberRegisterationNumber() {
+        return memberRegisterationNumber;
     }
     
     

@@ -123,7 +123,6 @@ public abstract class BaseEntity {
         {
             case ID:
                 return getID();
-            case MemberUniqueID:
             case UniqueID:
                 return getUniqueID();
         }
@@ -138,7 +137,6 @@ public abstract class BaseEntity {
             case ID:
                 setID(Integer.valueOf(value.toString()));
                 break;
-            case MemberUniqueID:
             case UniqueID:
                 setUniqueID(value.toString());
                 break;
@@ -162,8 +160,6 @@ public abstract class BaseEntity {
     public void setUniqueID(String uniqueID) {
         this.uniqueID = uniqueID;
     }
-    
-    
     
     private int id = Integer.MAX_VALUE;
     private String uniqueID = null;
