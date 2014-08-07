@@ -330,7 +330,7 @@ public class MemberStatementReportView extends BaseReportView {
                     Member member = (Member) DatabaseManager.getEntityWithUniqueID(memberRegNumber, Member.class);
                     if(member != null)
                     {
-                        MemberFrame memberFullInformation = new MemberFrame(member, InformationPanel.Context.View);
+                        MemberFrame memberFullInformation = new MemberFrame(member, InformationPanel.PanelType.View);
                         memberFullInformation.setVisible(true);
                     }
                 }

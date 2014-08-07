@@ -33,12 +33,13 @@ public class Expense extends BaseEntity{
             case Date:
             case ExpenseDate:
                 return EditorType.Date;
-            case ExpenseID:
             case Amount:
             case Description:
             case ResponsibleMember:
             case ResponsibleMemberName:
             case ResponsibleMemberPosition:
+            case UniqueID:
+            case ID:
                 return EditorType.Label;
                 
         }
@@ -107,10 +108,8 @@ public class Expense extends BaseEntity{
     {
         switch(name)
         {
-            case ID:
-                return "Expense ID";
             case UniqueID:
-                return "Unique ID";
+                return "Expense ID";
             case ExpenseType:
                 return "Category";
             case Date:
@@ -136,8 +135,6 @@ public class Expense extends BaseEntity{
     {
         switch(fieldName)
         {
-            case ID:
-                return getID();
             case ExpenseType:
                 return getExpenseType();
             case Date:
@@ -165,6 +162,8 @@ public class Expense extends BaseEntity{
                     return getReponsibleMember().getPosition();
                 }
                 break;
+            default:
+                return super.getValueForField(fieldName);
         }
         
         return null;
@@ -176,10 +175,6 @@ public class Expense extends BaseEntity{
         
         switch(fieldName)
         {
-            case ExpenseID:
-            case ID:
-                setID(Integer.parseInt(value.toString()));
-                break;
             case ExpenseType:
                 setExpenseType((String) value);
                 break;
@@ -213,7 +208,6 @@ public class Expense extends BaseEntity{
     public Vector<ColumnName> getColumnIDsForDetailLevel(DetailsLevel level)
     {
         Vector<ColumnName> columnNames = new Vector<ColumnName>(10);
-        columnNames.add((ColumnName.ID));
         columnNames.add((ColumnName.UniqueID));
         columnNames.add((ColumnName.ExpenseType));
         columnNames.add((ColumnName.Amount));
@@ -235,7 +229,6 @@ public class Expense extends BaseEntity{
     public Vector getColumnsForDetailsLevel(DetailsLevel level)
     {
         Vector columnNames = new Vector(10);
-        columnNames.add(getNameForColumnID(ColumnName.ID));
         columnNames.add(getNameForColumnID(ColumnName.UniqueID));
         columnNames.add(getNameForColumnID(ColumnName.ExpenseType));
         columnNames.add(getNameForColumnID(ColumnName.Amount));
@@ -258,7 +251,6 @@ public class Expense extends BaseEntity{
     {
         Vector expenseDetails = new Vector(10);
         
-        expenseDetails.add(getValueForField(ColumnName.ID));
         expenseDetails.add(getValueForField(ColumnName.UniqueID));
         expenseDetails.add(getValueForField(ColumnName.ExpenseType));
         expenseDetails.add(getValueForField(ColumnName.Amount));

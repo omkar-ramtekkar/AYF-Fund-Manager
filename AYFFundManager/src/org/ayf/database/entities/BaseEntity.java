@@ -38,8 +38,8 @@ public abstract class BaseEntity {
         ID, FirstName, MiddleName, LastName, DateOfBirth, MaritalStatus, 
         Cast, SubCast, District, BloodGroup, Gender, Age, PermanentAddress, TemporaryAddress,
         ContactNumber, EmailAddress, Education, Profession, RegisterationDate, Position,
-        ImagePath, ReceiptNumber, DonationDate, DonationType, PaymentMode, Status, ExpenseID, ExpenseType, Date, ExpenseDate, Amount, Description, ResponsibleMember, ResponsibleMemberName, ResponsibleMemberPosition,
-        TransactionID, MemberID, TransactionDate, UniqueID, MemberUniqueID
+        ImagePath, ReceiptNumber, DonationDate, DonationType, PaymentMode, Status, ExpenseType, Date, ExpenseDate, Amount, Description, ResponsibleMember, ResponsibleMemberName, ResponsibleMemberPosition,
+        MemberID, TransactionDate, UniqueID, MemberUniqueID
         
     }
     

@@ -13,11 +13,13 @@ import java.util.Vector;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
+import javax.swing.JPanel;
 import org.ayf.database.entities.BaseEntity;
 import org.ayf.database.entities.Member;
 import org.ayf.managers.DatabaseManager;
 import org.ayf.managers.ResourceManager;
 import org.ayf.util.DateTime;
+import org.ayf.util.NumberUtil;
 import org.ayf.util.Toast;
 
 /**
@@ -30,55 +32,59 @@ public class InformationPanel extends BackgroundPanel {
      * Creates new form PersonalInformationPanel
      */
     
+    Vector<Vector<JPanel>> allPanels;
+
+    
     public static final String[] BloodGroups = {"A+", "B+", "AB+", "O+", "A-", "B-", "AB-", "O-"};
     
-    public enum Context
+    public enum PanelType
     {
         Registeration,
         Update,
         Search,
-        View
+        View,
+        Donate
     }
     
-    private Context currentContext;
+    private PanelType panelType;
     private Member member;
     
     
-    public InformationPanel(Member member, Context context) {
+    public InformationPanel(Member member, PanelType context) {
          super(BackgroundStyle.GradientBlueGray);
         initComponents();
-        setCurrentContext(context);
+        setPanelType(context);
         setMember(member);
         
-//        PromptSupport.setPrompt("Address Line 1", permanentAddrFirstLine);
-//        PromptSupport.setPrompt("Pin Code", temporaryAddressPincodeTxt);
-//        PromptSupport.setPrompt("Country", temporaryAddressCountryTxt);
-//        PromptSupport.setPrompt("Address Line 2", permanentAddressSecondLine);
-//        PromptSupport.setPrompt("City", permanentAddressCityTxt);
-//        PromptSupport.setPrompt("Address Line 1", temporaryAddressFirstLine);
-//        PromptSupport.setPrompt("Address Line 2", temporaryAddressSecondLine);
-//        PromptSupport.setPrompt("City", temporaryAddressCityTxt);
-//        PromptSupport.setPrompt("Mobile Number", mobileNumberTxt);
-//        PromptSupport.setPrompt("Country", permanentAddressCountryTxt);
-//        PromptSupport.setPrompt("Pincode", permanentAddressPincodeTxt);
-//        PromptSupport.setPrompt("First Name", firstNameTxt);
-//        PromptSupport.setPrompt("Last Name", lastNameTxt);
-//        PromptSupport.setPrompt("Middle Name", middleNameTxt);
-//        
-//        PromptSupport.setPrompt("Middle Name", castTxt);
-//        PromptSupport.setPrompt("Middle Name", dobDate);
-//        PromptSupport.setPrompt("Middle Name", dobYear);
-//        PromptSupport.setPrompt("Middle Name", educationTxt);
-//        PromptSupport.setPrompt("Middle Name", emailAddressTxt);
+        allPanels = new Vector<Vector<JPanel>>();
+        
+        Vector personalInformation = new Vector();
+        personalInformation.add(this.basicInformationPanels);
+        if(this.panelType == PanelType.Donate)
+        {
+            personalInformation.add(donationInformationPanel);
+        }
+        
+        allPanels.add(personalInformation);
+        
+        Vector addresses = new Vector();
+        addresses.add(this.addressPanels);
+        allPanels.add(addresses);
+        
+        Vector otherInformation = new Vector();
+        otherInformation.add(otherInformationPanel);
+        allPanels.add(otherInformation);
+        
     }
 
-    public Context getCurrentContext() {
-        return currentContext;
+    public PanelType getPanelType() {
+        return panelType;
     }
 
-    public void setCurrentContext(Context currentContext) {
-        this.currentContext = currentContext;
-        if(this.currentContext == Context.View)
+    public void setPanelType(PanelType currentContext) {
+        this.panelType = currentContext;
+        this.donationAmountPanel.setVisible(false);
+        if(this.panelType == PanelType.View)
         {
             disableControls();
         }
@@ -87,7 +93,16 @@ public class InformationPanel extends BackgroundPanel {
             enableControls();
         }
         
+        if(this.panelType == PanelType.Donate)
+        {
+            this.donationAmountPanel.setVisible(true);
+        }
+        
         updatePanel();
+    }
+    
+    public Vector<Vector<JPanel>>  getAllPanels() {
+        return allPanels;
     }
     
 
@@ -208,6 +223,16 @@ public class InformationPanel extends BackgroundPanel {
     
     private void updatePanel()
     {
+        if(this.panelType == PanelType.Donate)
+        {
+            this.regOrDonationDate.setText("Donation Date");
+        }
+        else
+        {
+            this.regOrDonationDate.setText("Registeration Date");
+        }
+        
+        
         if(this.member != null)
         {
             //header panel
@@ -218,9 +243,30 @@ public class InformationPanel extends BackgroundPanel {
             this.middleNameTxt.setText(member.getMiddleName());
             this.lastNameTxt.setText(member.getLastName());
             
+            Object amount = this.member.getValueForField(BaseEntity.ColumnName.Amount);
+            if(amount != null)
+            {
+                this.donationTextField.setText(NumberUtil.getUnformattedNumber(amount.toString()));
+            }
+            else
+            {
+                this.donationTextField.setText("");
+            }
+            
+            Object regNumber = this.member.getValueForField(BaseEntity.ColumnName.UniqueID);
+            
+            if(regNumber != null)
+            {
+                this.registerationNumber.setText(regNumber.toString());
+            }
+            else
+            {
+                this.registerationNumber.setText("----");
+            }
+            
             this.dobDate.setText(Integer.toString(DateTime.getDay(member.getDateOfBirth())));
             Vector<String> dobMonth = new Vector<String>();
-            if(getCurrentContext() == Context.View)
+            if(getPanelType() == PanelType.View)
             {
                 dobMonth.add(DateTime.Months[DateTime.getMonth(member.getDateOfBirth())]);
                 setDateOfBirthMonthComboBox(dobMonth);
@@ -234,22 +280,32 @@ public class InformationPanel extends BackgroundPanel {
             
             this.dobYear.setText(Integer.toString(DateTime.getYear(member.getDateOfBirth())));
             
-            this.registerationDay.setText(Integer.toString(DateTime.getDay(member.getRegisterationDate())));
-            Vector<String> registerationMonth = new Vector<String>(1);
-            if(getCurrentContext() == Context.View)
+            java.sql.Date regOrDonationDate = null;
+            if(this.panelType == PanelType.Donate)
             {
-                registerationMonth.add(DateTime.Months[DateTime.getMonth(member.getRegisterationDate())]);
+                regOrDonationDate = (java.sql.Date)this.member.getValueForField(BaseEntity.ColumnName.DonationDate);
+            }
+            else
+            {
+                regOrDonationDate = (java.sql.Date)this.member.getValueForField(BaseEntity.ColumnName.RegisterationDate);
+            }
+            
+            this.registerationDay.setText(Integer.toString(DateTime.getDay(regOrDonationDate)));
+            Vector<String> registerationMonth = new Vector<String>(1);
+            if(getPanelType() == PanelType.View)
+            {
+                registerationMonth.add(DateTime.Months[DateTime.getMonth(regOrDonationDate)]);
                 setRegisterationMonthComboBox(registerationMonth);
             }
             else
             {
                 registerationMonth.addAll(Arrays.asList(DateTime.Months));
                 setRegisterationMonthComboBox(registerationMonth);
-                this.registerationMonth.setSelectedIndex(DateTime.getMonth(member.getRegisterationDate()));
+                this.registerationMonth.setSelectedIndex(DateTime.getMonth(regOrDonationDate));
             }
             
             
-            this.registerationYear.setText(Integer.toString(DateTime.getYear(member.getRegisterationDate())));
+            this.registerationYear.setText(Integer.toString(DateTime.getYear(regOrDonationDate)));
             
             
             this.genderFemaleButton.setSelected(false);
@@ -288,7 +344,7 @@ public class InformationPanel extends BackgroundPanel {
             this.mobileNumberTxt.setText(member.getContactNumber());
                 
             Vector<String> professions = new Vector<String>(1);
-            if(getCurrentContext() == Context.View)
+            if(getPanelType() == PanelType.View)
             {
                 professions.add(member.getProfession());
                 setProfessionTypes(professions);
@@ -303,7 +359,7 @@ public class InformationPanel extends BackgroundPanel {
             
             
             Vector<String> positions = new Vector<String>(1);
-            if(getCurrentContext() == Context.View)
+            if(getPanelType() == PanelType.View)
             {
                 positions.add(member.getPosition());
                 setPositionTypes(positions);
@@ -316,7 +372,7 @@ public class InformationPanel extends BackgroundPanel {
             }
             
             Vector<String> bloodGroups = new Vector<String>(1);
-            if(getCurrentContext() == Context.View)
+            if(getPanelType() == PanelType.View)
             {
                 bloodGroups.add(member.getBloodGroup());
                 setBloodGroups(bloodGroups);
@@ -458,9 +514,30 @@ public class InformationPanel extends BackgroundPanel {
         String cast = this.castTxt.getText();
         String education = this.educationTxt.getText();
         
+        float donationAmount = Integer.parseInt(NumberUtil.getUnformattedNumber(this.donationTextField.getText()));
+        long receiptNumber = 0;
+        
         if(isValidMember)
         {
-            return new Member(Integer.MAX_VALUE, firstName, middleName, lastName, DateTime.toSQLDate(dateOfBirth), maritalStatus, cast, subCast, permanentCity, bloodGroup, gender, permanentAddress, temporaryAddress, contactNumber, emailAddress, education, profession, DateTime.toSQLDate(registerationDate), position, imagePath, Member.ActiveStatus.Unknown);
+            /*
+                public Donor(float donationAmount, long receiptNumber, Date donationDate, String donationType, String paymentMode, int memberID, String firstName, String middleName, String lastName, Date dateOfBirth, MaritalStatus maritalStatus, String cast, String subCast, String district, String bloodGroup, Gender gender, String permanentAddress, String temporaryAddress, String contactNumber, String emailAddress, String education, String profession, Date registerationDate, String position, String imagePath, ActiveStatus currentStatus) {
+        super(memberID, firstName, middleName, lastName, dateOfBirth, maritalStatus, cast, subCast, district, bloodGroup, gender, permanentAddress, temporaryAddress, contactNumber, emailAddress, education, profession, registerationDate, position, imagePath, currentStatus);
+        this.donationAmount = donationAmount;
+        this.receiptNumber = receiptNumber;
+        this.donationDate = donationDate;
+        this.donationType = donationType;
+        this.paymentMode = paymentMode;
+    }
+            */
+            
+            if(this.panelType == PanelType.Donate)
+            {
+                return null;//new Donor(donationAmount, receiptNumber, registerationDate, dona);
+            }
+            else
+            {
+                return new Member(Integer.MAX_VALUE, firstName, middleName, lastName, DateTime.toSQLDate(dateOfBirth), maritalStatus, cast, subCast, permanentCity, bloodGroup, gender, permanentAddress, temporaryAddress, contactNumber, emailAddress, education, profession, DateTime.toSQLDate(registerationDate), position, imagePath, Member.ActiveStatus.Unknown);
+            }
         }
         else
         {
@@ -477,7 +554,32 @@ public class InformationPanel extends BackgroundPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        personalInformationPanel = new javax.swing.JPanel();
+        donationInformationPanel = new javax.swing.JPanel();
+        jLabel9 = new javax.swing.JLabel();
+        receiptNumberTextField = new javax.swing.JTextField();
+        jLabel10 = new javax.swing.JLabel();
+        donationTypeCombo = new javax.swing.JComboBox();
+        jLabel13 = new javax.swing.JLabel();
+        paymentModeCombo = new javax.swing.JComboBox();
+        otherInformationPanel = new javax.swing.JPanel();
+        professionTypeCombo = new javax.swing.JComboBox();
+        jLabel14 = new javax.swing.JLabel();
+        jLabel12 = new javax.swing.JLabel();
+        positionCombo = new javax.swing.JComboBox();
+        educationTxt = new javax.swing.JTextField();
+        jLabel11 = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
+        bloodGroupCombo = new javax.swing.JComboBox();
+        jLabel16 = new javax.swing.JLabel();
+        castTxt = new javax.swing.JTextField();
+        jLabel17 = new javax.swing.JLabel();
+        subcastTxt = new javax.swing.JTextField();
+        basicInformationPanels = new javax.swing.JPanel();
+        contactsPanel = new javax.swing.JPanel();
+        jLabel27 = new javax.swing.JLabel();
+        jLabel26 = new javax.swing.JLabel();
+        emailAddressTxt = new javax.swing.JTextField();
+        mobileNumberTxt = new javax.swing.JTextField();
         basicInformationPanel = new javax.swing.JPanel();
         dobYear = new javax.swing.JTextField();
         dobDate = new javax.swing.JTextField();
@@ -497,9 +599,17 @@ public class InformationPanel extends BackgroundPanel {
         registerationYear = new javax.swing.JTextField();
         registerationMonth = new javax.swing.JComboBox();
         registerationDay = new javax.swing.JTextField();
-        jLabel13 = new javax.swing.JLabel();
+        regOrDonationDate = new javax.swing.JLabel();
         marritalStatusSingle = new javax.swing.JRadioButton();
         marritalStatusMarried = new javax.swing.JRadioButton();
+        headerPanel = new javax.swing.JPanel();
+        imageLabel = new javax.swing.JLabel();
+        registerationNumber = new javax.swing.JLabel();
+        donationAmountPanel = new javax.swing.JPanel();
+        donationTextField = new javax.swing.JTextField();
+        jLabel7 = new javax.swing.JLabel();
+        jLabel8 = new javax.swing.JLabel();
+        addressPanels = new javax.swing.JPanel();
         permanentAddressPanell = new javax.swing.JPanel();
         permanentAddressZipCode = new javax.swing.JTextField();
         jLabel20 = new javax.swing.JLabel();
@@ -518,28 +628,215 @@ public class InformationPanel extends BackgroundPanel {
         temporaryAddressLine1 = new javax.swing.JTextField();
         jLabel31 = new javax.swing.JLabel();
         jLabel32 = new javax.swing.JLabel();
-        contactsPanel = new javax.swing.JPanel();
-        jLabel27 = new javax.swing.JLabel();
-        jLabel26 = new javax.swing.JLabel();
-        emailAddressTxt = new javax.swing.JTextField();
-        mobileNumberTxt = new javax.swing.JTextField();
-        headerPanel = new javax.swing.JPanel();
-        imageLabel = new javax.swing.JLabel();
-        otherInformationPanel = new javax.swing.JPanel();
-        professionTypeCombo = new javax.swing.JComboBox();
-        jLabel14 = new javax.swing.JLabel();
-        jLabel12 = new javax.swing.JLabel();
-        positionCombo = new javax.swing.JComboBox();
-        educationTxt = new javax.swing.JTextField();
-        jLabel11 = new javax.swing.JLabel();
-        jLabel6 = new javax.swing.JLabel();
-        bloodGroupCombo = new javax.swing.JComboBox();
-        jLabel16 = new javax.swing.JLabel();
-        castTxt = new javax.swing.JTextField();
-        jLabel17 = new javax.swing.JLabel();
-        subcastTxt = new javax.swing.JTextField();
 
-        personalInformationPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Personal Information"));
+        donationInformationPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Donation Information"));
+
+        jLabel9.setText("Receipt Number");
+
+        jLabel10.setText("Donation Type");
+
+        donationTypeCombo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
+        jLabel13.setText("Payment Mode");
+
+        paymentModeCombo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
+        javax.swing.GroupLayout donationInformationPanelLayout = new javax.swing.GroupLayout(donationInformationPanel);
+        donationInformationPanel.setLayout(donationInformationPanelLayout);
+        donationInformationPanelLayout.setHorizontalGroup(
+            donationInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(donationInformationPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(donationInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(donationInformationPanelLayout.createSequentialGroup()
+                        .addComponent(jLabel9)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(receiptNumberTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(donationInformationPanelLayout.createSequentialGroup()
+                        .addComponent(jLabel10)
+                        .addGap(18, 18, 18)
+                        .addComponent(donationTypeCombo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(donationInformationPanelLayout.createSequentialGroup()
+                        .addComponent(jLabel13)
+                        .addGap(18, 18, 18)
+                        .addComponent(paymentModeCombo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        donationInformationPanelLayout.setVerticalGroup(
+            donationInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(donationInformationPanelLayout.createSequentialGroup()
+                .addGap(9, 9, 9)
+                .addGroup(donationInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel9)
+                    .addComponent(receiptNumberTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(donationInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel10)
+                    .addComponent(donationTypeCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(donationInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel13)
+                    .addComponent(paymentModeCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        otherInformationPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Other Information"));
+
+        professionTypeCombo.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                professionTypeComboFocusGained(evt);
+            }
+        });
+
+        jLabel14.setText("Position");
+
+        jLabel12.setText("Profession");
+
+        positionCombo.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                positionComboFocusGained(evt);
+            }
+        });
+
+        educationTxt.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                educationTxtFocusGained(evt);
+            }
+        });
+
+        jLabel11.setText("Education");
+
+        jLabel6.setText("Blood Group");
+
+        bloodGroupCombo.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                bloodGroupComboFocusGained(evt);
+            }
+        });
+
+        jLabel16.setText("Cast");
+
+        castTxt.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                castTxtFocusGained(evt);
+            }
+        });
+
+        jLabel17.setText("Subcast");
+
+        subcastTxt.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                subcastTxtFocusGained(evt);
+            }
+        });
+
+        javax.swing.GroupLayout otherInformationPanelLayout = new javax.swing.GroupLayout(otherInformationPanel);
+        otherInformationPanel.setLayout(otherInformationPanelLayout);
+        otherInformationPanelLayout.setHorizontalGroup(
+            otherInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(otherInformationPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(otherInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, 78, Short.MAX_VALUE)
+                    .addComponent(jLabel16, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(27, 27, 27)
+                .addGroup(otherInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(professionTypeCombo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(bloodGroupCombo, 0, 165, Short.MAX_VALUE)
+                    .addComponent(castTxt)
+                    .addComponent(educationTxt))
+                .addGap(42, 42, 42)
+                .addGroup(otherInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel14, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel17))
+                .addGap(27, 27, 27)
+                .addGroup(otherInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(positionCombo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(subcastTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
+            .addGroup(otherInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(otherInformationPanelLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap(476, Short.MAX_VALUE)))
+        );
+        otherInformationPanelLayout.setVerticalGroup(
+            otherInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, otherInformationPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(otherInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(positionCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel14)
+                    .addComponent(professionTypeCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(otherInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(bloodGroupCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel6)
+                    .addComponent(jLabel17)
+                    .addComponent(subcastTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(otherInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel16)
+                    .addComponent(castTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(otherInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel11)
+                    .addComponent(educationTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(otherInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(otherInformationPanelLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap(150, Short.MAX_VALUE)))
+        );
+
+        contactsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Contacts"));
+
+        jLabel27.setText("Mobile No.");
+
+        jLabel26.setText("Email-id:");
+
+        emailAddressTxt.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                emailAddressTxtFocusGained(evt);
+            }
+        });
+
+        mobileNumberTxt.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                mobileNumberTxtFocusGained(evt);
+            }
+        });
+
+        javax.swing.GroupLayout contactsPanelLayout = new javax.swing.GroupLayout(contactsPanel);
+        contactsPanel.setLayout(contactsPanelLayout);
+        contactsPanelLayout.setHorizontalGroup(
+            contactsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(contactsPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(contactsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel27)
+                    .addComponent(jLabel26))
+                .addGap(62, 62, 62)
+                .addGroup(contactsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(mobileNumberTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 311, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(emailAddressTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 311, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        contactsPanelLayout.setVerticalGroup(
+            contactsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(contactsPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(contactsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel26)
+                    .addComponent(emailAddressTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(contactsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel27)
+                    .addComponent(mobileNumberTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
 
         basicInformationPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Basic Information"));
 
@@ -634,7 +931,7 @@ public class InformationPanel extends BackgroundPanel {
             }
         });
 
-        jLabel13.setText("Registration Date");
+        regOrDonationDate.setText("Registration Date");
 
         marritalStatusSingle.setText("Single");
         marritalStatusSingle.addFocusListener(new java.awt.event.FocusAdapter() {
@@ -667,7 +964,7 @@ public class InformationPanel extends BackgroundPanel {
             .addGroup(basicInformationPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(basicInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel13)
+                    .addComponent(regOrDonationDate)
                     .addComponent(jLabel4)
                     .addComponent(jLabel19)
                     .addComponent(jLabel5)
@@ -707,7 +1004,7 @@ public class InformationPanel extends BackgroundPanel {
                         .addGroup(basicInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(dobYear, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(registerationYear, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(6, 6, 6))
         );
         basicInformationPanelLayout.setVerticalGroup(
             basicInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -732,7 +1029,7 @@ public class InformationPanel extends BackgroundPanel {
                             .addComponent(jLabel4))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(basicInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel13)
+                            .addComponent(regOrDonationDate)
                             .addComponent(registerationDay, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(registerationMonth, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(basicInformationPanelLayout.createSequentialGroup()
@@ -749,6 +1046,118 @@ public class InformationPanel extends BackgroundPanel {
                     .addComponent(marritalStatusSingle)
                     .addComponent(marritalStatusMarried)
                     .addComponent(jLabel15))
+                .addContainerGap())
+        );
+
+        imageLabel.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(204, 255, 204), 2, true));
+        imageLabel.setMaximumSize(new java.awt.Dimension(90, 90));
+        imageLabel.setMinimumSize(new java.awt.Dimension(90, 90));
+        imageLabel.setName(""); // NOI18N
+        imageLabel.setPreferredSize(new java.awt.Dimension(90, 90));
+        imageLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                imageLabelMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                imageLabelMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                imageLabelMouseExited(evt);
+            }
+        });
+
+        registerationNumber.setFont(new java.awt.Font("Lucida Grande", 1, 18)); // NOI18N
+        registerationNumber.setText("AUF12023");
+
+        donationTextField.setFont(new java.awt.Font("Lucida Grande", 1, 18)); // NOI18N
+        donationTextField.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                donationTextFieldFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                donationTextFieldFocusLost(evt);
+            }
+        });
+
+        jLabel7.setFont(new java.awt.Font("Lucida Grande", 1, 18)); // NOI18N
+        jLabel7.setText("Amount");
+
+        jLabel8.setFont(new java.awt.Font("Lucida Grande", 1, 18)); // NOI18N
+        jLabel8.setText("₹");
+
+        javax.swing.GroupLayout donationAmountPanelLayout = new javax.swing.GroupLayout(donationAmountPanel);
+        donationAmountPanel.setLayout(donationAmountPanelLayout);
+        donationAmountPanelLayout.setHorizontalGroup(
+            donationAmountPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(donationAmountPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel7)
+                .addGap(34, 34, 34)
+                .addComponent(jLabel8)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(donationTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+        donationAmountPanelLayout.setVerticalGroup(
+            donationAmountPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(donationAmountPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(donationAmountPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(donationTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel7)
+                    .addComponent(jLabel8))
+                .addContainerGap())
+        );
+
+        javax.swing.GroupLayout headerPanelLayout = new javax.swing.GroupLayout(headerPanel);
+        headerPanel.setLayout(headerPanelLayout);
+        headerPanelLayout.setHorizontalGroup(
+            headerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(headerPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(imageLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(77, 77, 77)
+                .addGroup(headerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(headerPanelLayout.createSequentialGroup()
+                        .addComponent(donationAmountPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(6, 6, 6))
+                    .addComponent(registerationNumber, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+        headerPanelLayout.setVerticalGroup(
+            headerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(headerPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(headerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(imageLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(headerPanelLayout.createSequentialGroup()
+                        .addComponent(registerationNumber, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(donationAmountPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(6, 6, 6))
+        );
+
+        javax.swing.GroupLayout basicInformationPanelsLayout = new javax.swing.GroupLayout(basicInformationPanels);
+        basicInformationPanels.setLayout(basicInformationPanelsLayout);
+        basicInformationPanelsLayout.setHorizontalGroup(
+            basicInformationPanelsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(basicInformationPanelsLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(basicInformationPanelsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(headerPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(contactsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(basicInformationPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
+        );
+        basicInformationPanelsLayout.setVerticalGroup(
+            basicInformationPanelsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(basicInformationPanelsLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(headerPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(basicInformationPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(contactsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -935,228 +1344,27 @@ public class InformationPanel extends BackgroundPanel {
                     .addComponent(temporaryAddressZipCode, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
         );
 
-        contactsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Contacts"));
-
-        jLabel27.setText("Mobile No.");
-
-        jLabel26.setText("Email-id:");
-
-        emailAddressTxt.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusGained(java.awt.event.FocusEvent evt) {
-                emailAddressTxtFocusGained(evt);
-            }
-        });
-
-        mobileNumberTxt.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusGained(java.awt.event.FocusEvent evt) {
-                mobileNumberTxtFocusGained(evt);
-            }
-        });
-
-        javax.swing.GroupLayout contactsPanelLayout = new javax.swing.GroupLayout(contactsPanel);
-        contactsPanel.setLayout(contactsPanelLayout);
-        contactsPanelLayout.setHorizontalGroup(
-            contactsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(contactsPanelLayout.createSequentialGroup()
+        javax.swing.GroupLayout addressPanelsLayout = new javax.swing.GroupLayout(addressPanels);
+        addressPanels.setLayout(addressPanelsLayout);
+        addressPanelsLayout.setHorizontalGroup(
+            addressPanelsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(addressPanelsLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(contactsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel27)
-                    .addComponent(jLabel26))
-                .addGap(62, 62, 62)
-                .addGroup(contactsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(mobileNumberTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 311, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(emailAddressTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 311, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        contactsPanelLayout.setVerticalGroup(
-            contactsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(contactsPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(contactsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel26)
-                    .addComponent(emailAddressTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(contactsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel27)
-                    .addComponent(mobileNumberTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
-        imageLabel.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(204, 255, 204), 2, true));
-        imageLabel.setMaximumSize(new java.awt.Dimension(90, 90));
-        imageLabel.setMinimumSize(new java.awt.Dimension(90, 90));
-        imageLabel.setName(""); // NOI18N
-        imageLabel.setPreferredSize(new java.awt.Dimension(90, 90));
-        imageLabel.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                imageLabelMouseClicked(evt);
-            }
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                imageLabelMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                imageLabelMouseExited(evt);
-            }
-        });
-
-        javax.swing.GroupLayout headerPanelLayout = new javax.swing.GroupLayout(headerPanel);
-        headerPanel.setLayout(headerPanelLayout);
-        headerPanelLayout.setHorizontalGroup(
-            headerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(headerPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(imageLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        headerPanelLayout.setVerticalGroup(
-            headerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(headerPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(imageLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(addressPanelsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(addressPanelsLayout.createSequentialGroup()
+                        .addComponent(permanentAddressPanell, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(temporaryAddressPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
-
-        javax.swing.GroupLayout personalInformationPanelLayout = new javax.swing.GroupLayout(personalInformationPanel);
-        personalInformationPanel.setLayout(personalInformationPanelLayout);
-        personalInformationPanelLayout.setHorizontalGroup(
-            personalInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(personalInformationPanelLayout.createSequentialGroup()
+        addressPanelsLayout.setVerticalGroup(
+            addressPanelsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(addressPanelsLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(personalInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(basicInformationPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(permanentAddressPanell, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(personalInformationPanelLayout.createSequentialGroup()
-                        .addGap(6, 6, 6)
-                        .addGroup(personalInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(contactsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(temporaryAddressPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                    .addComponent(headerPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
-        );
-        personalInformationPanelLayout.setVerticalGroup(
-            personalInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(personalInformationPanelLayout.createSequentialGroup()
-                .addComponent(headerPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(basicInformationPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(permanentAddressPanell, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(temporaryAddressPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(contactsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
-        );
-
-        otherInformationPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Other Information"));
-
-        professionTypeCombo.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusGained(java.awt.event.FocusEvent evt) {
-                professionTypeComboFocusGained(evt);
-            }
-        });
-
-        jLabel14.setText("Position");
-
-        jLabel12.setText("Profession");
-
-        positionCombo.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusGained(java.awt.event.FocusEvent evt) {
-                positionComboFocusGained(evt);
-            }
-        });
-
-        educationTxt.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusGained(java.awt.event.FocusEvent evt) {
-                educationTxtFocusGained(evt);
-            }
-        });
-
-        jLabel11.setText("Education");
-
-        jLabel6.setText("Blood Group");
-
-        bloodGroupCombo.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusGained(java.awt.event.FocusEvent evt) {
-                bloodGroupComboFocusGained(evt);
-            }
-        });
-
-        jLabel16.setText("Cast");
-
-        castTxt.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusGained(java.awt.event.FocusEvent evt) {
-                castTxtFocusGained(evt);
-            }
-        });
-
-        jLabel17.setText("Subcast");
-
-        subcastTxt.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusGained(java.awt.event.FocusEvent evt) {
-                subcastTxtFocusGained(evt);
-            }
-        });
-
-        javax.swing.GroupLayout otherInformationPanelLayout = new javax.swing.GroupLayout(otherInformationPanel);
-        otherInformationPanel.setLayout(otherInformationPanelLayout);
-        otherInformationPanelLayout.setHorizontalGroup(
-            otherInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(otherInformationPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(otherInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, 78, Short.MAX_VALUE)
-                    .addComponent(jLabel16, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(27, 27, 27)
-                .addGroup(otherInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(professionTypeCombo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(bloodGroupCombo, 0, 165, Short.MAX_VALUE)
-                    .addComponent(castTxt)
-                    .addComponent(educationTxt))
-                .addGap(42, 42, 42)
-                .addGroup(otherInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel14, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel17))
-                .addGap(27, 27, 27)
-                .addGroup(otherInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(positionCombo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(subcastTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
-            .addGroup(otherInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(otherInformationPanelLayout.createSequentialGroup()
-                    .addContainerGap()
-                    .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(476, Short.MAX_VALUE)))
-        );
-        otherInformationPanelLayout.setVerticalGroup(
-            otherInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, otherInformationPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(otherInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(positionCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel14)
-                    .addComponent(professionTypeCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(otherInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(bloodGroupCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel6)
-                    .addComponent(jLabel17)
-                    .addComponent(subcastTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(otherInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel16)
-                    .addComponent(castTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(otherInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel11)
-                    .addComponent(educationTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(otherInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(otherInformationPanelLayout.createSequentialGroup()
-                    .addContainerGap()
-                    .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(123, Short.MAX_VALUE)))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -1164,19 +1372,28 @@ public class InformationPanel extends BackgroundPanel {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(10, 10, 10)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(personalInformationPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(otherInformationPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(basicInformationPanels, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(donationInformationPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(otherInformationPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(addressPanels, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addGap(6, 6, 6))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(personalInformationPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(6, 6, 6)
+                .addComponent(basicInformationPanels, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
+                .addComponent(donationInformationPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(otherInformationPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(otherInformationPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(addressPanels, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -1226,7 +1443,7 @@ public class InformationPanel extends BackgroundPanel {
 
     private void imageLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_imageLabelMouseClicked
         
-        if(this.currentContext != Context.View)
+        if(this.panelType != PanelType.View)
         {
             JFileChooser fileChooser = new JFileChooser();
             fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
@@ -1249,7 +1466,7 @@ public class InformationPanel extends BackgroundPanel {
 
     private void imageLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_imageLabelMouseEntered
         
-        if(this.currentContext != Context.View)
+        if(this.panelType != PanelType.View)
         {
             this.imageLabel.setIcon(ResourceManager.getIcon("change_photo", this.imageLabel.getPreferredSize()));
         }
@@ -1257,7 +1474,7 @@ public class InformationPanel extends BackgroundPanel {
 
     private void imageLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_imageLabelMouseExited
         
-        if(this.currentContext != Context.View)
+        if(this.panelType != PanelType.View)
         {
             if(this.imageLabel.getToolTipText() != null)
             {
@@ -1398,19 +1615,33 @@ public class InformationPanel extends BackgroundPanel {
         updateScrollViewWithEvent(evt);
     }//GEN-LAST:event_marritalStatusMarriedFocusGained
 
+    private void donationTextFieldFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_donationTextFieldFocusGained
+       this.donationTextField.setText(NumberUtil.getUnformattedNumber(this.donationTextField.getText()));
+    }//GEN-LAST:event_donationTextFieldFocusGained
+
+    private void donationTextFieldFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_donationTextFieldFocusLost
+        this.donationTextField.setText(NumberUtil.getFormattedNumber(this.donationTextField.getText()));
+    }//GEN-LAST:event_donationTextFieldFocusLost
+
 
     private Vector<String> professionTypes;
     private Vector<String> positionTypes;
     private Vector<String> bloodGroups;
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel addressPanels;
     private javax.swing.JPanel basicInformationPanel;
+    private javax.swing.JPanel basicInformationPanels;
     private javax.swing.JComboBox bloodGroupCombo;
     private javax.swing.JTextField castTxt;
     private javax.swing.JPanel contactsPanel;
     private javax.swing.JComboBox dateOfBirthMonths;
     private javax.swing.JTextField dobDate;
     private javax.swing.JTextField dobYear;
+    private javax.swing.JPanel donationAmountPanel;
+    private javax.swing.JPanel donationInformationPanel;
+    private javax.swing.JTextField donationTextField;
+    private javax.swing.JComboBox donationTypeCombo;
     private javax.swing.JTextField educationTxt;
     private javax.swing.JTextField emailAddressTxt;
     private javax.swing.JTextField firstNameTxt;
@@ -1419,6 +1650,7 @@ public class InformationPanel extends BackgroundPanel {
     private javax.swing.JPanel headerPanel;
     private javax.swing.JLabel imageLabel;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
@@ -1440,23 +1672,29 @@ public class InformationPanel extends BackgroundPanel {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JTextField lastNameTxt;
     private javax.swing.JRadioButton marritalStatusMarried;
     private javax.swing.JRadioButton marritalStatusSingle;
     private javax.swing.JTextField middleNameTxt;
     private javax.swing.JTextField mobileNumberTxt;
     private javax.swing.JPanel otherInformationPanel;
+    private javax.swing.JComboBox paymentModeCombo;
     private javax.swing.JTextField permanentAddrLine1;
     private javax.swing.JTextField permanentAddressCityTxt;
     private javax.swing.JTextField permanentAddressLine2;
     private javax.swing.JPanel permanentAddressPanell;
     private javax.swing.JTextField permanentAddressState;
     private javax.swing.JTextField permanentAddressZipCode;
-    private javax.swing.JPanel personalInformationPanel;
     private javax.swing.JComboBox positionCombo;
     private javax.swing.JComboBox professionTypeCombo;
+    private javax.swing.JTextField receiptNumberTextField;
+    private javax.swing.JLabel regOrDonationDate;
     private javax.swing.JTextField registerationDay;
     private javax.swing.JComboBox registerationMonth;
+    private javax.swing.JLabel registerationNumber;
     private javax.swing.JTextField registerationYear;
     private javax.swing.JTextField subcastTxt;
     private javax.swing.JTextField temporaryAddressCityTxt;

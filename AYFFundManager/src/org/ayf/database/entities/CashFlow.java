@@ -32,10 +32,6 @@ public class CashFlow extends BaseEntity{
         this.description = description;
     }
     
-    public int getId() {
-        return id;
-    }
-
     public Date getDate() {
         return date;
     }
@@ -46,10 +42,6 @@ public class CashFlow extends BaseEntity{
 
     public String getDescription() {
         return description;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public void setDate(Date date) {
@@ -71,11 +63,8 @@ public class CashFlow extends BaseEntity{
     {
         switch(name)
         {
-            case TransactionID:
-            case ID:
-                return "Transaction ID";
             case UniqueID:
-                return "Unique ID";
+                return "Transaction ID";
             case Date:
             case TransactionDate:
                 return "Transaction Date";
@@ -92,9 +81,6 @@ public class CashFlow extends BaseEntity{
     {
         switch(fieldName)
         {
-            case ID:
-            case TransactionID:
-                return getId();
             case Date:
             case TransactionDate:
                 return getDate();
@@ -102,9 +88,9 @@ public class CashFlow extends BaseEntity{
                 return getStatus();
             case Description:
                 return getDescription();
+            default:
+                return super.getValueForField(fieldName);
         }
-        
-        return null;
     }
     
     public void setValueForField(ColumnName fieldName, Object value)
@@ -113,10 +99,6 @@ public class CashFlow extends BaseEntity{
         
         switch(fieldName)
         {
-            case TransactionID:
-            case ID :
-                setID(Integer.parseInt(value.toString()));
-                break;
             case Date:
             case TransactionDate:
                 if(value instanceof Date)
@@ -147,7 +129,7 @@ public class CashFlow extends BaseEntity{
     public Vector<ColumnName> getColumnIDsForDetailLevel(CashFlow.DetailsLevel level)
     {
         Vector columnNames = new Vector(4);
-        columnNames.add((CashFlow.ColumnName.ID));
+        columnNames.add((CashFlow.ColumnName.UniqueID));
         columnNames.add((CashFlow.ColumnName.TransactionDate));
         columnNames.add((CashFlow.ColumnName.Status));
         columnNames.add((CashFlow.ColumnName.Description));
@@ -160,7 +142,7 @@ public class CashFlow extends BaseEntity{
     public Vector<Object> getColumnsForDetailsLevel(CashFlow.DetailsLevel level)
     {
         Vector columnNames = new Vector(4);
-        columnNames.add(getNameForColumnID(CashFlow.ColumnName.ID));
+        columnNames.add(getNameForColumnID(CashFlow.ColumnName.UniqueID));
         columnNames.add(getNameForColumnID(CashFlow.ColumnName.TransactionDate));
         columnNames.add(getNameForColumnID(CashFlow.ColumnName.Status));
         columnNames.add(getNameForColumnID(CashFlow.ColumnName.Description));
@@ -174,7 +156,7 @@ public class CashFlow extends BaseEntity{
     {
         Vector transactionDetails = new Vector(10);
         
-        transactionDetails.add(getValueForField(CashFlow.ColumnName.ID));
+        transactionDetails.add(getValueForField(CashFlow.ColumnName.UniqueID));
         transactionDetails.add(getValueForField(CashFlow.ColumnName.TransactionDate));
         transactionDetails.add(getValueForField(CashFlow.ColumnName.Status));
         transactionDetails.add(getValueForField(CashFlow.ColumnName.Description));
@@ -197,7 +179,7 @@ public class CashFlow extends BaseEntity{
     public EditorType getColumnEditorTypeForColumnName(ColumnName columnName) {
         switch(columnName)
         {
-            case TransactionID:
+            case UniqueID:
             case ID:
             case Description:
                 return EditorType.Label;

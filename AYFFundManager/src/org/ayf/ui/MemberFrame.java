@@ -8,11 +8,13 @@ package org.ayf.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.GridLayout;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import org.ayf.database.entities.BaseEntity;
 import org.ayf.database.entities.Member;
@@ -31,21 +33,84 @@ public class MemberFrame extends javax.swing.JFrame {
      * @param member
      * @param context
      */    
-    public MemberFrame(Member member, InformationPanel.Context context) {
+    
+    Vector<Vector<JPanel>> panels;
+    int currentIndex = -1;
+    
+    public MemberFrame(Member member, InformationPanel.PanelType context) {
         initComponents();
         
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         panel = new InformationPanel(member, context);
         
-        this.mainContainerPanel.add(panel, BorderLayout.CENTER);
-
+        panels = panel.getAllPanels();
+        
+        
+        SwingUtilities.invokeLater(new Runnable() 
+        {
+            @Override
+            public void run() {
+                updatePanel(true);
+            }
+        });
+        
+        
+        
         setSize(new Dimension((int) panel.getPreferredSize().getWidth() + 25, 600));
         setLocation(200, 100);
         
         updateTitle(context);
     }
+    
+    void updatePanel(boolean next)
+    {
+        this.allPanels.removeAll();
+        
+        if(next) ++currentIndex;
+        else --currentIndex;
+                 
+        if(currentIndex < panels.size() && currentIndex  >= 0)
+        {
 
-    void updateTitle(InformationPanel.Context context)
+            Vector<JPanel> p = panels.get(currentIndex);
+
+            JPanel dummyPanel = new JPanel(new GridLayout(p.size(), 1));
+
+            for (JPanel panel : p)
+            {
+                panel.setVisible(true);
+                dummyPanel.add(panel);
+            }
+
+            dummyPanel.validate();
+
+            this.allPanels.add(dummyPanel, BorderLayout.CENTER);
+        }
+        
+        
+        if(currentIndex == panels.size() - 1)
+        {
+            if(this.panel.getPanelType() == InformationPanel.PanelType.Donate)
+            {
+                this.actionButton.setText("Donate");
+            }
+            else
+            {
+                this.actionButton.setText("Register");
+            }
+        }
+        else
+        {
+            this.actionButton.setText("Next");
+        }
+        
+        this.previousButton.setEnabled(currentIndex != 0);
+
+        this.validate();
+        this.repaint();
+    }
+
+    void updateTitle(InformationPanel.PanelType context)
     {
         switch(context)
         {
@@ -58,6 +123,8 @@ public class MemberFrame extends javax.swing.JFrame {
             case Update:
                 setTitle("Update Member Information Form");
                 return;
+            case Donate:
+                setTitle("Donation Form");
         }
     }
     public void setMember(Member member) {
@@ -68,9 +135,9 @@ public class MemberFrame extends javax.swing.JFrame {
         return panel.getMember(true, true);
     }
     
-    public void setContext(InformationPanel.Context context)
+    public void setContext(InformationPanel.PanelType context)
     {
-        panel.setCurrentContext(context);
+        panel.setPanelType(context);
         updateTitle(context);
     }
     
@@ -88,7 +155,9 @@ public class MemberFrame extends javax.swing.JFrame {
         mainContainerPanel = new javax.swing.JPanel();
         actionPanel = new BackgroundPanel(BackgroundStyle.GradientBlueGray);
         actionButton = new javax.swing.JButton();
+        previousButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
+        allPanels = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -103,15 +172,29 @@ public class MemberFrame extends javax.swing.JFrame {
             }
         });
 
+        previousButton.setText("Previous");
+        previousButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                previousButtonActionPerformed(evt);
+            }
+        });
+
         cancelButton.setText("Cancel");
+        cancelButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cancelButtonActionPerformed(evt);
+            }
+        });
 
         org.jdesktop.layout.GroupLayout actionPanelLayout = new org.jdesktop.layout.GroupLayout(actionPanel);
         actionPanel.setLayout(actionPanelLayout);
         actionPanelLayout.setHorizontalGroup(
             actionPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(org.jdesktop.layout.GroupLayout.TRAILING, actionPanelLayout.createSequentialGroup()
-                .addContainerGap(353, Short.MAX_VALUE)
+                .addContainerGap(265, Short.MAX_VALUE)
                 .add(cancelButton)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                .add(previousButton)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                 .add(actionButton)
                 .addContainerGap())
@@ -122,11 +205,15 @@ public class MemberFrame extends javax.swing.JFrame {
                 .addContainerGap()
                 .add(actionPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(actionButton)
+                    .add(previousButton)
                     .add(cancelButton))
-                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .add(6, 6, 6))
         );
 
         mainContainerPanel.add(actionPanel, java.awt.BorderLayout.SOUTH);
+
+        allPanels.setLayout(new java.awt.BorderLayout());
+        mainContainerPanel.add(allPanels, java.awt.BorderLayout.CENTER);
 
         mainScrollView.setViewportView(mainContainerPanel);
 
@@ -137,45 +224,71 @@ public class MemberFrame extends javax.swing.JFrame {
 
     private void actionButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_actionButtonActionPerformed
         // TODO add your handling code here:
-        Member member = getMember();
-        if(member != null)
+        if(currentIndex < (panels.size() - 1))
         {
-            Vector<BaseEntity> entity = new Vector<BaseEntity>();
-            entity.add(member);
-            boolean bRegistered = DatabaseManager.insertEntities(entity, Member.class);
-            if(bRegistered)
+            updatePanel(true);
+        }
+        else
+        {
+            Member member = getMember();
+            if(member != null)
             {
-                Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-                Point centerPoint = new Point(screenSize.width / 2, screenSize.height/3);
-                this.setVisible(false);
-                Toast.showToast("Member registered successfully!", centerPoint, true);
-                SwingUtilities.invokeLater(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        try {
-                            Thread.sleep(1000);
-                        } catch (InterruptedException ex) {
-                            Logger.getLogger(MemberFrame.class.getName()).log(Level.SEVERE, null, ex);
-                        }
-                        finally
-                        {
-                            dispose();
-                        }
+                Vector<BaseEntity> entity = new Vector<BaseEntity>();
+                entity.add(member);
+                boolean bRegistered = DatabaseManager.insertEntities(entity, Member.class);
+                if(bRegistered)
+                {
+                    Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+                    Point centerPoint = new Point(screenSize.width / 2, screenSize.height/3);
+                    this.setVisible(false);
+                    if(panel.getPanelType() == InformationPanel.PanelType.Donate)
+                    {
+                        Toast.showToast("Donation performed successfully!", centerPoint, true);
                     }
-                });
+                    else
+                    {
+                        Toast.showToast("Member registered successfully!", centerPoint, true);
+                    }
+
+                    SwingUtilities.invokeLater(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            try {
+                                Thread.sleep(1000);
+                            } catch (InterruptedException ex) {
+                                Logger.getLogger(MemberFrame.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                            finally
+                            {
+                                dispose();
+                            }
+                        }
+                    });
+                }
             }
         }
     }//GEN-LAST:event_actionButtonActionPerformed
+
+    private void previousButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_previousButtonActionPerformed
+        updatePanel(false);
+    }//GEN-LAST:event_previousButtonActionPerformed
+
+    private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
+        this.setVisible(false);
+        this.dispose();
+    }//GEN-LAST:event_cancelButtonActionPerformed
 
     private InformationPanel panel;
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton actionButton;
     private javax.swing.JPanel actionPanel;
+    private javax.swing.JPanel allPanels;
     private javax.swing.JButton cancelButton;
     private javax.swing.JPanel mainContainerPanel;
     private javax.swing.JScrollPane mainScrollView;
+    private javax.swing.JButton previousButton;
     // End of variables declaration//GEN-END:variables
 
     private void updateInformationPanel() {

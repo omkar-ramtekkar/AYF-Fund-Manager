@@ -12,10 +12,9 @@ import java.io.File;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 import org.ayf.command.Command;
-import org.ayf.command.ReportCommand;
+import org.ayf.database.entities.Donor;
+import org.ayf.database.entities.Member;
 import org.ayf.mainmenubar.MainMenuController;
-import org.ayf.models.SideBarTableModel;
-import org.ayf.models.SideBarTableModel.Option;
 import org.ayf.toolbar.ToolbarController;
 import org.ayf.ui.InformationPanel;
 import org.ayf.ui.MainFrame;
@@ -146,7 +145,7 @@ public class ApplicationManager implements ActionListener
 
     private void handleUserAddAction() 
     {
-        new MemberFrame(null, InformationPanel.Context.Registeration).setVisible(true);
+        new MemberFrame(null, InformationPanel.PanelType.Registeration).setVisible(true);
     }
 
     private void handleUserDeleteAction() {
@@ -166,7 +165,7 @@ public class ApplicationManager implements ActionListener
     }
 
     private void handleDonateAction() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        new MemberFrame(null, InformationPanel.PanelType.Donate).setVisible(true);
     }
 
     private void checkAndUpdateDatabaseLocation()
@@ -198,5 +197,19 @@ public class ApplicationManager implements ActionListener
                 PreferenceManager.getIntance().setString("databasePath", file.getAbsolutePath());
             }
         }
+    }
+    
+    public void memberDidRegister(Member member)
+    {
+        String nextRegID = PreferenceManager.getIntance().getString("nextRegisterationID", "1");
+        int regNumber = Integer.parseInt(nextRegID);
+        PreferenceManager.getIntance().setString("nextRegisterationID", Integer.toString(++regNumber));
+    }
+    
+    public void donationDidPerform(Donor donor)
+    {
+        String nextDonorID = PreferenceManager.getIntance().getString("nextDonorID", "1");
+        int donorNumber = Integer.parseInt(nextDonorID);
+        PreferenceManager.getIntance().setString("nextDonorID", Integer.toString(++donorNumber));
     }
 }
