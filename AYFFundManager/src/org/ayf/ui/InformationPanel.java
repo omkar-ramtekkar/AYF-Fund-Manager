@@ -15,11 +15,13 @@ import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 import org.ayf.database.entities.BaseEntity;
+import org.ayf.database.entities.Donor;
 import org.ayf.database.entities.Member;
 import org.ayf.managers.DatabaseManager;
 import org.ayf.managers.ResourceManager;
 import org.ayf.util.DateTime;
 import org.ayf.util.NumberUtil;
+import org.ayf.util.PreferenceManager;
 import org.ayf.util.Toast;
 
 /**
@@ -51,8 +53,11 @@ public class InformationPanel extends BackgroundPanel {
     
     
     public InformationPanel(Member member, PanelType context) {
-         super(BackgroundStyle.GradientBlueGray);
+        
+        super(BackgroundStyle.GradientBlueGray);
+        
         initComponents();
+        
         setPanelType(context);
         setMember(member);
         
@@ -60,9 +65,10 @@ public class InformationPanel extends BackgroundPanel {
         
         Vector personalInformation = new Vector();
         personalInformation.add(this.basicInformationPanels);
-        if(this.panelType == PanelType.Donate)
+        
+        if(this.panelType != PanelType.Donate)
         {
-            personalInformation.add(donationInformationPanel);
+            this.donationInformationPanel.setVisible(false);
         }
         
         allPanels.add(personalInformation);
@@ -418,6 +424,114 @@ public class InformationPanel extends BackgroundPanel {
         updatePanel();
     }
     
+    boolean isValidBasicDetails(boolean showToast)
+    {
+        boolean isValidMember = true;
+
+        //basic information panel
+        String firstName = this.firstNameTxt.getText();
+        
+        if(firstName.length() <= 0) 
+        { 
+            if(showToast) Toast.showToast(this.firstNameTxt, "First Name required", false); 
+            isValidMember = false;; 
+        }
+        
+        try
+        {
+            int day = Integer.parseInt(this.dobDate.getText());
+            String month = (String)this.dateOfBirthMonths.getSelectedItem();
+            int year = Integer.parseInt(this.dobYear.getText());
+            DateTime.getDate(day, month, year);
+        } catch(NumberFormatException ex)
+        { 
+            if(showToast) Toast.showToast(this.dobDate, "Valid Date of Birth required", false); 
+            isValidMember = false;;
+        }
+        
+        try
+        {
+            int day = Integer.parseInt(this.registerationDay.getText());
+            String month = (String)this.registerationMonth.getSelectedItem();
+            int year = Integer.parseInt(this.registerationYear.getText());
+            DateTime.getDate(day, month, year);
+        } catch(NumberFormatException ex)
+        { 
+            if(showToast) Toast.showToast(this.registerationDay, "Valid Registeration Date required", false);
+            isValidMember = false;
+        }
+
+        if(!this.genderFemaleButton.isSelected() && !this.genderMaleButton.isSelected())
+        {
+            if(showToast) Toast.showToast(this.genderMaleButton, "Select Gender", false);
+            isValidMember = false;
+        }
+
+        if(!this.marritalStatusMarried.isSelected() && !this.marritalStatusSingle.isSelected())
+        {
+            if(showToast) Toast.showToast(this.marritalStatusSingle, "Select Marital Status", false);
+            isValidMember = false;
+        }
+        
+        
+        if(this.mobileNumberTxt.getText().length() <= 0)
+        {
+            if(showToast) Toast.showToast(this.mobileNumberTxt, "Valid contact number required.", false);
+            isValidMember = false;
+        }
+        
+        if(this.getPanelType() == PanelType.Donate)
+        {
+            if(NumberUtil.getUnformattedNumber(this.receiptNumberTextField.getText()) == null)
+            {
+                if(showToast) Toast.showToast(this.receiptNumberTextField, "Receipt Number required.", false);
+                isValidMember = false;
+            }
+            
+            if(NumberUtil.getUnformattedNumber(this.donationTextField.getText()) == null)
+            {
+                if(showToast) Toast.showToast(this.donationTextField, "Donation amount required.", false);
+                isValidMember = false;
+            }
+        }
+           
+        return isValidMember;
+    }
+    
+    boolean isValidPanelData(JPanel panel, boolean showToast)
+    {
+        if(panel == this.basicInformationPanels)
+        {
+            return isValidBasicDetails(showToast);
+        }
+        else if(panel == this.addressPanels)
+        {
+            return isValidAddressDetails(showToast);
+        }
+        else if(panel == this.otherInformationPanel)
+        {
+            return isValidOtherInformation(showToast);
+        }
+        
+        return true;
+    }
+    
+    boolean isValidAddressDetails(boolean showToast)
+    {
+        String permanentAddress = this.permanentAddrLine1.getText();
+        String permanentCity = this.permanentAddressCityTxt.getText();
+
+        String temporaryAddress = this.temporaryAddressLine1.getText();
+        String temporaryCity = this.temporaryAddressCityTxt.getText();
+
+        return true;
+    }
+    
+    boolean isValidOtherInformation(boolean showToast)
+    {
+        return true;
+    }
+    
     public Member getMember(boolean returnNULLIfInvalid, boolean showToast)
     {
         boolean isValidMember = true;
@@ -435,13 +549,13 @@ public class InformationPanel extends BackgroundPanel {
         String middleName = this.middleNameTxt.getText();
         String lastName = this.lastNameTxt.getText();
 
-        Date dateOfBirth = null;
+        java.sql.Date dateOfBirth = null;
         try
         {
             int day = Integer.parseInt(this.dobDate.getText());
             String month = (String)this.dateOfBirthMonths.getSelectedItem();
             int year = Integer.parseInt(this.dobYear.getText());
-            dateOfBirth = DateTime.getDate(day, month, year);
+            dateOfBirth = new java.sql.Date(DateTime.getDate(day, month, year).getTime());
         } catch(NumberFormatException ex)
         { 
             if(showToast) Toast.showToast(this.dobDate, "Valid Date of Birth required", false); 
@@ -450,13 +564,13 @@ public class InformationPanel extends BackgroundPanel {
         
         
         
-        Date registerationDate = null;
+        java.sql.Date registerationDate = null;
         try
         {
             int day = Integer.parseInt(this.registerationDay.getText());
             String month = (String)this.registerationMonth.getSelectedItem();
             int year = Integer.parseInt(this.registerationYear.getText());
-            registerationDate = DateTime.getDate(day, month, year);
+            registerationDate = new java.sql.Date(DateTime.getDate(day, month, year).getTime());
         } catch(NumberFormatException ex)
         { 
             if(showToast) Toast.showToast(this.registerationDay, "Valid Registeration Date required", false);
@@ -513,30 +627,71 @@ public class InformationPanel extends BackgroundPanel {
         String subCast = this.subcastTxt.getText();
         String cast = this.castTxt.getText();
         String education = this.educationTxt.getText();
-        
-        float donationAmount = Integer.parseInt(NumberUtil.getUnformattedNumber(this.donationTextField.getText()));
-        long receiptNumber = 0;
-        
+                
         if(isValidMember)
-        {
-            /*
-                public Donor(float donationAmount, long receiptNumber, Date donationDate, String donationType, String paymentMode, int memberID, String firstName, String middleName, String lastName, Date dateOfBirth, MaritalStatus maritalStatus, String cast, String subCast, String district, String bloodGroup, Gender gender, String permanentAddress, String temporaryAddress, String contactNumber, String emailAddress, String education, String profession, Date registerationDate, String position, String imagePath, ActiveStatus currentStatus) {
-        super(memberID, firstName, middleName, lastName, dateOfBirth, maritalStatus, cast, subCast, district, bloodGroup, gender, permanentAddress, temporaryAddress, contactNumber, emailAddress, education, profession, registerationDate, position, imagePath, currentStatus);
-        this.donationAmount = donationAmount;
-        this.receiptNumber = receiptNumber;
-        this.donationDate = donationDate;
-        this.donationType = donationType;
-        this.paymentMode = paymentMode;
-    }
-            */
-            
+        {   
             if(this.panelType == PanelType.Donate)
             {
-                return null;//new Donor(donationAmount, receiptNumber, registerationDate, dona);
+                float donationAmount = Integer.parseInt(NumberUtil.getUnformattedNumber(this.donationTextField.getText()));
+                long receiptNumber = Integer.parseInt(NumberUtil.getUnformattedNumber(this.receiptNumberTextField.getText()));
+        
+                Donor donor = new Donor(donationAmount, 
+                        receiptNumber, 
+                        registerationDate, 
+                        this.donationTypeCombo.getSelectedItem().toString(), 
+                        this.paymentModeCombo.getSelectedItem().toString(), 
+                        Integer.MAX_VALUE, 
+                        firstName, 
+                        middleName, 
+                        lastName, 
+                        dateOfBirth, 
+                        maritalStatus, 
+                        cast, 
+                        subCast, 
+                        null, 
+                        bloodGroup, 
+                        gender, 
+                        permanentAddress, 
+                        temporaryAddress, 
+                        contactNumber, 
+                        emailAddress, 
+                        education, 
+                        profession, 
+                        null, 
+                        position, 
+                        imagePath, 
+                        BaseEntity.ActiveStatus.Unknown);
+                
+                donor.setUniqueID(Donor.getNextDonorID());
+                return donor;
             }
             else
             {
-                return new Member(Integer.MAX_VALUE, firstName, middleName, lastName, DateTime.toSQLDate(dateOfBirth), maritalStatus, cast, subCast, permanentCity, bloodGroup, gender, permanentAddress, temporaryAddress, contactNumber, emailAddress, education, profession, DateTime.toSQLDate(registerationDate), position, imagePath, Member.ActiveStatus.Unknown);
+                Member member = new Member(
+                        Integer.MAX_VALUE, 
+                        firstName, 
+                        middleName, 
+                        lastName, 
+                        DateTime.toSQLDate(dateOfBirth), 
+                        maritalStatus, 
+                        cast, 
+                        subCast, 
+                        permanentCity, 
+                        bloodGroup, 
+                        gender, 
+                        permanentAddress, 
+                        temporaryAddress, 
+                        contactNumber, 
+                        emailAddress, 
+                        education, 
+                        profession, 
+                        DateTime.toSQLDate(registerationDate), 
+                        position, 
+                        imagePath, 
+                        Member.ActiveStatus.Unknown);
+                
+                member.setUniqueID(Member.getNextRegID());
+                return member;
             }
         }
         else
@@ -554,13 +709,6 @@ public class InformationPanel extends BackgroundPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        donationInformationPanel = new javax.swing.JPanel();
-        jLabel9 = new javax.swing.JLabel();
-        receiptNumberTextField = new javax.swing.JTextField();
-        jLabel10 = new javax.swing.JLabel();
-        donationTypeCombo = new javax.swing.JComboBox();
-        jLabel13 = new javax.swing.JLabel();
-        paymentModeCombo = new javax.swing.JComboBox();
         otherInformationPanel = new javax.swing.JPanel();
         professionTypeCombo = new javax.swing.JComboBox();
         jLabel14 = new javax.swing.JLabel();
@@ -609,6 +757,13 @@ public class InformationPanel extends BackgroundPanel {
         donationTextField = new javax.swing.JTextField();
         jLabel7 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
+        donationInformationPanel = new javax.swing.JPanel();
+        jLabel9 = new javax.swing.JLabel();
+        receiptNumberTextField = new javax.swing.JTextField();
+        jLabel10 = new javax.swing.JLabel();
+        donationTypeCombo = new javax.swing.JComboBox();
+        jLabel13 = new javax.swing.JLabel();
+        paymentModeCombo = new javax.swing.JComboBox();
         addressPanels = new javax.swing.JPanel();
         permanentAddressPanell = new javax.swing.JPanel();
         permanentAddressZipCode = new javax.swing.JTextField();
@@ -628,57 +783,6 @@ public class InformationPanel extends BackgroundPanel {
         temporaryAddressLine1 = new javax.swing.JTextField();
         jLabel31 = new javax.swing.JLabel();
         jLabel32 = new javax.swing.JLabel();
-
-        donationInformationPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Donation Information"));
-
-        jLabel9.setText("Receipt Number");
-
-        jLabel10.setText("Donation Type");
-
-        donationTypeCombo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-
-        jLabel13.setText("Payment Mode");
-
-        paymentModeCombo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-
-        javax.swing.GroupLayout donationInformationPanelLayout = new javax.swing.GroupLayout(donationInformationPanel);
-        donationInformationPanel.setLayout(donationInformationPanelLayout);
-        donationInformationPanelLayout.setHorizontalGroup(
-            donationInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(donationInformationPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(donationInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(donationInformationPanelLayout.createSequentialGroup()
-                        .addComponent(jLabel9)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(receiptNumberTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(donationInformationPanelLayout.createSequentialGroup()
-                        .addComponent(jLabel10)
-                        .addGap(18, 18, 18)
-                        .addComponent(donationTypeCombo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(donationInformationPanelLayout.createSequentialGroup()
-                        .addComponent(jLabel13)
-                        .addGap(18, 18, 18)
-                        .addComponent(paymentModeCombo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        donationInformationPanelLayout.setVerticalGroup(
-            donationInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(donationInformationPanelLayout.createSequentialGroup()
-                .addGap(9, 9, 9)
-                .addGroup(donationInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel9)
-                    .addComponent(receiptNumberTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(donationInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel10)
-                    .addComponent(donationTypeCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(donationInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel13)
-                    .addComponent(paymentModeCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
 
         otherInformationPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Other Information"));
 
@@ -783,7 +887,7 @@ public class InformationPanel extends BackgroundPanel {
                 .addGroup(otherInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel11)
                     .addComponent(educationTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
             .addGroup(otherInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(otherInformationPanelLayout.createSequentialGroup()
                     .addContainerGap()
@@ -835,7 +939,7 @@ public class InformationPanel extends BackgroundPanel {
                 .addGroup(contactsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel27)
                     .addComponent(mobileNumberTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         basicInformationPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Basic Information"));
@@ -1068,6 +1172,11 @@ public class InformationPanel extends BackgroundPanel {
 
         registerationNumber.setFont(new java.awt.Font("Lucida Grande", 1, 18)); // NOI18N
         registerationNumber.setText("AUF12023");
+        registerationNumber.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                registerationNumberMouseClicked(evt);
+            }
+        });
 
         donationTextField.setFont(new java.awt.Font("Lucida Grande", 1, 18)); // NOI18N
         donationTextField.addFocusListener(new java.awt.event.FocusAdapter() {
@@ -1137,6 +1246,57 @@ public class InformationPanel extends BackgroundPanel {
                 .addGap(6, 6, 6))
         );
 
+        donationInformationPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Donation Information"));
+
+        jLabel9.setText("Receipt Number");
+
+        jLabel10.setText("Donation Type");
+
+        donationTypeCombo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
+        jLabel13.setText("Payment Mode");
+
+        paymentModeCombo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
+        javax.swing.GroupLayout donationInformationPanelLayout = new javax.swing.GroupLayout(donationInformationPanel);
+        donationInformationPanel.setLayout(donationInformationPanelLayout);
+        donationInformationPanelLayout.setHorizontalGroup(
+            donationInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(donationInformationPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(donationInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel9)
+                    .addComponent(jLabel10)
+                    .addComponent(jLabel13))
+                .addGap(29, 29, 29)
+                .addGroup(donationInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(donationInformationPanelLayout.createSequentialGroup()
+                        .addGap(3, 3, 3)
+                        .addComponent(receiptNumberTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(donationInformationPanelLayout.createSequentialGroup()
+                        .addGap(1, 1, 1)
+                        .addComponent(donationTypeCombo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(paymentModeCombo, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(14, 14, 14))
+        );
+        donationInformationPanelLayout.setVerticalGroup(
+            donationInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(donationInformationPanelLayout.createSequentialGroup()
+                .addGap(9, 9, 9)
+                .addGroup(donationInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel9)
+                    .addComponent(receiptNumberTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(donationInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel10)
+                    .addComponent(donationTypeCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(donationInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel13)
+                    .addComponent(paymentModeCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(6, 6, 6))
+        );
+
         javax.swing.GroupLayout basicInformationPanelsLayout = new javax.swing.GroupLayout(basicInformationPanels);
         basicInformationPanels.setLayout(basicInformationPanelsLayout);
         basicInformationPanelsLayout.setHorizontalGroup(
@@ -1146,7 +1306,8 @@ public class InformationPanel extends BackgroundPanel {
                 .addGroup(basicInformationPanelsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(headerPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(contactsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(basicInformationPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(basicInformationPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(donationInformationPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
         basicInformationPanelsLayout.setVerticalGroup(
@@ -1154,10 +1315,12 @@ public class InformationPanel extends BackgroundPanel {
             .addGroup(basicInformationPanelsLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(headerPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
                 .addComponent(basicInformationPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(18, 18, 18)
                 .addComponent(contactsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(donationInformationPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -1248,7 +1411,7 @@ public class InformationPanel extends BackgroundPanel {
                 .addGroup(permanentAddressPanellLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel28)
                     .addComponent(permanentAddressZipCode, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         temporaryAddressPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Temporary Address"));
@@ -1377,7 +1540,6 @@ public class InformationPanel extends BackgroundPanel {
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(donationInformationPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(otherInformationPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(addressPanels, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addGap(6, 6, 6))
@@ -1387,9 +1549,7 @@ public class InformationPanel extends BackgroundPanel {
             .addGroup(layout.createSequentialGroup()
                 .addGap(6, 6, 6)
                 .addComponent(basicInformationPanels, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(18, 18, 18)
-                .addComponent(donationInformationPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(157, 157, 157)
                 .addComponent(otherInformationPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(addressPanels, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -1622,6 +1782,10 @@ public class InformationPanel extends BackgroundPanel {
     private void donationTextFieldFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_donationTextFieldFocusLost
         this.donationTextField.setText(NumberUtil.getFormattedNumber(this.donationTextField.getText()));
     }//GEN-LAST:event_donationTextFieldFocusLost
+
+    private void registerationNumberMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_registerationNumberMouseClicked
+        
+    }//GEN-LAST:event_registerationNumberMouseClicked
 
 
     private Vector<String> professionTypes;

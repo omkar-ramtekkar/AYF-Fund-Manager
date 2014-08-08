@@ -12,7 +12,6 @@ import java.text.ParseException;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.ayf.ui.InformationPanel;
 
 /**
  *

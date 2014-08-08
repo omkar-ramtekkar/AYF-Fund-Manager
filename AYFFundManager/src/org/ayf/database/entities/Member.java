@@ -13,6 +13,8 @@ import java.util.Map;
 import java.util.Vector;
 import org.ayf.reports.ReportData;
 import org.ayf.util.DateTime;
+import org.ayf.util.PreferenceManager;
+import org.jdesktop.swingx.calendar.DateUtils;
 
 /**
  *
@@ -92,6 +94,16 @@ public class Member extends BaseEntity
         this.registerationDate = registerationDate;
         this.position = position;
         this.currentStatus = currentStatus;
+    }
+    
+    static public String getNextRegID()
+    {
+        String id = PreferenceManager.getIntance().getString("nextRegisterationID", "1");
+        return "AUF/" + 
+                DateTime.getMonth(DateTime.toSQLDate(new java.util.Date())) + 
+                "/" + 
+                DateTime.getYear(DateTime.toSQLDate(new java.util.Date())) +
+                "/"+id;
     }
 
     static void init()

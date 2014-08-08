@@ -12,6 +12,7 @@ import java.io.File;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 import org.ayf.command.Command;
+import org.ayf.database.entities.BaseEntity;
 import org.ayf.database.entities.Donor;
 import org.ayf.database.entities.Member;
 import org.ayf.mainmenubar.MainMenuController;
@@ -211,5 +212,20 @@ public class ApplicationManager implements ActionListener
         String nextDonorID = PreferenceManager.getIntance().getString("nextDonorID", "1");
         int donorNumber = Integer.parseInt(nextDonorID);
         PreferenceManager.getIntance().setString("nextDonorID", Integer.toString(++donorNumber));
+    }
+
+    void entityDidAdded(BaseEntity entity) 
+    {
+        if(entity != null)
+        {
+            if(entity.getClass().equals(Donor.class))
+            {
+                donationDidPerform((Donor) entity);
+            }
+            else if(entity.getClass().equals(Member.class))
+            {
+                memberDidRegister((Member) entity);
+            }
+        }
     }
 }

@@ -788,6 +788,8 @@ public class DatabaseManager {
                     }
                     
                     bInserted &= ps.executeUpdate() > 0;
+                    
+                    ApplicationManager.getSharedManager().entityDidAdded(entity);
                 }
                 
                 conn.commit();

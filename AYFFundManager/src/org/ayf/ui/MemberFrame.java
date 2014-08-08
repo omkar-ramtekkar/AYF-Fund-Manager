@@ -54,8 +54,6 @@ public class MemberFrame extends javax.swing.JFrame {
             }
         });
         
-        
-        
         setSize(new Dimension((int) panel.getPreferredSize().getWidth() + 25, 600));
         setLocation(200, 100);
         
@@ -64,6 +62,30 @@ public class MemberFrame extends javax.swing.JFrame {
     
     void updatePanel(boolean next)
     {
+        if(next)
+        {
+            if(this.allPanels.getComponentCount() > 0)
+            {
+                boolean bValidData = true;
+                JPanel dummy = (JPanel)this.allPanels.getComponent(0);
+                
+                for(int i=0; i< dummy.getComponentCount(); ++i)
+                {
+                    JPanel testPanel = (JPanel)dummy.getComponent(i);
+                    
+                    if(testPanel != null)
+                    {
+                        bValidData &= this.panel.isValidPanelData(testPanel, true);
+                    }
+                }
+                
+                if(!bValidData)
+                {
+                    return;
+                }
+            }
+        }
+        
         this.allPanels.removeAll();
         
         if(next) ++currentIndex;
@@ -74,17 +96,22 @@ public class MemberFrame extends javax.swing.JFrame {
 
             Vector<JPanel> p = panels.get(currentIndex);
 
-            JPanel dummyPanel = new JPanel(new GridLayout(p.size(), 1));
-
+            JPanel dummy = new JPanel(new GridLayout(p.size(), 1));
+            Dimension dimension = new Dimension();
             for (JPanel panel : p)
             {
-                panel.setVisible(true);
-                dummyPanel.add(panel);
+                dimension.width = Math.max(panel.getPreferredSize().width, dimension.width);
+                dimension.height += panel.getPreferredSize().height;
+                panel.doLayout();
+                panel.validate();
+                dummy.add(panel);
             }
-
-            dummyPanel.validate();
-
-            this.allPanels.add(dummyPanel, BorderLayout.CENTER);
+            
+            dummy.doLayout();
+            
+            
+            
+            this.allPanels.add(dummy, BorderLayout.CENTER);
         }
         
         

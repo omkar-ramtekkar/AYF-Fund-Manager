@@ -13,6 +13,7 @@ import java.util.Vector;
 import org.ayf.managers.DatabaseManager;
 import org.ayf.reports.ReportData;
 import org.ayf.util.DateTime;
+import org.ayf.util.PreferenceManager;
 
 /**
  *
@@ -47,6 +48,16 @@ public class Donor extends Member
         this.donationDate = donationDate;
         this.donationType = donationType;
         this.paymentMode = paymentMode;
+    }
+    
+    static public String getNextDonorID()
+    {
+        String id = PreferenceManager.getIntance().getString("nextDonorID", "1");
+        return "AUF/Donation/" + 
+                DateTime.getMonth(DateTime.toSQLDate(new java.util.Date())) + 
+                "/" + 
+                DateTime.getYear(DateTime.toSQLDate(new java.util.Date())) +
+                "/"+id;
     }
     
 
