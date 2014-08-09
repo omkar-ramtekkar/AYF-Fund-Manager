@@ -12,7 +12,6 @@ import java.awt.event.ActionListener;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
 import org.ayf.command.Command;
 import org.ayf.managers.ApplicationManager;
 import org.ayf.toolbar.ActionItem;
@@ -60,9 +59,13 @@ public class MainMenuController implements ActionListener{
         memberMenu.add(new ActionItem("Update Member...", Command.SubCommandType.UserEdit, "user_edit", dimension));
         memberMenu.add(new ActionItem("Remove Member...", Command.SubCommandType.UserDelete, "user_remove", dimension));
         
+        JMenu tools = new JMenu("Tools");
+        tools.add(new ActionItem("Settings...", Command.SubCommandType.Settings, "settings", dimension));
+        
         mainMenuBarView.add(fileMenu);
         mainMenuBarView.add(new JLabel());
         mainMenuBarView.add(memberMenu);
+        mainMenuBarView.add(tools);
         
     } 
 

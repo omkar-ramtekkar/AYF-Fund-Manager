@@ -8,7 +8,6 @@ package org.ayf.ui;
 
 import java.io.File;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.Vector;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
@@ -21,7 +20,6 @@ import org.ayf.managers.DatabaseManager;
 import org.ayf.managers.ResourceManager;
 import org.ayf.util.DateTime;
 import org.ayf.util.NumberUtil;
-import org.ayf.util.PreferenceManager;
 import org.ayf.util.Toast;
 
 /**
@@ -137,6 +135,17 @@ public class InformationPanel extends BackgroundPanel {
         this.registerationMonth.setModel(new DefaultComboBoxModel(months));
     }
     
+    
+    public void setPaymentModeComboBox(Vector<String> modes)
+    {
+        this.paymentModeCombo.setModel(new DefaultComboBoxModel(modes));
+    }
+    
+    public void setDonationTypeComboBox(Vector<String> types)
+    {
+        this.donationTypeCombo.setModel(new DefaultComboBoxModel(types));
+    }
+    
     void disableControls()
     {
         this.imageLabel.setEnabled(false);
@@ -241,8 +250,7 @@ public class InformationPanel extends BackgroundPanel {
         
         if(this.member != null)
         {
-            //header panel
-            this.imageLabel.setIcon(ResourceManager.getExternalIcon(member.getImagePath(), this.imageLabel.getPreferredSize()));
+            updateImageIcon(member.getImagePath());
             
             //basic information panel
             this.firstNameTxt.setText(member.getFirstName());
@@ -310,6 +318,33 @@ public class InformationPanel extends BackgroundPanel {
                 this.registerationMonth.setSelectedIndex(DateTime.getMonth(regOrDonationDate));
             }
             
+            
+            Vector<String> donationTypes = new Vector<String>(1);
+            if(getPanelType() == PanelType.View)
+            {
+                donationTypes.add(this.member.getValueForField(BaseEntity.ColumnName.DonationType).toString());
+                setDonationTypeComboBox(donationTypes);
+            }
+            else
+            {
+                donationTypes.addAll(BaseEntity.getAllValuesForColumnName(BaseEntity.ColumnName.DonationType));
+                setDonationTypeComboBox(registerationMonth);
+                this.registerationMonth.setSelectedItem(this.member.getValueForField(BaseEntity.ColumnName.DonationType).toString());
+            }
+            
+            
+            Vector<String> paymentModes = new Vector<String>(1);
+            if(getPanelType() == PanelType.View)
+            {
+                paymentModes.add(this.member.getValueForField(BaseEntity.ColumnName.PaymentMode).toString());
+                setPaymentModeComboBox(paymentModes);
+            }
+            else
+            {
+                paymentModes.addAll(BaseEntity.getAllValuesForColumnName(BaseEntity.ColumnName.PaymentMode));
+                setPaymentModeComboBox(registerationMonth);
+                this.paymentModeCombo.setSelectedItem(this.member.getValueForField(BaseEntity.ColumnName.PaymentMode).toString());
+            }
             
             this.registerationYear.setText(Integer.toString(DateTime.getYear(regOrDonationDate)));
             
@@ -396,24 +431,15 @@ public class InformationPanel extends BackgroundPanel {
         }
         else
         {
-            if(this.genderFemaleButton.isSelected())
-            {
-                this.imageLabel.setIcon(ResourceManager.getIcon("no_photo_women", this.imageLabel.getPreferredSize()));
-            }
-            else if(this.genderMaleButton.isSelected())
-            {
-                this.imageLabel.setIcon(ResourceManager.getIcon("no_photo_men", this.imageLabel.getPreferredSize()));
-            }
-            else
-            {
-                this.imageLabel.setIcon(ResourceManager.getIcon("no_photo", this.imageLabel.getPreferredSize()));
-            }
+            updateImageIcon(null);
             
             setBloodGroups(new Vector<String>(Arrays.asList(BloodGroups)));
             setRegisterationMonthComboBox(new Vector<String>(Arrays.asList(DateTime.Months)));
             setDateOfBirthMonthComboBox(new Vector<String>(Arrays.asList(DateTime.Months)));
             setPositionTypes(new Vector<String>(DatabaseManager.typesToStrings(DatabaseManager.getPositionTypes())));
             setProfessionTypes(new Vector<String>(DatabaseManager.typesToStrings(DatabaseManager.getProfessionTypes())));
+            setPaymentModeComboBox(BaseEntity.getAllValuesForColumnName(BaseEntity.ColumnName.PaymentMode));
+            setDonationTypeComboBox(BaseEntity.getAllValuesForColumnName(BaseEntity.ColumnName.DonationType));
         }
     }
     
@@ -579,9 +605,9 @@ public class InformationPanel extends BackgroundPanel {
         
         BaseEntity.Gender gender = BaseEntity.Gender.Female;
         
-        if(this.genderFemaleButton.isSelected())
+        if(this.genderMaleButton.isSelected())
         {
-            gender = BaseEntity.Gender.Female;
+            gender = BaseEntity.Gender.Male;
         }
         
         if(!this.genderFemaleButton.isSelected() && !this.genderMaleButton.isSelected())
@@ -648,7 +674,7 @@ public class InformationPanel extends BackgroundPanel {
                         maritalStatus, 
                         cast, 
                         subCast, 
-                        null, 
+                        permanentCity, 
                         bloodGroup, 
                         gender, 
                         permanentAddress, 
@@ -840,10 +866,12 @@ public class InformationPanel extends BackgroundPanel {
             otherInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(otherInformationPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(otherInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, 78, Short.MAX_VALUE)
-                    .addComponent(jLabel16, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(otherInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(otherInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, 78, Short.MAX_VALUE)
+                        .addComponent(jLabel16, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(27, 27, 27)
                 .addGroup(otherInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(professionTypeCombo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -859,20 +887,16 @@ public class InformationPanel extends BackgroundPanel {
                     .addComponent(positionCombo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(subcastTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
-            .addGroup(otherInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(otherInformationPanelLayout.createSequentialGroup()
-                    .addContainerGap()
-                    .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(476, Short.MAX_VALUE)))
         );
         otherInformationPanelLayout.setVerticalGroup(
             otherInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, otherInformationPanelLayout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(12, 12, 12)
                 .addGroup(otherInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(positionCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel14)
-                    .addComponent(professionTypeCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(professionTypeCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(otherInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(bloodGroupCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -888,11 +912,6 @@ public class InformationPanel extends BackgroundPanel {
                     .addComponent(jLabel11)
                     .addComponent(educationTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
-            .addGroup(otherInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(otherInformationPanelLayout.createSequentialGroup()
-                    .addContainerGap()
-                    .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(150, Short.MAX_VALUE)))
         );
 
         contactsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Contacts"));
@@ -931,11 +950,11 @@ public class InformationPanel extends BackgroundPanel {
         contactsPanelLayout.setVerticalGroup(
             contactsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(contactsPanelLayout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(12, 12, 12)
                 .addGroup(contactsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel26)
                     .addComponent(emailAddressTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(18, 18, 18)
                 .addGroup(contactsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel27)
                     .addComponent(mobileNumberTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -1108,12 +1127,12 @@ public class InformationPanel extends BackgroundPanel {
                         .addGroup(basicInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(dobYear, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(registerationYear, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addGap(6, 6, 6))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         basicInformationPanelLayout.setVerticalGroup(
             basicInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(basicInformationPanelLayout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(12, 12, 12)
                 .addGroup(basicInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(jLabel3)
@@ -1124,34 +1143,36 @@ public class InformationPanel extends BackgroundPanel {
                     .addComponent(middleNameTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lastNameTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel19))
-                .addGap(15, 15, 15)
+                .addGap(18, 18, 18)
                 .addGroup(basicInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(basicInformationPanelLayout.createSequentialGroup()
                         .addGroup(basicInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(dobDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(dateOfBirthMonths, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel4))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGap(18, 18, 18)
                         .addGroup(basicInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(regOrDonationDate)
                             .addComponent(registerationDay, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(registerationMonth, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(basicInformationPanelLayout.createSequentialGroup()
                         .addComponent(dobYear, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGap(18, 18, 18)
                         .addComponent(registerationYear, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(18, 18, 18)
                 .addGroup(basicInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(genderMaleButton)
                     .addComponent(genderFemaleButton))
-                .addGap(11, 11, 11)
+                .addGap(18, 18, 18)
                 .addGroup(basicInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(marritalStatusSingle)
                     .addComponent(marritalStatusMarried)
                     .addComponent(jLabel15))
                 .addContainerGap())
         );
+
+        headerPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
 
         imageLabel.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(204, 255, 204), 2, true));
         imageLabel.setMaximumSize(new java.awt.Dimension(90, 90));
@@ -1277,20 +1298,20 @@ public class InformationPanel extends BackgroundPanel {
                         .addGap(1, 1, 1)
                         .addComponent(donationTypeCombo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addComponent(paymentModeCombo, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(14, 14, 14))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         donationInformationPanelLayout.setVerticalGroup(
             donationInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(donationInformationPanelLayout.createSequentialGroup()
-                .addGap(9, 9, 9)
+                .addGap(12, 12, 12)
                 .addGroup(donationInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel9)
                     .addComponent(receiptNumberTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(18, 18, 18)
                 .addGroup(donationInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel10)
                     .addComponent(donationTypeCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(18, 18, 18)
                 .addGroup(donationInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel13)
                     .addComponent(paymentModeCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -1303,12 +1324,12 @@ public class InformationPanel extends BackgroundPanel {
             basicInformationPanelsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(basicInformationPanelsLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(basicInformationPanelsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(headerPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(contactsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(basicInformationPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(donationInformationPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
+                .addGroup(basicInformationPanelsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(basicInformationPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(headerPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(donationInformationPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(contactsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         basicInformationPanelsLayout.setVerticalGroup(
             basicInformationPanelsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1397,17 +1418,17 @@ public class InformationPanel extends BackgroundPanel {
         permanentAddressPanellLayout.setVerticalGroup(
             permanentAddressPanellLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(permanentAddressPanellLayout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(12, 12, 12)
                 .addComponent(permanentAddrLine1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(permanentAddressLine2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(18, 18, 18)
                 .addGroup(permanentAddressPanellLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel20)
                     .addComponent(permanentAddressCityTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel21)
                     .addComponent(permanentAddressState, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(18, 18, 18)
                 .addGroup(permanentAddressPanellLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel28)
                     .addComponent(permanentAddressZipCode, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -1468,7 +1489,7 @@ public class InformationPanel extends BackgroundPanel {
             temporaryAddressPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(temporaryAddressPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(temporaryAddressPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(temporaryAddressPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, temporaryAddressPanelLayout.createSequentialGroup()
                         .addGroup(temporaryAddressPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, temporaryAddressPanelLayout.createSequentialGroup()
@@ -1483,25 +1504,25 @@ public class InformationPanel extends BackgroundPanel {
                         .addGap(36, 36, 36)
                         .addComponent(jLabel32)
                         .addGap(18, 18, 18)
-                        .addComponent(temporaryAddressState, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(temporaryAddressLine1, javax.swing.GroupLayout.PREFERRED_SIZE, 396, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(temporaryAddressLine2, javax.swing.GroupLayout.PREFERRED_SIZE, 396, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(temporaryAddressState, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(temporaryAddressLine1)
+                    .addComponent(temporaryAddressLine2))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         temporaryAddressPanelLayout.setVerticalGroup(
             temporaryAddressPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(temporaryAddressPanelLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(12, 12, 12)
                 .addComponent(temporaryAddressLine1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(temporaryAddressLine2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(18, 18, 18)
                 .addGroup(temporaryAddressPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel30)
                     .addComponent(temporaryAddressCityTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel32)
                     .addComponent(temporaryAddressState, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(18, 18, 18)
                 .addGroup(temporaryAddressPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel31)
                     .addComponent(temporaryAddressZipCode, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -1514,10 +1535,8 @@ public class InformationPanel extends BackgroundPanel {
             .addGroup(addressPanelsLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(addressPanelsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(addressPanelsLayout.createSequentialGroup()
-                        .addComponent(permanentAddressPanell, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(temporaryAddressPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(temporaryAddressPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(permanentAddressPanell, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         addressPanelsLayout.setVerticalGroup(
@@ -1525,7 +1544,7 @@ public class InformationPanel extends BackgroundPanel {
             .addGroup(addressPanelsLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(permanentAddressPanell, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(18, 18, 18)
                 .addComponent(temporaryAddressPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -1539,9 +1558,9 @@ public class InformationPanel extends BackgroundPanel {
                     .addComponent(basicInformationPanels, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(otherInformationPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(addressPanels, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(otherInformationPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(addressPanels, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addGap(6, 6, 6))
         );
         layout.setVerticalGroup(
@@ -1549,9 +1568,9 @@ public class InformationPanel extends BackgroundPanel {
             .addGroup(layout.createSequentialGroup()
                 .addGap(6, 6, 6)
                 .addComponent(basicInformationPanels, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(157, 157, 157)
+                .addGap(18, 18, 18)
                 .addComponent(otherInformationPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(18, 18, 18)
                 .addComponent(addressPanels, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
@@ -1614,16 +1633,45 @@ public class InformationPanel extends BackgroundPanel {
             if(userOption == JFileChooser.APPROVE_OPTION)
             {
                 File file = fileChooser.getSelectedFile();
-                ImageIcon icon = ResourceManager.getIcon(file.getAbsolutePath());
-                if(icon != null)
-                {
-                    this.imageLabel.setIcon(icon);
-                    this.imageLabel.setToolTipText(file.getAbsolutePath());
-                }
+                updateImageIcon(file.getAbsolutePath());
             }
         }
     }//GEN-LAST:event_imageLabelMouseClicked
 
+    void updateImageIcon(String imagePath)
+    {
+        String iconPath = imagePath;
+        if(imagePath == null)
+        {
+            iconPath = this.imageLabel.getToolTipText();
+        }
+        
+        if(iconPath != null)
+        {
+            ImageIcon icon = ResourceManager.getExternalIcon(iconPath, this.imageLabel.getPreferredSize());
+            if(icon != null)
+            {
+                this.imageLabel.setIcon(icon);
+                this.imageLabel.setToolTipText(iconPath);
+            }
+        }
+        else
+        {
+            if(this.genderFemaleButton.isSelected())
+            {
+                this.imageLabel.setIcon(ResourceManager.getIcon("no_photo_women", this.imageLabel.getPreferredSize()));
+            }
+            else if(this.genderMaleButton.isSelected())
+            {
+                this.imageLabel.setIcon(ResourceManager.getIcon("no_photo_men", this.imageLabel.getPreferredSize()));
+            }
+            else
+            {
+                this.imageLabel.setIcon(ResourceManager.getIcon("no_photo", this.imageLabel.getPreferredSize()));
+            }
+        }
+    }
+    
     private void imageLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_imageLabelMouseEntered
         
         if(this.panelType != PanelType.View)
@@ -1633,28 +1681,9 @@ public class InformationPanel extends BackgroundPanel {
     }//GEN-LAST:event_imageLabelMouseEntered
 
     private void imageLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_imageLabelMouseExited
-        
-        if(this.panelType != PanelType.View)
+        if(getPanelType() != PanelType.View)
         {
-            if(this.imageLabel.getToolTipText() != null)
-            {
-                this.imageLabel.setIcon(ResourceManager.getExternalIcon(this.imageLabel.getToolTipText(), this.imageLabel.getPreferredSize()));
-            }
-            else
-            {
-                if(this.genderFemaleButton.isSelected())
-                {
-                    this.imageLabel.setIcon(ResourceManager.getIcon("no_photo_women", this.imageLabel.getPreferredSize()));
-                }
-                else if(this.genderMaleButton.isSelected())
-                {
-                    this.imageLabel.setIcon(ResourceManager.getIcon("no_photo_men", this.imageLabel.getPreferredSize()));
-                }
-                else
-                {
-                    this.imageLabel.setIcon(ResourceManager.getIcon("no_photo", this.imageLabel.getPreferredSize()));
-                }
-            }
+            updateImageIcon(null);
         }
     }//GEN-LAST:event_imageLabelMouseExited
 

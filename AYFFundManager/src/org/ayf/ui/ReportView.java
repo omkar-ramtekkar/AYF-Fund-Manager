@@ -24,7 +24,7 @@ public class ReportView extends javax.swing.JPanel {
             rootPanel = new BackgroundPanel(BackgroundPanel.BackgroundStyle.Default);
             setLayout(new java.awt.BorderLayout());
 
-            rootPanel.setLayout(new java.awt.GridLayout(2, 2));
+            rootPanel.setLayout(new java.awt.BorderLayout());
             jScrollPane1.setViewportView(rootPanel);
 
             add(jScrollPane1, java.awt.BorderLayout.CENTER);
