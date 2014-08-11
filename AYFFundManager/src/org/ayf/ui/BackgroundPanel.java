@@ -45,10 +45,8 @@ public class BackgroundPanel extends javax.swing.JPanel
     }
     
     
-    
     protected void paintComponent(Graphics g) 
     {
-        
         if(backgroundImage == null)
         {
             backgroundImage = ResourceManager.getImage("background_" + this.style.toString(), getSize());

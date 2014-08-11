@@ -14,7 +14,6 @@ import java.util.Vector;
 import org.ayf.reports.ReportData;
 import org.ayf.util.DateTime;
 import org.ayf.util.PreferenceManager;
-import org.jdesktop.swingx.calendar.DateUtils;
 
 /**
  *
@@ -623,7 +622,9 @@ public class Member extends BaseEntity
     
     @Override
     public String toString() {
-        return "Member{" + "memberID=" + getID() + ", firstName=" + firstName + ", middleName=" + middleName + ", lastName=" + lastName + ", dateOfBirth=" + dateOfBirth + ", maritalStatus=" + maritalStatus.toString() + ", cast=" + cast + ", subCast=" + subCast + ", district=" + district + ", bloodGroup=" + bloodGroup + ", gender=" + gender + ", age=" + age + ", permanentAddress=" + permanentAddress + ", temporaryAddress=" + temporaryAddress + ", contactNumber=" + contactNumber + ", emailAddress=" + emailAddress + ", education=" + education + ", profession=" + profession + ", registerationDate=" + registerationDate + ", position=" + position + ", imagePath=" + imagePath + '}';
+        StringBuilder memberString = new StringBuilder(30);
+        memberString.append(getUniqueID()).append(" ").append(getFirstName()).append(" ").append(getMiddleName()).append(" ").append(getLastName());
+        return  memberString.toString();
     }
 
     @Override

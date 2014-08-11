@@ -27,6 +27,7 @@ import org.ayf.database.entities.BaseEntity;
 import org.ayf.database.entities.CashFlow;
 import org.ayf.database.entities.Expense;
 import org.ayf.reports.ReportData;
+import org.ayf.util.PreferenceManager;
 
 
 /**
@@ -58,28 +59,34 @@ public class DatabaseManager {
     public static  ArrayList<Type> PAYMENT_MODE_TYPES;
     public static  ArrayList<Type> STATUS_TYPES;
     
-    private static void intializeDatabaseManager()
+    public static void initializeDatabaseManager()
     {
-        try {
-            // Load MS accces driver class
-            Class.forName("net.ucanaccess.jdbc.UcanaccessDriver");
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, ex);
-            JOptionPane.showMessageDialog(null, ex.getLocalizedMessage(), "Failed to load database Driver", ERROR_MESSAGE);
-            System.exit(0);
+        try
+        {
+            getProfessionTypes();
+            getExpenseTypes();
+            getDonationTypes();
+            getMemberTypes();
+            getCashFlowStatusTypes();
         }
-        
-        getProfessionTypes();
-        getExpenseTypes();
-        getDonationTypes();
-        getMemberTypes();
-        getCashFlowStatusTypes();
+        catch(Exception ex)
+        {
+        }
         
     }
     
-    static 
+    
+    static public void loadDatabaseClass()
     {
-        DatabaseManager.intializeDatabaseManager();
+        //PreferenceManager.setDatabaseDir("");
+        
+        try {
+            // Load MS accces driver class
+            Class.forName("net.ucanaccess.jdbc.UcanaccessDriver");
+        } catch (Exception ex) {
+            Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(null, ex.getLocalizedMessage(), "Failed to load database Driver", ERROR_MESSAGE);
+        }
     }
     
     private static void dump(ResultSet rs,String exName)
@@ -102,30 +109,29 @@ public class DatabaseManager {
     
     private static Connection createConnection()
     {
-        String url = null;
-        if(System.getProperty("os.name").toLowerCase().contains("win"))
-        {
-            url = UcanaccessDriver.URL_PREFIX + "D:/database.accdb" + ";newDatabaseVersion=V2007";
-        }
-        else
-        {
-            url = UcanaccessDriver.URL_PREFIX + "/Volumes/MACINTOSH 2/Projects/AadimYouthFoundation/AYF-Fund-Manager/AYFFundManager/database.accdb"+ ";newDatabaseVersion=V2007";
-        }            
+        String url = UcanaccessDriver.URL_PREFIX + PreferenceManager.getDatabaseDir() + ";newDatabaseVersion=V2007";
+//        if(System.getProperty("os.name").toLowerCase().contains("win"))
+//        {
+//            url = UcanaccessDriver.URL_PREFIX + "D:/database.accdb" + ";newDatabaseVersion=V2007";
+//        }
+//        else
+//        {
+//            url = UcanaccessDriver.URL_PREFIX + "/Volumes/MACINTOSH 2/Projects/AadimYouthFoundation/AYF-Fund-Manager/AYFFundManager/database.accdb"+ ";newDatabaseVersion=V2007";
+//        }            
         
         // specify url, username, pasword - make sure these are valid 
+        
         Connection conn = null;
         try {
             conn = DriverManager.getConnection(url, "", "");
         } catch (SQLException ex) {
             Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, ex);
-            JOptionPane.showMessageDialog(null, ex.getLocalizedMessage(), "Database connection error", ERROR_MESSAGE);
-            System.exit(0);
+            //JOptionPane.showMessageDialog(null, ex.getLocalizedMessage(), "Database connection error", ERROR_MESSAGE);
         }
         catch(NullPointerException ex)
         {
             Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, ex);
-            JOptionPane.showMessageDialog(null, ex.getLocalizedMessage(), "Database connection error", ERROR_MESSAGE);
-            System.exit(0);
+            //JOptionPane.showMessageDialog(null, ex.getLocalizedMessage(), "Database connection error", ERROR_MESSAGE);
         }
 
         System.out.println("Connection Succesfull");
@@ -384,6 +390,8 @@ public class DatabaseManager {
         {
             Connection conn = null;
             conn = createConnection();
+            
+            if(conn == null) return entities;
                 
             StringBuilder sqlQuery = new StringBuilder("SELECT * FROM ");
             String tableName = null;

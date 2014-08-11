@@ -6,7 +6,9 @@
 
 package org.ayf.ui;
 
+import java.util.Vector;
 import javax.swing.JComponent;
+import org.ayf.reports.views.BaseReportView;
 
 /**
  *
@@ -45,6 +47,21 @@ public class ReportView extends javax.swing.JPanel {
     {
         rootPanel.removeAll();
         rootPanel.repaint();
+    }
+    
+    public Vector<BaseReportView> getReportViews()
+    {
+        Vector<BaseReportView> reportViews = new Vector<BaseReportView>();
+        
+        for(int i=0; i<rootPanel.getComponentCount(); ++i)
+        {
+            if(rootPanel.getComponent(i).getClass().equals(BaseReportView.class))
+            {
+                reportViews.add(((BaseReportView)rootPanel.getComponent(i)));
+            }
+        }
+        
+        return reportViews;
     }
     
     /**

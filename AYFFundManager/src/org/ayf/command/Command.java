@@ -52,6 +52,8 @@ public class Command {
         Save,
         Download,
         Settings,
+        AdminPassword,
+        AdminUserName,
         PrintReport,
         ExportAsText,
         ExportAsExcel,

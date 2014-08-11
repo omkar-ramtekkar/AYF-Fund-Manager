@@ -6,9 +6,9 @@
 
 package org.ayf.reports.views;
 
-import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import javax.swing.JTable;
-import javax.swing.ToolTipManager;
+import org.ayf.database.entities.BaseEntity;
 import org.ayf.database.entities.Member;
 import org.ayf.managers.DatabaseManager;
 import org.ayf.managers.ResourceManager;
@@ -20,6 +20,7 @@ import org.ayf.ui.InformationPanel;
 import org.ayf.ui.MemberFrame;
 import org.ayf.util.DateTime;
 import org.ayf.util.Toast;
+import org.jdesktop.swingx.autocomplete.ObjectToStringConverter;
 import org.jdesktop.swingx.prompt.PromptSupport;
 
 /**
@@ -35,7 +36,8 @@ public class MemberStatementReportView extends BaseReportView {
         super(report);
         initComponents();
         PromptSupport.setPrompt("Type text to filter member statement rows", searchTextField);
-        PromptSupport.setPrompt("Enter Member ID", memberIDTextField);
+        //PromptSupport.setPrompt("Enter Member ID", memberIDTextField);
+        
         setupTextSearchForReportTable(searchTextField);
     }
 
@@ -50,8 +52,8 @@ public class MemberStatementReportView extends BaseReportView {
 
         searchDetailsPanel = new javax.swing.JPanel();
         searchMemberButton = new javax.swing.JButton();
-        memberIDTextField = new javax.swing.JTextField();
         showStatementButton = new javax.swing.JButton();
+        searchMemberTxt = new javax.swing.JTextField();
         reportPanel = new javax.swing.JPanel();
         searchTextField = new javax.swing.JTextField();
         refreshButton = new javax.swing.JButton();
@@ -70,23 +72,18 @@ public class MemberStatementReportView extends BaseReportView {
         contactNumberLabel = new javax.swing.JLabel();
         showFullDetailsButton = new javax.swing.JButton();
 
+        addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentShown(java.awt.event.ComponentEvent evt) {
+                formComponentShown(evt);
+            }
+        });
+
         searchDetailsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Search Details", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 3, 11))); // NOI18N
 
         searchMemberButton.setText("Search Member");
         searchMemberButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 searchMemberButtonActionPerformed(evt);
-            }
-        });
-
-        memberIDTextField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                memberIDTextFieldActionPerformed(evt);
-            }
-        });
-        memberIDTextField.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyTyped(java.awt.event.KeyEvent evt) {
-                memberIDTextFieldKeyTyped(evt);
             }
         });
 
@@ -103,7 +100,7 @@ public class MemberStatementReportView extends BaseReportView {
             searchDetailsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(searchDetailsPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .add(memberIDTextField)
+                .add(searchMemberTxt)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(showStatementButton)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
@@ -114,11 +111,10 @@ public class MemberStatementReportView extends BaseReportView {
             searchDetailsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(searchDetailsPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .add(searchDetailsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(searchDetailsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                        .add(showStatementButton)
-                        .add(searchMemberButton))
-                    .add(memberIDTextField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .add(searchDetailsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(showStatementButton)
+                    .add(searchMemberButton)
+                    .add(searchMemberTxt, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .add(0, 8, Short.MAX_VALUE))
         );
 
@@ -164,7 +160,7 @@ public class MemberStatementReportView extends BaseReportView {
                     .add(searchTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(refreshButton))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 153, Short.MAX_VALUE)
+                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 170, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -300,8 +296,12 @@ public class MemberStatementReportView extends BaseReportView {
                 if(report instanceof MemberStatementReport)
                 {
                     MemberStatementReport memberReport = (MemberStatementReport) report;
-                    String memberRegNumber = memberIDTextField.getText().trim();
-                    memberReport.setMemberRegisterationNumber(memberRegNumber);
+//                    BaseEntity entity = (BaseEntity) this.selectMemberComboBox.getSelectedItem();
+//                    if(entity != null)
+//                    {
+//                        String memberRegNumber = entity.getUniqueID();
+//                        memberReport.setMemberRegisterationNumber(memberRegNumber);
+//                    }
                 }
             }
         }
@@ -338,39 +338,22 @@ public class MemberStatementReportView extends BaseReportView {
         }
     }//GEN-LAST:event_showFullDetailsButtonActionPerformed
 
-    private void memberIDTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_memberIDTextFieldActionPerformed
+    private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
         // TODO add your handling code here:
-        showStatementButtonActionPerformed(evt);
-    }//GEN-LAST:event_memberIDTextFieldActionPerformed
+    }//GEN-LAST:event_formComponentShown
 
-    private void memberIDTextFieldKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_memberIDTextFieldKeyTyped
-        // TODO add your handling code here:
-    }//GEN-LAST:event_memberIDTextFieldKeyTyped
+    void fillSelectMemberComboList()
+    {
+        ArrayList<BaseEntity> members = DatabaseManager.getAllEntities(Member.class);
+        
+        setupAutoComplete(this.searchTextField, members, new ObjectToStringConverter() {
 
-
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel contactNumberLabel;
-    private javax.swing.JLabel dateOfBirthLabel;
-    private javax.swing.JLabel districtLabel;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel6;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JLabel memberFullName;
-    private javax.swing.JTextField memberIDTextField;
-    private javax.swing.JLabel memberImageLabel;
-    private javax.swing.JPanel memberInformationPanel;
-    private javax.swing.JTable memberStatementTable;
-    private javax.swing.JButton refreshButton;
-    private javax.swing.JLabel registerationDateLabel;
-    private javax.swing.JPanel reportPanel;
-    private javax.swing.JPanel searchDetailsPanel;
-    private javax.swing.JButton searchMemberButton;
-    private javax.swing.JTextField searchTextField;
-    private javax.swing.JButton showFullDetailsButton;
-    private javax.swing.JButton showStatementButton;
-    // End of variables declaration//GEN-END:variables
+            @Override
+            public String getPreferredStringForItem(Object o) {
+                return o.toString();
+            }
+        });
+    }
 
     @Override
     public void updateView(ReportData data) {
@@ -409,7 +392,7 @@ public class MemberStatementReportView extends BaseReportView {
                         this.districtLabel.setText("");
                         this.memberImageLabel.setIcon(null);
                         
-                        Toast.showToast(this.memberIDTextField, "Member not found with this ID", false);
+                        Toast.showToast(this.searchMemberTxt, "Member not found with this ID", false);
                     }
                 }
             }
@@ -425,4 +408,35 @@ public class MemberStatementReportView extends BaseReportView {
     protected JTable getReportTable() {
         return memberStatementTable;
     }
+    
+    @Override
+    public void reportWillLoad()
+    {
+        fillSelectMemberComboList();
+    }
+    
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel contactNumberLabel;
+    private javax.swing.JLabel dateOfBirthLabel;
+    private javax.swing.JLabel districtLabel;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel memberFullName;
+    private javax.swing.JLabel memberImageLabel;
+    private javax.swing.JPanel memberInformationPanel;
+    private javax.swing.JTable memberStatementTable;
+    private javax.swing.JButton refreshButton;
+    private javax.swing.JLabel registerationDateLabel;
+    private javax.swing.JPanel reportPanel;
+    private javax.swing.JPanel searchDetailsPanel;
+    private javax.swing.JButton searchMemberButton;
+    private javax.swing.JTextField searchMemberTxt;
+    private javax.swing.JTextField searchTextField;
+    private javax.swing.JButton showFullDetailsButton;
+    private javax.swing.JButton showStatementButton;
+    // End of variables declaration//GEN-END:variables
+    
 }

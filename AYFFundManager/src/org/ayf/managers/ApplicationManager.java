@@ -6,11 +6,11 @@
 
 package org.ayf.managers;
 
+import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import javax.swing.JFileChooser;
-import javax.swing.filechooser.FileFilter;
 import org.ayf.command.Command;
 import org.ayf.database.entities.BaseEntity;
 import org.ayf.database.entities.Donor;
@@ -21,8 +21,10 @@ import org.ayf.ui.InformationPanel;
 import org.ayf.ui.MainFrame;
 import org.ayf.ui.MemberFrame;
 import org.ayf.ui.controllers.ReportViewController;
+import org.ayf.ui.controllers.SettingsViewController;
 import org.ayf.ui.controllers.SideBarTableController;
 import org.ayf.util.PreferenceManager;
+import org.ayf.util.Toast;
 
 /**
  
@@ -35,6 +37,7 @@ public class ApplicationManager implements ActionListener
     private ReportViewController reportController;
     private ToolbarController   toolbarController;
     private MainMenuController  mainMenuBarController;
+    private SettingsViewController settingViewController;
     
     private static ApplicationManager instance = null;
 
@@ -55,6 +58,16 @@ public class ApplicationManager implements ActionListener
     
     public void initialize()
     {
+        DatabaseManager.loadDatabaseClass();
+        
+        this.settingViewController = new SettingsViewController();
+        
+        File databaseFile = new File(PreferenceManager.getDatabaseDir());
+        if(!databaseFile.isDirectory() && databaseFile.exists())
+        {
+            DatabaseManager.initializeDatabaseManager();
+        }
+        
         this.mainFrame = new MainFrame();
 
         this.toolbarController = new ToolbarController();        
@@ -66,7 +79,6 @@ public class ApplicationManager implements ActionListener
         this.sidebarTableController.addActionListener(this);
         
         checkAndUpdateDatabaseLocation();
-        
     }
 
     
@@ -139,6 +151,10 @@ public class ApplicationManager implements ActionListener
                     break;
                 case Home:
                     sidebarTableController.selectOption(Command.SubCommandType.Dashboard, null);
+                    break;
+                case AdminPassword:
+                    handleAdminSettings();
+                    break;
                     
             }
         }
@@ -162,7 +178,7 @@ public class ApplicationManager implements ActionListener
     }
 
     private void handleSettingsAction() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.settingViewController.showSettingsView();
     }
 
     private void handleDonateAction() {
@@ -171,47 +187,28 @@ public class ApplicationManager implements ActionListener
 
     private void checkAndUpdateDatabaseLocation()
     {
-        String dbPath = PreferenceManager.getIntance().getString("databasePath", null);
-        if(dbPath == null)
-        {
-            JFileChooser fileChooser = new JFileChooser();
-            fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-            fileChooser.setMultiSelectionEnabled(false);
-            fileChooser.setFileFilter(new FileFilter() {
-
-                @Override
-                public boolean accept(File f) {
-                    return (f.getName().endsWith(".mdb") || f.getName().endsWith(".accdb"));
-                }
-
-                @Override
-                public String getDescription() {
-                    return "mdb and accdb files";
-                }
-            });
-            
-            int userOption = fileChooser.showOpenDialog(this.mainFrame);
-
-            if(userOption == JFileChooser.APPROVE_OPTION)
+        try {
+            File databaseFile = new File(PreferenceManager.getDatabaseDir());
+            if (databaseFile.isDirectory() || !databaseFile.exists()) 
             {
-                File file = fileChooser.getSelectedFile();
-                PreferenceManager.getIntance().setString("databasePath", file.getAbsolutePath());
+                throw new Exception();
             }
+        } catch (Exception exception) 
+        {
+            Point centerPoint = new Point((int) (Toolkit.getDefaultToolkit().getScreenSize().getWidth() / 2.0), (int) (Toolkit.getDefaultToolkit().getScreenSize().getHeight() / 2.0));
+            Toast.showToast("Invalid Database directory path", centerPoint, false);
+            this.settingViewController.showSettingsView();
         }
     }
     
     public void memberDidRegister(Member member)
     {
-        String nextRegID = PreferenceManager.getIntance().getString("nextRegisterationID", "1");
-        int regNumber = Integer.parseInt(nextRegID);
-        PreferenceManager.getIntance().setString("nextRegisterationID", Integer.toString(++regNumber));
+        PreferenceManager.updateNextRegID();
     }
     
     public void donationDidPerform(Donor donor)
     {
-        String nextDonorID = PreferenceManager.getIntance().getString("nextDonorID", "1");
-        int donorNumber = Integer.parseInt(nextDonorID);
-        PreferenceManager.getIntance().setString("nextDonorID", Integer.toString(++donorNumber));
+        PreferenceManager.updateNextDonationID();
     }
 
     void entityDidAdded(BaseEntity entity) 
@@ -227,5 +224,23 @@ public class ApplicationManager implements ActionListener
                 memberDidRegister((Member) entity);
             }
         }
+    }
+    
+    public void databasePathDidChange(String oldPath, String newPath)
+    {
+        DatabaseManager.initializeDatabaseManager();
+        this.reportController.refresh();
+    }
+
+    void showSettingsPanel() {
+        this.settingViewController.showSettingsView();
+    }
+
+    public void imagePathDidChange(String oldPath, String newPath) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    private void handleAdminSettings() {
+        
     }
 }

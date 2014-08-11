@@ -61,6 +61,7 @@ public class MainMenuController implements ActionListener{
         
         JMenu tools = new JMenu("Tools");
         tools.add(new ActionItem("Settings...", Command.SubCommandType.Settings, "settings", dimension));
+        tools.add(new ActionItem("Change Password...", Command.SubCommandType.AdminPassword, "settings", dimension));
         
         mainMenuBarView.add(fileMenu);
         mainMenuBarView.add(new JLabel());
