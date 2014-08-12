@@ -1,0 +1,1093 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>SwingLabs Release Notes</title>
+<link rel="stylesheet" type="text/css" href="swinglabs.css" />
+</head>
+<body>
+<div id="container">
+<div id="stitch-hack">
+<div id="banner">
+</div>
+<div id="menu">
+<img class="menu-left" src="images/menu-left.png" alt="" /><a href="README.html">Readme</a><img class="menu-right" src="images/menu-right.png" alt="" />
+<img class="menu-left" src="images/menu-left.png" alt="" /><a href="ReleaseNotes.html">Release Notes</a><img class="menu-right" src="images/menu-right.png" alt="" />
+<img class="menu-left" src="images/menu-left.png" alt="" /><a href="docs/api/index.html">JavaDoc</a><img class="menu-right" src="images/menu-right.png" alt="" />
+<img class="menu-left" src="images/menu-left.png" alt="" /><a href="http://swinglabs.org/">Main Website</a><img class="menu-right" src="images/menu-right.png" alt="" />
+</div>
+<div id="content">
+<div id="section">
+<p><h2><center>Release Notes</center></h2>
+<h4 align="right">Release Date: 17 November 2005<br/>
+This is the 0.8 development release</h4></p>
+<h2>Project: swingx</h2>
+
+        <p>Since the 0.7 release a tremendous amount of work has been done to
+        add polish and completeness to the UI components offered in the SwingX
+        project. The work of polishing still isn't complete, but the components
+        are now in very good condition overall. Documentation is still improving.
+        Listed below are some of the major new additions to the SwingX component
+        set.</p>
+    
+<h5>Autocompletion</h5>
+
+            <p>The automatic completion feature allows the user to enter a few characters
+            using the keyboard - meanwhile, the computer &quot;guesses&quot; what the user
+            intents to enter. Take a look at the example below to get an idea of the
+            resulting user experience.</p>
+
+            <p>Enabling automatic completion for e.g. a JComboBox is only one line of
+            code:</p>
+            <p><pre class="code">
+    import org.jdesktop.swingx.autocomplete.Configurator;
+    [...]
+    JComboBox comboBox = [...];
+    Configurator.<b>enableAutoCompletion</b>(comboBox);
+            </pre></p>
+
+            <p>See the JavaDoc for the org.jdesktop.swingx.autocomplete package for more
+            detailed information.
+            <a href="https://jdnc-incubator.dev.java.net/documentation/bierhance/demo.jnlp">Click here to run the demo</a></p>
+        
+<h5>JXCollapsiblePane</h5>
+
+            <p><code>JXCollapsiblePane</code> is a Swing component which can collapse or
+            expand its content area with animation and fade in/fade out effects.
+            It also acts as a standard container for other Swing components.</p>
+            
+            <p>In this example, the <code>JXCollapsiblePane</code> is used to build
+            a Search pane which can be shown and hidden on demand.</p>
+            
+            <p><pre class="code">
+    JXCollapsiblePane cp = new JXCollapsiblePane();
+    // JXCollapsiblePane can be used like any other container
+    cp.setLayout(new BorderLayout());
+
+    // the Controls panel with a textfield to filter the tree
+    JPanel controls = new JPanel(new FlowLayout(FlowLayout.LEFT, 4, 0));
+    controls.add(new JLabel("Search:"));
+    controls.add(new JTextField(10));    
+    controls.add(new JButton("Refresh"));
+    controls.setBorder(new TitledBorder("Filters"));
+    cp.add("Center", controls);
+
+    JXFrame frame = new JXFrame();
+    frame.setLayout(new BorderLayout());
+
+    // Put the "Controls" first
+    frame.add("North", cp);
+
+    // Then the tree - we assume the Controls would somehow filter the tree
+    JScrollPane scroll = new JScrollPane(new JTree());
+    frame.add("Center", scroll);
+
+    // Show/hide the "Controls"
+    JButton toggle = new JButton(cp.getActionMap().get("toggle"));
+    frame.add("South", toggle);
+    frame.pack();
+    frame.setVisible(true);
+            </pre></p>
+        
+<h5>JXErrorDialog</h5>
+
+            <p>A common Error Dialog, suitable for representing information about 
+            errors and exceptions happened in application. The common usage of the 
+            <code>JXErrorDialog</code> is to show collected data about the incident and 
+            probably ask customer for a feedback. The data about the incident consists 
+            from the title which will be displayed in the dialog header, short 
+            description of the problem that will be immediately seen after dialog is 
+            became visible, full description of the problem which will be visible after
+            user clicks "Details" button and Throwable that contains stack trace and
+            another usable information that may be displayed in the dialog.</p>
+
+            <p>To ask user for feedback extend abstract class <code>ErrorReporter</code> and
+            set your reporter using <code>setReporter</code> method. Report button will 
+            be added to the dialog automatically. See org.jdesktop.swingx.MailErrorReporter
+            documentation for the example of error reporting usage.</p>
+
+            <p>For example, to show simple <code>JXErrorDialog</code> call <br>
+            <code>JXErrorDialog.showDialog(null, "Application Error", 
+              "The application encountered the unexpected error,
+                please contact developers")</code></p>
+        
+<h5>JXFindBar</h5>
+
+            <p>A simple Mozilla Firefox-ish search bar for use with the
+            SwingX search subsystem</p>
+        
+<h5>JXHyperlink</h5>
+
+            <p>A relatively trivial component at heart, yet incredibly useful
+            for many UIs, the JXHyperlink component mimicks the behavior of an
+            HTML anchor. The JXHyperlink is essentially a button that looks like
+            your typical web hyper link, with rollover support and click-color support.</p>
+        
+<h5>JXLoginPanel</h5>
+
+            <p>The JXLoginPanel leverages the SwingLabs Authentication Framework to provide a
+            pleasing, usable, standard login component. The JXLoginPanel may be embedded in
+            any Swing container (such as a custom login dialog). Alternatively, JXLoginPanel
+            contains several static methods to create either a login dialog, or a login frame.</p>
+            
+            <p>The SwingLabs Authentication Framework provides a basic authentication abstraction
+            useful when writing Java applications. It comprises of 3 main classes: 
+            LoginService, PasswordStore, and UserNameStore.</p>
+
+            <p>LoginService is the main abstraction, responsible for handling multithreaded
+            authentication. A LoginService can be configured to perform either synchronous or
+            asynchronous authentication. LoginListeners may be registered with the LoginService. 
+            These listeners will be notified during the various phases of the authentication
+            process, such as when login is started, as well as if and when it is canceled, succeeds,
+            or fails.</p>
+
+            <p>Various default implementations of LoginService may be used out of the box, such as 
+            JAASLoginService, JDBCLoginService, or SimpleLoginService. For more information,
+            <a href="http://swinglabs.org/docs/components/JXLoginPanel/tutorial.jsp">See the JXLoginPanel Tutorial</a>.
+            </p>
+        
+<h5>JXPanel</h5>
+
+            <p>A simple JPanel extension that adds translucency support.
+            This component and all of its content will be displayed with the specified
+            &quot;alpha&quot; transluscency property value. It also provides basic
+            <strong>experimental</strong> support for gradients.</p>
+            
+            <p>It is used extensively within SwingX (hopefully, all JPanels will
+            be replaced by JXPanels before the 1.0 release!).</p>
+        
+<h5>JXTaskPane</h5>
+
+            <p>Typically, the JXTaskPane is a container for actions represented
+            by hyperlinks. But more generally, any component can be added in the
+            JXTaskPane. Components are directly added on the JXTaskPane in the
+            normal manner:</p>
+            
+            <p><pre class="code">
+    taskPane.add(myComponent);
+            </pre></p>
+            
+            <p>When the end-user clicks on the JXTaskPane header, the pane toggles
+            its state and hides or shows its content. When collapsed, only the
+            header is visible. The developer can programmatically expand or
+            collapse the component. If the JXTaskPane is contained in a 
+            JScrollPane, there is an option (<em>scrollOnExpand</em>) to ensure 
+            the JScrollPane will automatically scroll if the JXTaskPane is
+            not completely visible.</p>
+
+            <p>In addition to supporting any components, the JXTaskPane can 
+            use add <em>Action</em>s. When an Action (javax.swing) is added to the
+            JXTaskPane, it will automatically create a JXHyperlink. The hyperlink 
+            icon, tooltip, text are taken from the Action as a JToolBar does.</p>
+            
+            <p>Individual JXTaskPanes are typically placed within a JXTaskPaneGroup.
+            The JXTaskPaneGroup provides both a decent LayoutManager for handling
+            the JXTaskPanes animation, as well as sensible background colors
+            for different look and feels.</p>
+        
+<h5>JXTipOfTheDay</h5>
+
+            <p>&quot;Tip of the Day&quot; dialogs are commonly seen in rich
+            client applications. <a href="http://jdnc-incubator.dev.java.net/documentation/l2fprod/JXTipOfTheDay.html">This page</a>
+            has screen shots of many different Tip of the Day dialogs. This
+            general component has been implemented and is in the org.jdesktop.swingx
+            package.</p>
+        
+<h5>JXTitledPanel</h5>
+
+            <p>A simple JPanel that has a title section.
+            This style of component is especially common in binding frameworks
+            that require some kind of "handle" for dragging a panel around. They
+            are also an elegant alternative to title borders, at times. When
+            used judiciously, they help present a pleasing UI</p>
+        
+<h5>PLAF</h5>
+
+            <p>Pluggable Look and Feel implementations for the current component
+            have been written. Part of this involved some API to make it easier to
+            add PLAF implementations onto the existing Swing PLAF framework. This
+            additional API is called LookAndFeelAddon and can be read about
+            in more detail <a href="http://jdnc-incubator.dev.java.net/documentation/l2fprod/LookAndFeelAddons.html">here</a>.</p>
+        
+<p>
+<h5>Resolved Issues</h5>
+<table width="100%">
+<tr>
+<th colspan="6">Thu Nov 17 21:57:53 +0000 2005</th>
+</tr>
+<tr>
+<th>ID</th>
+<th>Type</th>
+<th>Priority</th>
+<th>Votes</th>
+<th>Component</th>
+<th>Summary</th>
+</tr>
+<tr class="odd">
+<td><a href="https://swingx.dev.java.net/issues/show_bug.cgi?id=13">13</a></td>
+<td><font color="RED"><span class="issue_type">DEFECT</span></font></td>
+<td><font color="RED"><span class="priority">P1</span></font></td>
+<td><font color="RED"><span class="votes">0</span></font></td>
+<td><font color="RED"><span class="component">swingx</span></font></td>
+<td><font color="RED"><span class="summary">JXTable: no way to configure column identifier vs. name</span></font></td>
+</tr>
+<tr class="even">
+<td><a href="https://swingx.dev.java.net/issues/show_bug.cgi?id=37">37</a></td>
+<td><font color="RED"><span class="issue_type">DEFECT</span></font></td>
+<td><font color="RED"><span class="priority">P1</span></font></td>
+<td><font color="RED"><span class="votes">0</span></font></td>
+<td><font color="RED"><span class="component">swingx</span></font></td>
+<td><font color="RED"><span class="summary">ColumnControlButton ignores TableColumnExt visibility</span></font></td>
+</tr>
+<tr class="odd">
+<td><a href="https://swingx.dev.java.net/issues/show_bug.cgi?id=38">38</a></td>
+<td><font color="RED"><span class="issue_type">DEFECT</span></font></td>
+<td><font color="RED"><span class="priority">P1</span></font></td>
+<td><font color="RED"><span class="votes">0</span></font></td>
+<td><font color="RED"><span class="component">swingx</span></font></td>
+<td><font color="RED"><span class="summary">JXTable: ColumnControl doesn't contain initially invisible columns</span></font></td>
+</tr>
+<tr class="even">
+<td><a href="https://swingx.dev.java.net/issues/show_bug.cgi?id=87">87</a></td>
+<td><font color="BLACK"><span class="issue_type">TASK</span></font></td>
+<td><font color="BLACK"><span class="priority">P1</span></font></td>
+<td><font color="BLACK"><span class="votes">0</span></font></td>
+<td><font color="BLACK"><span class="component">swingx</span></font></td>
+<td><font color="BLACK"><span class="summary">Add More Components to the Issue Tracker</span></font></td>
+</tr>
+<tr class="odd">
+<td><a href="https://swingx.dev.java.net/issues/show_bug.cgi?id=186">186</a></td>
+<td><font color="RED"><span class="issue_type">DEFECT</span></font></td>
+<td><font color="RED"><span class="priority">P1</span></font></td>
+<td><font color="RED"><span class="votes">0</span></font></td>
+<td><font color="RED"><span class="component">swingx</span></font></td>
+<td><font color="RED"><span class="summary">JXTable: problems with selection/lead and button type editors</span></font></td>
+</tr>
+<tr class="even">
+<td><a href="https://swingx.dev.java.net/issues/show_bug.cgi?id=23">23</a></td>
+<td><font color="RED"><span class="issue_type">DEFECT</span></font></td>
+<td><font color="RED"><span class="priority">P2</span></font></td>
+<td><font color="RED"><span class="votes">0</span></font></td>
+<td><font color="RED"><span class="component">swingx</span></font></td>
+<td><font color="RED"><span class="summary">JXMonthView not keyboard navigable - accessibility</span></font></td>
+</tr>
+<tr class="odd">
+<td><a href="https://swingx.dev.java.net/issues/show_bug.cgi?id=24">24</a></td>
+<td><font color="RED"><span class="issue_type">DEFECT</span></font></td>
+<td><font color="RED"><span class="priority">P2</span></font></td>
+<td><font color="RED"><span class="votes">0</span></font></td>
+<td><font color="RED"><span class="component">swingx</span></font></td>
+<td><font color="RED"><span class="summary">DatePicker drop down not keyboard navigable - accessibility</span></font></td>
+</tr>
+<tr class="even">
+<td><a href="https://swingx.dev.java.net/issues/show_bug.cgi?id=83">83</a></td>
+<td><font color="RED"><span class="issue_type">DEFECT</span></font></td>
+<td><font color="RED"><span class="priority">P2</span></font></td>
+<td><font color="RED"><span class="votes">1</span></font></td>
+<td><font color="RED"><span class="component">swingx</span></font></td>
+<td><font color="RED"><span class="summary">JXLoginDialog & JXLoginPanel bugs</span></font></td>
+</tr>
+<tr class="odd">
+<td><a href="https://swingx.dev.java.net/issues/show_bug.cgi?id=84">84</a></td>
+<td><font color="RED"><span class="issue_type">DEFECT</span></font></td>
+<td><font color="RED"><span class="priority">P2</span></font></td>
+<td><font color="RED"><span class="votes">0</span></font></td>
+<td><font color="RED"><span class="component">swingx</span></font></td>
+<td><font color="RED"><span class="summary">NPE if JXTitledPanel colors have not been set on UIManager</span></font></td>
+</tr>
+<tr class="even">
+<td><a href="https://swingx.dev.java.net/issues/show_bug.cgi?id=100">100</a></td>
+<td><font color="RED"><span class="issue_type">DEFECT</span></font></td>
+<td><font color="RED"><span class="priority">P2</span></font></td>
+<td><font color="RED"><span class="votes">0</span></font></td>
+<td><font color="RED"><span class="component">swingx</span></font></td>
+<td><font color="RED"><span class="summary">All Searchable implementations - missing support for incremental finds</span></font></td>
+</tr>
+<tr class="odd">
+<td><a href="https://swingx.dev.java.net/issues/show_bug.cgi?id=132">132</a></td>
+<td><font color="RED"><span class="issue_type">DEFECT</span></font></td>
+<td><font color="RED"><span class="priority">P2</span></font></td>
+<td><font color="RED"><span class="votes">0</span></font></td>
+<td><font color="RED"><span class="component">swingx</span></font></td>
+<td><font color="RED"><span class="summary">JXEditorPane: backwards search not implemented</span></font></td>
+</tr>
+<tr class="even">
+<td><a href="https://swingx.dev.java.net/issues/show_bug.cgi?id=145">145</a></td>
+<td><font color="GREEN"><span class="issue_type">PATCH</span></font></td>
+<td><font color="GREEN"><span class="priority">P2</span></font></td>
+<td><font color="GREEN"><span class="votes">0</span></font></td>
+<td><font color="GREEN"><span class="component">swingx</span></font></td>
+<td><font color="GREEN"><span class="summary">JXTable cells don't change orientation according to the tables orientation</span></font></td>
+</tr>
+<tr class="odd">
+<td><a href="https://swingx.dev.java.net/issues/show_bug.cgi?id=146">146</a></td>
+<td><font color="RED"><span class="issue_type">DEFECT</span></font></td>
+<td><font color="RED"><span class="priority">P2</span></font></td>
+<td><font color="RED"><span class="votes">0</span></font></td>
+<td><font color="RED"><span class="component">swingx</span></font></td>
+<td><font color="RED"><span class="summary">JXHyperlink is not BiDi compliant</span></font></td>
+</tr>
+<tr class="even">
+<td><a href="https://swingx.dev.java.net/issues/show_bug.cgi?id=148">148</a></td>
+<td><font color="RED"><span class="issue_type">DEFECT</span></font></td>
+<td><font color="RED"><span class="priority">P2</span></font></td>
+<td><font color="RED"><span class="votes">0</span></font></td>
+<td><font color="RED"><span class="component">swingx</span></font></td>
+<td><font color="RED"><span class="summary">Title and icon of the JXTaskPane don't change sides when componentOrientation is RIGHT_TO_LEFT</span></font></td>
+</tr>
+<tr class="odd">
+<td><a href="https://swingx.dev.java.net/issues/show_bug.cgi?id=150">150</a></td>
+<td><font color="RED"><span class="issue_type">DEFECT</span></font></td>
+<td><font color="RED"><span class="priority">P2</span></font></td>
+<td><font color="RED"><span class="votes">0</span></font></td>
+<td><font color="RED"><span class="component">swingx</span></font></td>
+<td><font color="RED"><span class="summary">ColumnheaderRenderer: sort icons not bidi complient</span></font></td>
+</tr>
+<tr class="even">
+<td><a href="https://swingx.dev.java.net/issues/show_bug.cgi?id=152">152</a></td>
+<td><font color="GREEN"><span class="issue_type">PATCH</span></font></td>
+<td><font color="GREEN"><span class="priority">P2</span></font></td>
+<td><font color="GREEN"><span class="votes">0</span></font></td>
+<td><font color="GREEN"><span class="component">swingx</span></font></td>
+<td><font color="GREEN"><span class="summary">JXTable column control dissapears in RIGHT_TO_LEFT orientation</span></font></td>
+</tr>
+<tr class="odd">
+<td><a href="https://swingx.dev.java.net/issues/show_bug.cgi?id=155">155</a></td>
+<td><font color="RED"><span class="issue_type">DEFECT</span></font></td>
+<td><font color="RED"><span class="priority">P2</span></font></td>
+<td><font color="RED"><span class="votes">0</span></font></td>
+<td><font color="RED"><span class="component">swingx</span></font></td>
+<td><font color="RED"><span class="summary">JXTable negates VERTICAL_SCROLLBAR_ALWAYS</span></font></td>
+</tr>
+<tr class="even">
+<td><a href="https://swingx.dev.java.net/issues/show_bug.cgi?id=156">156</a></td>
+<td><font color="RED"><span class="issue_type">DEFECT</span></font></td>
+<td><font color="RED"><span class="priority">P2</span></font></td>
+<td><font color="RED"><span class="votes">0</span></font></td>
+<td><font color="RED"><span class="component">swingx</span></font></td>
+<td><font color="RED"><span class="summary">ColumnControl: menuitems don't follow componentOrientation</span></font></td>
+</tr>
+<tr class="odd">
+<td><a href="https://swingx.dev.java.net/issues/show_bug.cgi?id=163">163</a></td>
+<td><font color="BLACK"><span class="issue_type">TASK</span></font></td>
+<td><font color="BLACK"><span class="priority">P2</span></font></td>
+<td><font color="BLACK"><span class="votes">0</span></font></td>
+<td><font color="BLACK"><span class="component">swingx</span></font></td>
+<td><font color="BLACK"><span class="summary">SwingX: Consistently handle caught runtime exceptions</span></font></td>
+</tr>
+<tr class="even">
+<td><a href="https://swingx.dev.java.net/issues/show_bug.cgi?id=173">173</a></td>
+<td><font color="RED"><span class="issue_type">DEFECT</span></font></td>
+<td><font color="RED"><span class="priority">P2</span></font></td>
+<td><font color="RED"><span class="votes">0</span></font></td>
+<td><font color="RED"><span class="component">swingx</span></font></td>
+<td><font color="RED"><span class="summary">JXTable: setFilters() notifies selectionListeners while internal state not yet updated</span></font></td>
+</tr>
+<tr class="odd">
+<td><a href="https://swingx.dev.java.net/issues/show_bug.cgi?id=3">3</a></td>
+<td><font color="RED"><span class="issue_type">DEFECT</span></font></td>
+<td><font color="RED"><span class="priority">P3</span></font></td>
+<td><font color="RED"><span class="votes">0</span></font></td>
+<td><font color="RED"><span class="component">swingx</span></font></td>
+<td><font color="RED"><span class="summary">Problems assigning plaf with JXTitledPanel</span></font></td>
+</tr>
+<tr class="even">
+<td><a href="https://swingx.dev.java.net/issues/show_bug.cgi?id=5">5</a></td>
+<td><font color="RED"><span class="issue_type">DEFECT</span></font></td>
+<td><font color="RED"><span class="priority">P3</span></font></td>
+<td><font color="RED"><span class="votes">0</span></font></td>
+<td><font color="RED"><span class="component">swingx</span></font></td>
+<td><font color="RED"><span class="summary">JXHyperLink: underline not below text</span></font></td>
+</tr>
+<tr class="odd">
+<td><a href="https://swingx.dev.java.net/issues/show_bug.cgi?id=8">8</a></td>
+<td><font color="RED"><span class="issue_type">DEFECT</span></font></td>
+<td><font color="RED"><span class="priority">P3</span></font></td>
+<td><font color="RED"><span class="votes">0</span></font></td>
+<td><font color="RED"><span class="component">swingx</span></font></td>
+<td><font color="RED"><span class="summary">JXFindDialog relies on Searchable being a subclass of Component</span></font></td>
+</tr>
+<tr class="even">
+<td><a href="https://swingx.dev.java.net/issues/show_bug.cgi?id=9">9</a></td>
+<td><font color="RED"><span class="issue_type">DEFECT</span></font></td>
+<td><font color="RED"><span class="priority">P3</span></font></td>
+<td><font color="RED"><span class="votes">0</span></font></td>
+<td><font color="RED"><span class="component">swingx</span></font></td>
+<td><font color="RED"><span class="summary">JXTitledPanel: missing change notification after setTitle</span></font></td>
+</tr>
+<tr class="odd">
+<td><a href="https://swingx.dev.java.net/issues/show_bug.cgi?id=10">10</a></td>
+<td><font color="RED"><span class="issue_type">DEFECT</span></font></td>
+<td><font color="RED"><span class="priority">P3</span></font></td>
+<td><font color="RED"><span class="votes">0</span></font></td>
+<td><font color="RED"><span class="component">swingx</span></font></td>
+<td><font color="RED"><span class="summary">JXTreeTable: setting tree properties does not update</span></font></td>
+</tr>
+<tr class="even">
+<td><a href="https://swingx.dev.java.net/issues/show_bug.cgi?id=12">12</a></td>
+<td><font color="BLACK"><span class="issue_type">TASK</span></font></td>
+<td><font color="BLACK"><span class="priority">P3</span></font></td>
+<td><font color="BLACK"><span class="votes">0</span></font></td>
+<td><font color="BLACK"><span class="component">swingx</span></font></td>
+<td><font color="BLACK"><span class="summary">JXTable: add column hide/show support</span></font></td>
+</tr>
+<tr class="odd">
+<td><a href="https://swingx.dev.java.net/issues/show_bug.cgi?id=14">14</a></td>
+<td><font color="RED"><span class="issue_type">DEFECT</span></font></td>
+<td><font color="RED"><span class="priority">P3</span></font></td>
+<td><font color="RED"><span class="votes">0</span></font></td>
+<td><font color="RED"><span class="component">swingx</span></font></td>
+<td><font color="RED"><span class="summary">J*Table: not all renderers/editors are updated on LF change</span></font></td>
+</tr>
+<tr class="even">
+<td><a href="https://swingx.dev.java.net/issues/show_bug.cgi?id=15">15</a></td>
+<td><font color="RED"><span class="issue_type">DEFECT</span></font></td>
+<td><font color="RED"><span class="priority">P3</span></font></td>
+<td><font color="RED"><span class="votes">0</span></font></td>
+<td><font color="RED"><span class="component">swingx</span></font></td>
+<td><font color="RED"><span class="summary">project build-impl.xml file defines default source and target as 1.4</span></font></td>
+</tr>
+<tr class="odd">
+<td><a href="https://swingx.dev.java.net/issues/show_bug.cgi?id=17">17</a></td>
+<td><font color="GREEN"><span class="issue_type">PATCH</span></font></td>
+<td><font color="GREEN"><span class="priority">P3</span></font></td>
+<td><font color="GREEN"><span class="votes">0</span></font></td>
+<td><font color="GREEN"><span class="component">swingx</span></font></td>
+<td><font color="GREEN"><span class="summary">JXMonthView locale settings</span></font></td>
+</tr>
+<tr class="even">
+<td><a href="https://swingx.dev.java.net/issues/show_bug.cgi?id=19">19</a></td>
+<td><font color="RED"><span class="issue_type">DEFECT</span></font></td>
+<td><font color="RED"><span class="priority">P3</span></font></td>
+<td><font color="RED"><span class="votes">0</span></font></td>
+<td><font color="RED"><span class="component">swingx</span></font></td>
+<td><font color="RED"><span class="summary">JXTitledPanel: looses left/right decoration on LF change</span></font></td>
+</tr>
+<tr class="odd">
+<td><a href="https://swingx.dev.java.net/issues/show_bug.cgi?id=27">27</a></td>
+<td><font color="RED"><span class="issue_type">DEFECT</span></font></td>
+<td><font color="RED"><span class="priority">P3</span></font></td>
+<td><font color="RED"><span class="votes">0</span></font></td>
+<td><font color="RED"><span class="component">swingx</span></font></td>
+<td><font color="RED"><span class="summary">ColumnControlButton should close the popup when clicked if it is already open</span></font></td>
+</tr>
+<tr class="even">
+<td><a href="https://swingx.dev.java.net/issues/show_bug.cgi?id=29">29</a></td>
+<td><font color="RED"><span class="issue_type">DEFECT</span></font></td>
+<td><font color="RED"><span class="priority">P3</span></font></td>
+<td><font color="RED"><span class="votes">0</span></font></td>
+<td><font color="RED"><span class="component">swingx</span></font></td>
+<td><font color="RED"><span class="summary">JXTreeTable: highlighters not highlighting tree cell completely</span></font></td>
+</tr>
+<tr class="odd">
+<td><a href="https://swingx.dev.java.net/issues/show_bug.cgi?id=31">31</a></td>
+<td><font color="RED"><span class="issue_type">DEFECT</span></font></td>
+<td><font color="RED"><span class="priority">P3</span></font></td>
+<td><font color="RED"><span class="votes">0</span></font></td>
+<td><font color="RED"><span class="component">swingx</span></font></td>
+<td><font color="RED"><span class="summary">JXTableHeader: must not sort column if table disabled</span></font></td>
+</tr>
+<tr class="even">
+<td><a href="https://swingx.dev.java.net/issues/show_bug.cgi?id=33">33</a></td>
+<td><font color="RED"><span class="issue_type">DEFECT</span></font></td>
+<td><font color="RED"><span class="priority">P3</span></font></td>
+<td><font color="RED"><span class="votes">0</span></font></td>
+<td><font color="RED"><span class="component">swingx</span></font></td>
+<td><font color="RED"><span class="summary">JXTable/Sorter: doesn't keep selection after setting Comparator</span></font></td>
+</tr>
+<tr class="odd">
+<td><a href="https://swingx.dev.java.net/issues/show_bug.cgi?id=34">34</a></td>
+<td><font color="RED"><span class="issue_type">DEFECT</span></font></td>
+<td><font color="RED"><span class="priority">P3</span></font></td>
+<td><font color="RED"><span class="votes">0</span></font></td>
+<td><font color="RED"><span class="component">swingx</span></font></td>
+<td><font color="RED"><span class="summary">Clicking on header in JXTable does not show arrow right away</span></font></td>
+</tr>
+<tr class="even">
+<td><a href="https://swingx.dev.java.net/issues/show_bug.cgi?id=36">36</a></td>
+<td><font color="RED"><span class="issue_type">DEFECT</span></font></td>
+<td><font color="RED"><span class="priority">P3</span></font></td>
+<td><font color="RED"><span class="votes">0</span></font></td>
+<td><font color="RED"><span class="component">swingx</span></font></td>
+<td><font color="RED"><span class="summary">Sorter: does not use Collator on String values</span></font></td>
+</tr>
+<tr class="odd">
+<td><a href="https://swingx.dev.java.net/issues/show_bug.cgi?id=40">40</a></td>
+<td><font color="BLACK"><span class="issue_type">TASK</span></font></td>
+<td><font color="BLACK"><span class="priority">P3</span></font></td>
+<td><font color="BLACK"><span class="votes">0</span></font></td>
+<td><font color="BLACK"><span class="component">swingx</span></font></td>
+<td><font color="BLACK"><span class="summary">JXTable: improve column configuration</span></font></td>
+</tr>
+<tr class="even">
+<td><a href="https://swingx.dev.java.net/issues/show_bug.cgi?id=41">41</a></td>
+<td><font color="BLACK"><span class="issue_type">FEATURE</span></font></td>
+<td><font color="BLACK"><span class="priority">P3</span></font></td>
+<td><font color="BLACK"><span class="votes">0</span></font></td>
+<td><font color="BLACK"><span class="component">swingx</span></font></td>
+<td><font color="BLACK"><span class="summary">Should be able to specify link for JXDatePicker</span></font></td>
+</tr>
+<tr class="odd">
+<td><a href="https://swingx.dev.java.net/issues/show_bug.cgi?id=42">42</a></td>
+<td><font color="BLACK"><span class="issue_type">TASK</span></font></td>
+<td><font color="BLACK"><span class="priority">P3</span></font></td>
+<td><font color="BLACK"><span class="votes">0</span></font></td>
+<td><font color="BLACK"><span class="component">swingx</span></font></td>
+<td><font color="BLACK"><span class="summary">JXTree: add methods setXXIcon</span></font></td>
+</tr>
+<tr class="even">
+<td><a href="https://swingx.dev.java.net/issues/show_bug.cgi?id=43">43</a></td>
+<td><font color="RED"><span class="issue_type">DEFECT</span></font></td>
+<td><font color="RED"><span class="priority">P3</span></font></td>
+<td><font color="RED"><span class="votes">0</span></font></td>
+<td><font color="RED"><span class="component">swingx</span></font></td>
+<td><font color="RED"><span class="summary">ColumnControl: menuitems not updated on column title change</span></font></td>
+</tr>
+<tr class="odd">
+<td><a href="https://swingx.dev.java.net/issues/show_bug.cgi?id=44">44</a></td>
+<td><font color="BLACK"><span class="issue_type">FEATURE</span></font></td>
+<td><font color="BLACK"><span class="priority">P3</span></font></td>
+<td><font color="BLACK"><span class="votes">0</span></font></td>
+<td><font color="BLACK"><span class="component">swingx</span></font></td>
+<td><font color="BLACK"><span class="summary">ColumnControl: enabled should be synched to related JXTable</span></font></td>
+</tr>
+<tr class="even">
+<td><a href="https://swingx.dev.java.net/issues/show_bug.cgi?id=45">45</a></td>
+<td><font color="RED"><span class="issue_type">DEFECT</span></font></td>
+<td><font color="RED"><span class="priority">P3</span></font></td>
+<td><font color="RED"><span class="votes">0</span></font></td>
+<td><font color="RED"><span class="component">swingx</span></font></td>
+<td><font color="RED"><span class="summary">Sorter: interpose does not check for same adapter as new pipeline</span></font></td>
+</tr>
+<tr class="odd">
+<td><a href="https://swingx.dev.java.net/issues/show_bug.cgi?id=46">46</a></td>
+<td><font color="RED"><span class="issue_type">DEFECT</span></font></td>
+<td><font color="RED"><span class="priority">P3</span></font></td>
+<td><font color="RED"><span class="votes">0</span></font></td>
+<td><font color="RED"><span class="component">swingx</span></font></td>
+<td><font color="RED"><span class="summary">FilterPipeline: empty behaviour undefined</span></font></td>
+</tr>
+<tr class="even">
+<td><a href="https://swingx.dev.java.net/issues/show_bug.cgi?id=53">53</a></td>
+<td><font color="RED"><span class="issue_type">DEFECT</span></font></td>
+<td><font color="RED"><span class="priority">P3</span></font></td>
+<td><font color="RED"><span class="votes">0</span></font></td>
+<td><font color="RED"><span class="component">swingx</span></font></td>
+<td><font color="RED"><span class="summary">JXTable: interactive sorter not removed if column removed</span></font></td>
+</tr>
+<tr class="odd">
+<td><a href="https://swingx.dev.java.net/issues/show_bug.cgi?id=54">54</a></td>
+<td><font color="RED"><span class="issue_type">DEFECT</span></font></td>
+<td><font color="RED"><span class="priority">P3</span></font></td>
+<td><font color="RED"><span class="votes">0</span></font></td>
+<td><font color="RED"><span class="component">swingx</span></font></td>
+<td><font color="RED"><span class="summary">JXTable: hidden columns not removed on setModel</span></font></td>
+</tr>
+<tr class="even">
+<td><a href="https://swingx.dev.java.net/issues/show_bug.cgi?id=58">58</a></td>
+<td><font color="RED"><span class="issue_type">DEFECT</span></font></td>
+<td><font color="RED"><span class="priority">P3</span></font></td>
+<td><font color="RED"><span class="votes">0</span></font></td>
+<td><font color="RED"><span class="component">swingx</span></font></td>
+<td><font color="RED"><span class="summary">Fonts and BG for JXLoginDialog are not properly set</span></font></td>
+</tr>
+<tr class="odd">
+<td><a href="https://swingx.dev.java.net/issues/show_bug.cgi?id=59">59</a></td>
+<td><font color="RED"><span class="issue_type">DEFECT</span></font></td>
+<td><font color="RED"><span class="priority">P3</span></font></td>
+<td><font color="RED"><span class="votes">0</span></font></td>
+<td><font color="RED"><span class="component">swingx</span></font></td>
+<td><font color="RED"><span class="summary">FilterPipeline: should auto-flush on assign</span></font></td>
+</tr>
+<tr class="even">
+<td><a href="https://swingx.dev.java.net/issues/show_bug.cgi?id=60">60</a></td>
+<td><font color="RED"><span class="issue_type">DEFECT</span></font></td>
+<td><font color="RED"><span class="priority">P3</span></font></td>
+<td><font color="RED"><span class="votes">0</span></font></td>
+<td><font color="RED"><span class="component">swingx</span></font></td>
+<td><font color="RED"><span class="summary">FilterPipeline: missing notification on setSorter(null)</span></font></td>
+</tr>
+<tr class="odd">
+<td><a href="https://swingx.dev.java.net/issues/show_bug.cgi?id=63">63</a></td>
+<td><font color="BLACK"><span class="issue_type">ENHANCEMENT</span></font></td>
+<td><font color="BLACK"><span class="priority">P3</span></font></td>
+<td><font color="BLACK"><span class="votes">0</span></font></td>
+<td><font color="BLACK"><span class="component">swingx</span></font></td>
+<td><font color="BLACK"><span class="summary">JXTable/filtering: add support to include hidden columns</span></font></td>
+</tr>
+<tr class="even">
+<td><a href="https://swingx.dev.java.net/issues/show_bug.cgi?id=64">64</a></td>
+<td><font color="RED"><span class="issue_type">DEFECT</span></font></td>
+<td><font color="RED"><span class="priority">P3</span></font></td>
+<td><font color="RED"><span class="votes">0</span></font></td>
+<td><font color="RED"><span class="component">swingx</span></font></td>
+<td><font color="RED"><span class="summary">JXTable: setFilters(null) throws NPE if had row selection</span></font></td>
+</tr>
+<tr class="odd">
+<td><a href="https://swingx.dev.java.net/issues/show_bug.cgi?id=65">65</a></td>
+<td><font color="BLACK"><span class="issue_type">ENHANCEMENT</span></font></td>
+<td><font color="BLACK"><span class="priority">P3</span></font></td>
+<td><font color="BLACK"><span class="votes">0</span></font></td>
+<td><font color="BLACK"><span class="component">swingx</span></font></td>
+<td><font color="BLACK"><span class="summary">Allow way to support changing link date on date picker popup.</span></font></td>
+</tr>
+<tr class="even">
+<td><a href="https://swingx.dev.java.net/issues/show_bug.cgi?id=66">66</a></td>
+<td><font color="RED"><span class="issue_type">DEFECT</span></font></td>
+<td><font color="RED"><span class="priority">P3</span></font></td>
+<td><font color="RED"><span class="votes">0</span></font></td>
+<td><font color="RED"><span class="component">swingx</span></font></td>
+<td><font color="RED"><span class="summary">JXRootPane setStatusBar(null) throws NPE</span></font></td>
+</tr>
+<tr class="odd">
+<td><a href="https://swingx.dev.java.net/issues/show_bug.cgi?id=68">68</a></td>
+<td><font color="BLACK"><span class="issue_type">ENHANCEMENT</span></font></td>
+<td><font color="BLACK"><span class="priority">P3</span></font></td>
+<td><font color="BLACK"><span class="votes">0</span></font></td>
+<td><font color="BLACK"><span class="component">swingx</span></font></td>
+<td><font color="BLACK"><span class="summary">JXDatePicker: Weekend dates renderer</span></font></td>
+</tr>
+<tr class="even">
+<td><a href="https://swingx.dev.java.net/issues/show_bug.cgi?id=76">76</a></td>
+<td><font color="RED"><span class="issue_type">DEFECT</span></font></td>
+<td><font color="RED"><span class="priority">P3</span></font></td>
+<td><font color="RED"><span class="votes">0</span></font></td>
+<td><font color="RED"><span class="component">swingx</span></font></td>
+<td><font color="RED"><span class="summary">JTaskPane/Container: sizing problems</span></font></td>
+</tr>
+<tr class="odd">
+<td><a href="https://swingx.dev.java.net/issues/show_bug.cgi?id=81">81</a></td>
+<td><font color="GREEN"><span class="issue_type">PATCH</span></font></td>
+<td><font color="GREEN"><span class="priority">P3</span></font></td>
+<td><font color="GREEN"><span class="votes">0</span></font></td>
+<td><font color="GREEN"><span class="component">swingx</span></font></td>
+<td><font color="GREEN"><span class="summary">Make JXTable cell formatters more useful</span></font></td>
+</tr>
+<tr class="even">
+<td><a href="https://swingx.dev.java.net/issues/show_bug.cgi?id=82">82</a></td>
+<td><font color="RED"><span class="issue_type">DEFECT</span></font></td>
+<td><font color="RED"><span class="priority">P3</span></font></td>
+<td><font color="RED"><span class="votes">0</span></font></td>
+<td><font color="RED"><span class="component">swingx</span></font></td>
+<td><font color="RED"><span class="summary">JXTreeTable: not updated after node inserted</span></font></td>
+</tr>
+<tr class="odd">
+<td><a href="https://swingx.dev.java.net/issues/show_bug.cgi?id=89">89</a></td>
+<td><font color="RED"><span class="issue_type">DEFECT</span></font></td>
+<td><font color="RED"><span class="priority">P3</span></font></td>
+<td><font color="RED"><span class="votes">0</span></font></td>
+<td><font color="RED"><span class="component">swingx</span></font></td>
+<td><font color="RED"><span class="summary">JXTable: ColumnControl does not respect ComponentOrientation</span></font></td>
+</tr>
+<tr class="even">
+<td><a href="https://swingx.dev.java.net/issues/show_bug.cgi?id=90">90</a></td>
+<td><font color="RED"><span class="issue_type">DEFECT</span></font></td>
+<td><font color="RED"><span class="priority">P3</span></font></td>
+<td><font color="RED"><span class="votes">0</span></font></td>
+<td><font color="RED"><span class="component">swingx</span></font></td>
+<td><font color="RED"><span class="summary">JXDatePicker: dropdown not closed on clicking button again</span></font></td>
+</tr>
+<tr class="odd">
+<td><a href="https://swingx.dev.java.net/issues/show_bug.cgi?id=94">94</a></td>
+<td><font color="BLACK"><span class="issue_type">TASK</span></font></td>
+<td><font color="BLACK"><span class="priority">P3</span></font></td>
+<td><font color="BLACK"><span class="votes">1</span></font></td>
+<td><font color="BLACK"><span class="component">swingx</span></font></td>
+<td><font color="BLACK"><span class="summary">Search/Find: general overhaul</span></font></td>
+</tr>
+<tr class="even">
+<td><a href="https://swingx.dev.java.net/issues/show_bug.cgi?id=98">98</a></td>
+<td><font color="BLACK"><span class="issue_type">ENHANCEMENT</span></font></td>
+<td><font color="BLACK"><span class="priority">P3</span></font></td>
+<td><font color="BLACK"><span class="votes">0</span></font></td>
+<td><font color="BLACK"><span class="component">swingx</span></font></td>
+<td><font color="BLACK"><span class="summary">Creation of datefield in JXDatePicker</span></font></td>
+</tr>
+<tr class="odd">
+<td><a href="https://swingx.dev.java.net/issues/show_bug.cgi?id=124">124</a></td>
+<td><font color="RED"><span class="issue_type">DEFECT</span></font></td>
+<td><font color="RED"><span class="priority">P3</span></font></td>
+<td><font color="RED"><span class="votes">0</span></font></td>
+<td><font color="RED"><span class="component">swingx</span></font></td>
+<td><font color="RED"><span class="summary">cancelButton: size setting does not honor font settings/text</span></font></td>
+</tr>
+<tr class="even">
+<td><a href="https://swingx.dev.java.net/issues/show_bug.cgi?id=125">125</a></td>
+<td><font color="RED"><span class="issue_type">DEFECT</span></font></td>
+<td><font color="RED"><span class="priority">P3</span></font></td>
+<td><font color="RED"><span class="votes">0</span></font></td>
+<td><font color="RED"><span class="component">swingx</span></font></td>
+<td><font color="RED"><span class="summary">LoginService: startAuthentication needs to catch exceptions</span></font></td>
+</tr>
+<tr class="odd">
+<td><a href="https://swingx.dev.java.net/issues/show_bug.cgi?id=126">126</a></td>
+<td><font color="RED"><span class="issue_type">DEFECT</span></font></td>
+<td><font color="RED"><span class="priority">P3</span></font></td>
+<td><font color="RED"><span class="votes">0</span></font></td>
+<td><font color="RED"><span class="component">swingx</span></font></td>
+<td><font color="RED"><span class="summary">JXLoginDialog#progressPanel not updated</span></font></td>
+</tr>
+<tr class="even">
+<td><a href="https://swingx.dev.java.net/issues/show_bug.cgi?id=127">127</a></td>
+<td><font color="BLACK"><span class="issue_type">ENHANCEMENT</span></font></td>
+<td><font color="BLACK"><span class="priority">P3</span></font></td>
+<td><font color="BLACK"><span class="votes">0</span></font></td>
+<td><font color="BLACK"><span class="component">swingx</span></font></td>
+<td><font color="BLACK"><span class="summary">JXLoginDialog#getState()</span></font></td>
+</tr>
+<tr class="odd">
+<td><a href="https://swingx.dev.java.net/issues/show_bug.cgi?id=128">128</a></td>
+<td><font color="RED"><span class="issue_type">DEFECT</span></font></td>
+<td><font color="RED"><span class="priority">P3</span></font></td>
+<td><font color="RED"><span class="votes">0</span></font></td>
+<td><font color="RED"><span class="component">swingx</span></font></td>
+<td><font color="RED"><span class="summary">cancel login on WINDOW_CLOSE</span></font></td>
+</tr>
+<tr class="even">
+<td><a href="https://swingx.dev.java.net/issues/show_bug.cgi?id=133">133</a></td>
+<td><font color="BLACK"><span class="issue_type">ENHANCEMENT</span></font></td>
+<td><font color="BLACK"><span class="priority">P3</span></font></td>
+<td><font color="BLACK"><span class="votes">0</span></font></td>
+<td><font color="BLACK"><span class="component">swingx</span></font></td>
+<td><font color="BLACK"><span class="summary">JXErrorDialog#showDialog(owner, title, msg, throwable)</span></font></td>
+</tr>
+<tr class="odd">
+<td><a href="https://swingx.dev.java.net/issues/show_bug.cgi?id=135">135</a></td>
+<td><font color="RED"><span class="issue_type">DEFECT</span></font></td>
+<td><font color="RED"><span class="priority">P3</span></font></td>
+<td><font color="RED"><span class="votes">0</span></font></td>
+<td><font color="RED"><span class="component">swingx</span></font></td>
+<td><font color="RED"><span class="summary">JXErrorDialog  should allow a Component as parent</span></font></td>
+</tr>
+<tr class="even">
+<td><a href="https://swingx.dev.java.net/issues/show_bug.cgi?id=139">139</a></td>
+<td><font color="RED"><span class="issue_type">DEFECT</span></font></td>
+<td><font color="RED"><span class="priority">P3</span></font></td>
+<td><font color="RED"><span class="votes">0</span></font></td>
+<td><font color="RED"><span class="component">swingx</span></font></td>
+<td><font color="RED"><span class="summary">JXErrorDialog dispose() on OK</span></font></td>
+</tr>
+<tr class="odd">
+<td><a href="https://swingx.dev.java.net/issues/show_bug.cgi?id=141">141</a></td>
+<td><font color="RED"><span class="issue_type">DEFECT</span></font></td>
+<td><font color="RED"><span class="priority">P3</span></font></td>
+<td><font color="RED"><span class="votes">0</span></font></td>
+<td><font color="RED"><span class="component">swingx</span></font></td>
+<td><font color="RED"><span class="summary">LoginService#authenticate should allow to throw any Exceptions</span></font></td>
+</tr>
+<tr class="even">
+<td><a href="https://swingx.dev.java.net/issues/show_bug.cgi?id=142">142</a></td>
+<td><font color="RED"><span class="issue_type">DEFECT</span></font></td>
+<td><font color="RED"><span class="priority">P3</span></font></td>
+<td><font color="RED"><span class="votes">0</span></font></td>
+<td><font color="RED"><span class="component">swingx</span></font></td>
+<td><font color="RED"><span class="summary">Exception when refreshing an applet using SwingX components having custom look and feel</span></font></td>
+</tr>
+<tr class="odd">
+<td><a href="https://swingx.dev.java.net/issues/show_bug.cgi?id=144">144</a></td>
+<td><font color="RED"><span class="issue_type">DEFECT</span></font></td>
+<td><font color="RED"><span class="priority">P3</span></font></td>
+<td><font color="RED"><span class="votes">0</span></font></td>
+<td><font color="RED"><span class="component">swingx</span></font></td>
+<td><font color="RED"><span class="summary">LookAndFeelAddons override entries manually added to UIManager</span></font></td>
+</tr>
+<tr class="even">
+<td><a href="https://swingx.dev.java.net/issues/show_bug.cgi?id=153">153</a></td>
+<td><font color="RED"><span class="issue_type">DEFECT</span></font></td>
+<td><font color="RED"><span class="priority">P3</span></font></td>
+<td><font color="RED"><span class="votes">0</span></font></td>
+<td><font color="RED"><span class="component">swingx</span></font></td>
+<td><font color="RED"><span class="summary">ColumnControlButton fails with ClassCastException when adding keystrokes on JXTreeTable</span></font></td>
+</tr>
+<tr class="odd">
+<td><a href="https://swingx.dev.java.net/issues/show_bug.cgi?id=160">160</a></td>
+<td><font color="RED"><span class="issue_type">DEFECT</span></font></td>
+<td><font color="RED"><span class="priority">P3</span></font></td>
+<td><font color="RED"><span class="votes">0</span></font></td>
+<td><font color="RED"><span class="component">swingx</span></font></td>
+<td><font color="RED"><span class="summary">JXTaskPane disappears when animation off</span></font></td>
+</tr>
+<tr class="even">
+<td><a href="https://swingx.dev.java.net/issues/show_bug.cgi?id=164">164</a></td>
+<td><font color="RED"><span class="issue_type">DEFECT</span></font></td>
+<td><font color="RED"><span class="priority">P3</span></font></td>
+<td><font color="RED"><span class="votes">0</span></font></td>
+<td><font color="RED"><span class="component">swingx</span></font></td>
+<td><font color="RED"><span class="summary">JXTable: unexpected (caught) accessControlException</span></font></td>
+</tr>
+<tr class="odd">
+<td><a href="https://swingx.dev.java.net/issues/show_bug.cgi?id=165">165</a></td>
+<td><font color="GREEN"><span class="issue_type">PATCH</span></font></td>
+<td><font color="GREEN"><span class="priority">P3</span></font></td>
+<td><font color="GREEN"><span class="votes">0</span></font></td>
+<td><font color="GREEN"><span class="component">swingx</span></font></td>
+<td><font color="GREEN"><span class="summary">IndexOutOfBoundsException for moveToVisible()</span></font></td>
+</tr>
+<tr class="even">
+<td><a href="https://swingx.dev.java.net/issues/show_bug.cgi?id=175">175</a></td>
+<td><font color="RED"><span class="issue_type">DEFECT</span></font></td>
+<td><font color="RED"><span class="priority">P3</span></font></td>
+<td><font color="RED"><span class="votes">0</span></font></td>
+<td><font color="RED"><span class="component">swingx</span></font></td>
+<td><font color="RED"><span class="summary">JXTaskPane: what means "special"</span></font></td>
+</tr>
+<tr class="odd">
+<td><a href="https://swingx.dev.java.net/issues/show_bug.cgi?id=179">179</a></td>
+<td><font color="RED"><span class="issue_type">DEFECT</span></font></td>
+<td><font color="RED"><span class="priority">P3</span></font></td>
+<td><font color="RED"><span class="votes">0</span></font></td>
+<td><font color="RED"><span class="component">swingx</span></font></td>
+<td><font color="RED"><span class="summary">JXDatePicker#setLinkDate() has no effect</span></font></td>
+</tr>
+<tr class="even">
+<td><a href="https://swingx.dev.java.net/issues/show_bug.cgi?id=180">180</a></td>
+<td><font color="RED"><span class="issue_type">DEFECT</span></font></td>
+<td><font color="RED"><span class="priority">P3</span></font></td>
+<td><font color="RED"><span class="votes">0</span></font></td>
+<td><font color="RED"><span class="component">swingx</span></font></td>
+<td><font color="RED"><span class="summary">ArrayIndexOutOfBoundsException in PatternHighlighter</span></font></td>
+</tr>
+<tr class="odd">
+<td><a href="https://swingx.dev.java.net/issues/show_bug.cgi?id=182">182</a></td>
+<td><font color="RED"><span class="issue_type">DEFECT</span></font></td>
+<td><font color="RED"><span class="priority">P3</span></font></td>
+<td><font color="RED"><span class="votes">0</span></font></td>
+<td><font color="RED"><span class="component">swingx</span></font></td>
+<td><font color="RED"><span class="summary">JXTable: no focus rect around checkbox renderer</span></font></td>
+</tr>
+<tr class="even">
+<td><a href="https://swingx.dev.java.net/issues/show_bug.cgi?id=183">183</a></td>
+<td><font color="RED"><span class="issue_type">DEFECT</span></font></td>
+<td><font color="RED"><span class="priority">P3</span></font></td>
+<td><font color="RED"><span class="votes">0</span></font></td>
+<td><font color="RED"><span class="component">swingx</span></font></td>
+<td><font color="RED"><span class="summary">LinkRenderer: selection background lost on changing LF</span></font></td>
+</tr>
+<tr class="odd">
+<td><a href="https://swingx.dev.java.net/issues/show_bug.cgi?id=190">190</a></td>
+<td><font color="RED"><span class="issue_type">DEFECT</span></font></td>
+<td><font color="RED"><span class="priority">P3</span></font></td>
+<td><font color="RED"><span class="votes">0</span></font></td>
+<td><font color="RED"><span class="component">swingx</span></font></td>
+<td><font color="RED"><span class="summary">TableSearchable: too much scrolling if no match found</span></font></td>
+</tr>
+<tr class="even">
+<td><a href="https://swingx.dev.java.net/issues/show_bug.cgi?id=198">198</a></td>
+<td><font color="RED"><span class="issue_type">DEFECT</span></font></td>
+<td><font color="RED"><span class="priority">P3</span></font></td>
+<td><font color="RED"><span class="votes">0</span></font></td>
+<td><font color="RED"><span class="component">swingx</span></font></td>
+<td><font color="RED"><span class="summary">JXDatePicker needs better time zone handling and doc</span></font></td>
+</tr>
+<tr class="odd">
+<td><a href="https://swingx.dev.java.net/issues/show_bug.cgi?id=110">110</a></td>
+<td><font color="RED"><span class="issue_type">DEFECT</span></font></td>
+<td><font color="RED"><span class="priority">P4</span></font></td>
+<td><font color="RED"><span class="votes">0</span></font></td>
+<td><font color="RED"><span class="component">swingx</span></font></td>
+<td><font color="RED"><span class="summary">DefaultUserNameStore.saveUserNames: key too long</span></font></td>
+</tr>
+<tr class="even">
+<td><a href="https://swingx.dev.java.net/issues/show_bug.cgi?id=147">147</a></td>
+<td><font color="RED"><span class="issue_type">DEFECT</span></font></td>
+<td><font color="RED"><span class="priority">P4</span></font></td>
+<td><font color="RED"><span class="votes">0</span></font></td>
+<td><font color="RED"><span class="component">swingx</span></font></td>
+<td><font color="RED"><span class="summary">JXImagePanel(url) always fails dueto bad class cast</span></font></td>
+</tr>
+<tr class="odd">
+<td><a href="https://swingx.dev.java.net/issues/show_bug.cgi?id=1">1</a></td>
+<td><font color="BLACK"><span class="issue_type">TASK</span></font></td>
+<td><font color="BLACK"><span class="priority">P5</span></font></td>
+<td><font color="BLACK"><span class="votes">0</span></font></td>
+<td><font color="BLACK"><span class="component">swingx</span></font></td>
+<td><font color="BLACK"><span class="summary">Rename JXScrollUp</span></font></td>
+</tr>
+<tr class="even">
+<td><a href="https://swingx.dev.java.net/issues/show_bug.cgi?id=169">169</a></td>
+<td><font color="RED"><span class="issue_type">DEFECT</span></font></td>
+<td><font color="RED"><span class="priority">P5</span></font></td>
+<td><font color="RED"><span class="votes">0</span></font></td>
+<td><font color="RED"><span class="component">swingx</span></font></td>
+<td><font color="RED"><span class="summary">JXTable: change packSelected action to work on lead</span></font></td>
+</tr>
+</table>
+</p>
+<h2>Project: databinding</h2>
+
+        <p>In the 0.8 release, the DataBinding project has focused mainly on
+        the DataSet API (org.jdesktop.dataset package). This API concerns itself
+        with modeling accurately relational data. The concepts of DataSet will
+        be familiar to anybody who understand the ADO.NET DataSet, or more
+        importantly, anybody who understands relational principles as they
+        relate to Relation Database Management Systems (RDBMS) today.</p>
+        
+        <p>DataSet contains DataTables, which in turn contain DataColumns and
+        DataRows. DataTables can contain key columns and be related to other
+        DataTables via DataRelations. Finally, DataValues can be created that,
+        using a given expression, will calculate its value.</p>
+        
+        <p>DataSets do not rely on SQL data sources, working equally well with
+        particular web services (WebRowSetXML, or in the .9 release the
+        DataSetWebService specification), or local tabular data such as that
+        found in comma and tab delimted files.</p>
+    
+<h5>Enhancements to SQLDataProvider</h5>
+
+            <p>SQLDataProvider was significantly enhanced, while also simplifying
+            the API. SQLDataProvider now contains
+            the ability to map database columns to local DataTable columns. This
+            means that the database column name could be &quot;foo_bar&quot; and
+            the local column name could be &quot;FooBar&quot;.</p>
+            
+            <p>Also, the relationship between a TableCommand and
+            SQLCommand has been simplified. SQLCommand is a simple DataCommand that
+            allows you to specify the exact Update, Insert, Delete and Select SQL
+            statements you want to use. TableCommand extends SQLCommand by focusing
+            on interacting with a single table. As such, it can automatically generate
+            the update, insert, and delete SQL statements for you, as well as a broad
+            (though inefficient) select statement. The automatically generated select
+            statement is "select * from tableName". Since TableCommand extends SQLCommand,
+            you can override the default generated SQL statements with your own custom
+            SQL statements.</p>
+
+            <p>SQLDataProvider takes a JDBCDataConnection as its
+            data connection. A JDBCDataConnection is based on a java.sql.Connection
+            object (the basic connection construct in JDBC). It can be configured
+            to retrieve this Connection from JNDI via a javax.sql.DataSource.
+            Alternativly, you can specify the DriverManager and JDBC URL (along
+            with the user name and password) to create a Connection. Finally,
+            you may also use the SwingX JXLoginPanel with a JDBCLoginService to
+            create the Connection, and simply pass this Connection object to the
+            JDBCDataConnection</p>
+        
+<h5>Pluggable Schema Reader/Writer</h5>
+
+            <p>The pluggable schema reader/writer API lets you create a DataSet
+            based on a JDBC data source, or read/write a schema from XML. The
+            easiest way to do this is to use the org.jdesktop.dataset.util.DataSetUtility 
+            static methods.</p>
+
+            <p><pre class="code">
+    Reader r = new FileReader("dataset-invoicing.xsd");
+    DataSet ds = DataSetUtility.readDataSetFromXml(r);
+            </pre></p>
+            
+            or
+
+            <p><pre class="code">
+    JDBCDataConnection jconn = ...
+    DataSet ds = DataSetUtility.readDataSetFromJDBC(jconn);
+            </pre></p>
+
+            <p>You can also restrict to a subset of tables (and table columns) using
+            the optional tablenames array parameter.</p>
+
+            <p>Some nice-to-haves would be import/export for DDL, possibly using an
+            Antlr or JavaCC parser for the DDL, as well as different XML formats
+            currently in use in the industry.</p>
+        
+<p>
+<h5>Resolved Issues</h5>
+<table width="100%">
+<tr>
+<th colspan="6">Thu Nov 17 21:57:53 +0000 2005</th>
+</tr>
+<tr>
+<th>ID</th>
+<th>Type</th>
+<th>Priority</th>
+<th>Votes</th>
+<th>Component</th>
+<th>Summary</th>
+</tr>
+<tr class="odd">
+<td><a href="https://databinding.dev.java.net/issues/show_bug.cgi?id=11">11</a></td>
+<td><font color="BLACK"><span class="issue_type">ENHANCEMENT</span></font></td>
+<td><font color="BLACK"><span class="priority">P1</span></font></td>
+<td><font color="BLACK"><span class="votes">0</span></font></td>
+<td><font color="BLACK"><span class="component">DataSet</span></font></td>
+<td><font color="BLACK"><span class="summary">Pluggable Schema Reader/Writer</span></font></td>
+</tr>
+<tr class="even">
+<td><a href="https://databinding.dev.java.net/issues/show_bug.cgi?id=17">17</a></td>
+<td><font color="RED"><span class="issue_type">DEFECT</span></font></td>
+<td><font color="RED"><span class="priority">P2</span></font></td>
+<td><font color="RED"><span class="votes">0</span></font></td>
+<td><font color="RED"><span class="component">DataSet</span></font></td>
+<td><font color="RED"><span class="summary">Assert error when discarding first row in table</span></font></td>
+</tr>
+<tr class="odd">
+<td><a href="https://databinding.dev.java.net/issues/show_bug.cgi?id=3">3</a></td>
+<td><font color="BLACK"><span class="issue_type">ENHANCEMENT</span></font></td>
+<td><font color="BLACK"><span class="priority">P3</span></font></td>
+<td><font color="BLACK"><span class="votes">0</span></font></td>
+<td><font color="BLACK"><span class="component">DataSet</span></font></td>
+<td><font color="BLACK"><span class="summary">Separate concerns in SQLCommand / TableCommand</span></font></td>
+</tr>
+<tr class="even">
+<td><a href="https://databinding.dev.java.net/issues/show_bug.cgi?id=5">5</a></td>
+<td><font color="RED"><span class="issue_type">DEFECT</span></font></td>
+<td><font color="RED"><span class="priority">P3</span></font></td>
+<td><font color="RED"><span class="votes">0</span></font></td>
+<td><font color="RED"><span class="component">Binding</span></font></td>
+<td><font color="RED"><span class="summary">DatePickerBinding does not work</span></font></td>
+</tr>
+<tr class="odd">
+<td><a href="https://databinding.dev.java.net/issues/show_bug.cgi?id=6">6</a></td>
+<td><font color="RED"><span class="issue_type">DEFECT</span></font></td>
+<td><font color="RED"><span class="priority">P3</span></font></td>
+<td><font color="RED"><span class="votes">0</span></font></td>
+<td><font color="RED"><span class="component">DataSet</span></font></td>
+<td><font color="RED"><span class="summary">Slow dataSet creation from schema</span></font></td>
+</tr>
+<tr class="even">
+<td><a href="https://databinding.dev.java.net/issues/show_bug.cgi?id=7">7</a></td>
+<td><font color="BLACK"><span class="issue_type">ENHANCEMENT</span></font></td>
+<td><font color="BLACK"><span class="priority">P3</span></font></td>
+<td><font color="BLACK"><span class="votes">0</span></font></td>
+<td><font color="BLACK"><span class="component">DataSet</span></font></td>
+<td><font color="BLACK"><span class="summary">SQLDataProvider needs mapping</span></font></td>
+</tr>
+<tr class="odd">
+<td><a href="https://databinding.dev.java.net/issues/show_bug.cgi?id=15">15</a></td>
+<td><font color="RED"><span class="issue_type">DEFECT</span></font></td>
+<td><font color="RED"><span class="priority">P3</span></font></td>
+<td><font color="RED"><span class="votes">0</span></font></td>
+<td><font color="RED"><span class="component">DataSet</span></font></td>
+<td><font color="RED"><span class="summary">ParseException in calculated field</span></font></td>
+</tr>
+<tr class="even">
+<td><a href="https://databinding.dev.java.net/issues/show_bug.cgi?id=16">16</a></td>
+<td><font color="RED"><span class="issue_type">DEFECT</span></font></td>
+<td><font color="RED"><span class="priority">P3</span></font></td>
+<td><font color="RED"><span class="votes">0</span></font></td>
+<td><font color="RED"><span class="component">Binding</span></font></td>
+<td><font color="RED"><span class="summary">don't NPE with IndexedPropertyType</span></font></td>
+</tr>
+<tr class="odd">
+<td><a href="https://databinding.dev.java.net/issues/show_bug.cgi?id=18">18</a></td>
+<td><font color="RED"><span class="issue_type">DEFECT</span></font></td>
+<td><font color="RED"><span class="priority">P3</span></font></td>
+<td><font color="RED"><span class="votes">0</span></font></td>
+<td><font color="RED"><span class="component">DataSet</span></font></td>
+<td><font color="RED"><span class="summary">DataRow in inconsistent state during RowChanged event</span></font></td>
+</tr>
+<tr class="even">
+<td><a href="https://databinding.dev.java.net/issues/show_bug.cgi?id=23">23</a></td>
+<td><font color="RED"><span class="issue_type">DEFECT</span></font></td>
+<td><font color="RED"><span class="priority">P4</span></font></td>
+<td><font color="RED"><span class="votes">0</span></font></td>
+<td><font color="RED"><span class="component">DataSet</span></font></td>
+<td><font color="RED"><span class="summary">Error saving an inserted DataRow with calc DataColumns</span></font></td>
+</tr>
+</table>
+</p>
+</div>
+</div>
+<div id="footer">
+</div>
+</div>
+</div>
+</body>
+</html>

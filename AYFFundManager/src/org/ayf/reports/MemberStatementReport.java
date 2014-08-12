@@ -25,13 +25,14 @@ public class MemberStatementReport extends Report{
     }
 
     @Override
-    public ReportData getData() {
-        if(getMemberRegisterationNumber() == null || getMemberRegisterationNumber().length() == 0)
+    public ReportData getData() 
+    {
+        if(getMemberRegisterationNumber() != null && getMemberRegisterationNumber().length() > 0)
         {
-            return null;
+            return DatabaseManager.getMemberStatement(getMemberRegisterationNumber());
         }
         
-        return DatabaseManager.getMemberStatement(getMemberRegisterationNumber());
+        return null;
     }
 
     public void setMemberRegisterationNumber(String memberRegisterationNumber) {
@@ -42,7 +43,4 @@ public class MemberStatementReport extends Report{
     public String getMemberRegisterationNumber() {
         return memberRegisterationNumber;
     }
-    
-    
-    
 }

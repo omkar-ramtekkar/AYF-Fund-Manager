@@ -41,6 +41,9 @@ public class Command {
         StatementsCashFlows,
         NotificationsMemberSubscription,
         
+        //Report Command for all kind of search reports
+        GenericSearch,
+        
         //Toolbar
         Home,
         UserAdd,

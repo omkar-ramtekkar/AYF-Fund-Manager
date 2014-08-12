@@ -228,6 +228,20 @@ public class Member extends BaseEntity
             
             detailLevelVsColumnsMap.put(DetailsLevel.Database, columnNames);
         }
+        
+        {
+            Vector columnNames = new Vector(20);
+            columnNames.add((ColumnName.UniqueID));
+            columnNames.add((ColumnName.FirstName));
+            columnNames.add((ColumnName.MiddleName));
+            columnNames.add((ColumnName.LastName));
+            columnNames.add((ColumnName.ContactNumber));
+            columnNames.add((ColumnName.EmailAddress));
+            columnNames.add((ColumnName.RegisterationDate));
+            columnNames.add((ColumnName.Status));
+            
+            detailLevelVsColumnsMap.put(DetailsLevel.Search, columnNames);
+        }
     }
     
     public MaritalStatus getMaritalStatus() {

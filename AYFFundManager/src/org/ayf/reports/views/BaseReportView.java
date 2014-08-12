@@ -13,6 +13,7 @@ import java.awt.event.ContainerEvent;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.AffineTransform;
 import java.util.List;
+import java.util.Vector;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JTable;
@@ -37,7 +38,7 @@ import org.jdesktop.swingx.autocomplete.ObjectToStringConverter;
  */
 
 
-public abstract class BaseReportView extends BackgroundPanel implements ReportDelegate
+public abstract class BaseReportView extends BackgroundPanel implements ReportViewDelegate
 {
     protected Report report;
     TableAutoFilterAdapter rowFilter;
@@ -236,4 +237,40 @@ public abstract class BaseReportView extends BackgroundPanel implements ReportDe
     public void reportWillUnLoad(){}
     @Override
     public void reportDidUnLoad(){}
+    @Override
+    public ReportData getSelectedReportData()
+    {
+        if(getReportTable() != null)
+        {
+            int selectedRows[] = getReportTable().getSelectedRows();
+            
+            Vector<BaseEntity> entities = getReport().getData().getEntities();
+            Vector<Object> dataObjects = getReport().getData().getData();
+            
+            if(entities != null)
+            {
+                Vector<BaseEntity> selectedEntities = new Vector<BaseEntity>(selectedRows.length+1);
+                
+                for (int i : selectedRows) 
+                {
+                    selectedEntities.add(entities.get(i));
+                }
+                
+                return new ReportData(selectedEntities, getReport().getData().getDetailLevel(), getReport().getData().getDummyEntity().getClass());
+            }
+            else
+            {
+                Vector<Object> selectedDataObjects = new Vector<Object>(selectedRows.length+1);
+                
+                for (int i : selectedRows) 
+                {
+                    selectedDataObjects.add(dataObjects.get(i));
+                }
+                
+                return new ReportData(dataObjects, getReport().getData().getColumnIDs(), getReport().getData().getDetailLevel(), null);
+            }
+        }
+        
+        return null;
+    }
 }

@@ -6,13 +6,17 @@
 
 package org.ayf.reports.views;
 
-import java.util.ArrayList;
+import com.sun.tools.corba.se.idl.InvalidArgument;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JTable;
 import org.ayf.database.entities.BaseEntity;
 import org.ayf.database.entities.Member;
+import org.ayf.managers.ApplicationManager;
 import org.ayf.managers.DatabaseManager;
 import org.ayf.managers.ResourceManager;
 import org.ayf.models.GenericDefaultTableModel;
+import org.ayf.reports.GenericSearchReport;
 import org.ayf.reports.MemberStatementReport;
 import org.ayf.reports.Report;
 import org.ayf.reports.ReportData;
@@ -20,14 +24,13 @@ import org.ayf.ui.InformationPanel;
 import org.ayf.ui.MemberFrame;
 import org.ayf.util.DateTime;
 import org.ayf.util.Toast;
-import org.jdesktop.swingx.autocomplete.ObjectToStringConverter;
 import org.jdesktop.swingx.prompt.PromptSupport;
 
 /**
  *
  * @author om
  */
-public class MemberStatementReportView extends BaseReportView {
+public class MemberStatementReportView extends BaseReportView implements ReportDataProcessor{
 
     /**
      * Creates new form MemberStatement
@@ -36,7 +39,6 @@ public class MemberStatementReportView extends BaseReportView {
         super(report);
         initComponents();
         PromptSupport.setPrompt("Type text to filter member statement rows", searchTextField);
-        //PromptSupport.setPrompt("Enter Member ID", memberIDTextField);
         
         setupTextSearchForReportTable(searchTextField);
     }
@@ -288,33 +290,32 @@ public class MemberStatementReportView extends BaseReportView {
     }//GEN-LAST:event_refreshButtonActionPerformed
 
     private void showStatementButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showStatementButtonActionPerformed
-        // TODO add your handling code here:
-        try
-        {
-            if(report != null)
-            {
-                if(report instanceof MemberStatementReport)
-                {
-                    MemberStatementReport memberReport = (MemberStatementReport) report;
-//                    BaseEntity entity = (BaseEntity) this.selectMemberComboBox.getSelectedItem();
-//                    if(entity != null)
-//                    {
-//                        String memberRegNumber = entity.getUniqueID();
-//                        memberReport.setMemberRegisterationNumber(memberRegNumber);
-//                    }
-                }
-            }
-        }
-        catch(NumberFormatException ex)
-        {            
-        }
-        catch(NullPointerException ex)
-        {            
-        }
+        updateReportView(this.searchMemberTxt.getText().trim());
     }//GEN-LAST:event_showStatementButtonActionPerformed
 
+    void updateReportView(String memberRegID)
+    {
+        if(report != null)
+        {
+            if(report instanceof MemberStatementReport)
+            {
+                MemberStatementReport memberReport = (MemberStatementReport) report;
+                memberReport.setMemberRegisterationNumber(memberRegID);
+            }
+        }
+    }
+    
+    
     private void searchMemberButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchMemberButtonActionPerformed
         // TODO add your handling code here:
+        GenericSearchDialog genericSearchDialog = null;
+        try {
+            genericSearchDialog = new GenericSearchDialog(new GenericSearchReport(Member.class, BaseEntity.DetailsLevel.Search), this, ApplicationManager.getSharedManager().getMainFrame(), true);
+            genericSearchDialog.setVisible(true);
+        } catch (InvalidArgument ex) {
+            Logger.getLogger(MemberStatementReportView.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
     }//GEN-LAST:event_searchMemberButtonActionPerformed
 
     private void showFullDetailsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showFullDetailsButtonActionPerformed
@@ -342,21 +343,9 @@ public class MemberStatementReportView extends BaseReportView {
         // TODO add your handling code here:
     }//GEN-LAST:event_formComponentShown
 
-    void fillSelectMemberComboList()
-    {
-        ArrayList<BaseEntity> members = DatabaseManager.getAllEntities(Member.class);
-        
-        setupAutoComplete(this.searchTextField, members, new ObjectToStringConverter() {
-
-            @Override
-            public String getPreferredStringForItem(Object o) {
-                return o.toString();
-            }
-        });
-    }
-
     @Override
-    public void updateView(ReportData data) {
+    public void updateView(ReportData data) 
+    {
         if(data != null)
         {
             getReportTable().setModel(new GenericDefaultTableModel(data));
@@ -410,9 +399,18 @@ public class MemberStatementReportView extends BaseReportView {
     }
     
     @Override
-    public void reportWillLoad()
+    public void processSelectedData(ReportData data, BaseReportView reportView) 
     {
-        fillSelectMemberComboList();
+        if(data != null)
+        {
+            BaseEntity entity = data.getEntities().firstElement();
+            
+            if(entity != null)
+            {
+                this.searchMemberTxt.setText(entity.getUniqueID());
+                updateReportView(entity.getUniqueID());
+            }
+        }
     }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -438,5 +436,5 @@ public class MemberStatementReportView extends BaseReportView {
     private javax.swing.JButton showFullDetailsButton;
     private javax.swing.JButton showStatementButton;
     // End of variables declaration//GEN-END:variables
-    
+
 }

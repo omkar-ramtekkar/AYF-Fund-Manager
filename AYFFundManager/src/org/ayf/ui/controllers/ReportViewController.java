@@ -19,7 +19,7 @@ import org.ayf.command.ReportCommand;
 import org.ayf.models.SideBarTableModel.Option;
 import org.ayf.reports.Report;
 import org.ayf.reports.views.BaseReportView;
-import org.ayf.reports.views.ReportDelegate;
+import org.ayf.reports.views.ReportViewDelegate;
 import org.ayf.ui.ReportView;
 
 /**
@@ -109,7 +109,7 @@ public class ReportViewController implements ActionListener, MouseListener
             
             for (Report report : reports) 
             {
-                ReportDelegate delegate = (ReportDelegate) report.getView();
+                ReportViewDelegate delegate = (ReportViewDelegate) report.getView();
                 delegate.reportWillLoad();
                 reportView.addView(report.getView());
                 report.updateReport();
@@ -123,7 +123,7 @@ public class ReportViewController implements ActionListener, MouseListener
         Vector<BaseReportView> reportViews = this.reportView.getReportViews();
         
         for (BaseReportView baseReportView : reportViews) {
-            ReportDelegate delegate = (ReportDelegate) baseReportView;
+            ReportViewDelegate delegate = (ReportViewDelegate) baseReportView;
             if(delegate != null)
             {
                 delegate.reportWillUnLoad();
@@ -133,7 +133,7 @@ public class ReportViewController implements ActionListener, MouseListener
         this.reportView.cleanView();
         
         for (BaseReportView baseReportView : reportViews) {
-            ReportDelegate delegate = (ReportDelegate) baseReportView;
+            ReportViewDelegate delegate = (ReportViewDelegate) baseReportView;
             if(delegate != null)
             {
                 delegate.reportDidUnLoad();

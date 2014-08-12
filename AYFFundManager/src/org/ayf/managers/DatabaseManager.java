@@ -471,7 +471,7 @@ public class DatabaseManager {
         {
             Connection conn = null;
             conn = createConnection();
-                
+            
             StringBuilder sqlQuery = new StringBuilder("SELECT * FROM ");
             String tableName = null;
                 
@@ -503,11 +503,11 @@ public class DatabaseManager {
                 {
                     if(conditionColumns.lastElement() == conditionColumns.get(i))
                     {
-                        conditionString.append(conditionColumns.get(i)).append("=").append(conditionValues.get(i));
+                        conditionString.append(conditionColumns.get(i)).append("=?");
                     }
                     else
                     {
-                        conditionString.append(conditionColumns.get(i)).append("=").append(conditionValues.get(i)).append(" AND ");
+                        conditionString.append(conditionColumns.get(i)).append("=?").append(" AND ");
                     }
                 }
                 
@@ -515,12 +515,55 @@ public class DatabaseManager {
                 
                 sqlQuery.trimToSize();
                 
-                ResultSet rs = null;
-                Statement statement = null;
+                
                 try 
                 {
-                    statement = conn.createStatement();
-                    rs = statement.executeQuery(sqlQuery.toString());
+                    
+                    PreparedStatement ps = conn.prepareStatement(sqlQuery.toString());;
+                    
+                    for (int i = 1; i <= conditionColumns.size(); ++i)
+                    {
+                        Object value = conditionValues.get(i-1);
+
+                        if(value instanceof String)
+                        {
+                            ps.setString(i, (String) value);
+                        }
+                        else if(value instanceof Double)
+                        {
+                            ps.setDouble(i, ((Double) value));
+                        }
+                        else if(value instanceof Integer)
+                        {
+                            ps.setInt(i, (Integer) value);
+                        }
+                        else if(value instanceof Float)
+                        {
+                            ps.setFloat(i, (Float) value);
+                        }
+                        else if(value instanceof Long)
+                        {
+                            ps.setFloat(i, (Long) value);
+                        }
+                        else if(value instanceof Date || conditionColumns.get(i).toString().contains("Date"))
+                        {
+                            ps.setDate(i, (Date) value);
+                        }
+                        else
+                        {
+                            if(value != null)
+                            {
+                                ps.setString(i, value.toString());
+                            }
+                            else
+                            {
+                                ps.setString(i, "");
+                            }
+                        }
+                    }
+                    
+                    ResultSet rs = ps.executeQuery();
+                
                     BaseEntity dummyEntity = (BaseEntity) entityClass.newInstance();
                     Vector<BaseEntity.ColumnName> columns = dummyEntity.getColumnIDsForDetailLevel(BaseEntity.DetailsLevel.Database);
 
@@ -544,7 +587,7 @@ public class DatabaseManager {
                     }
                     
                     if(rs != null) rs.close();
-                    if(statement != null) statement.close();
+                    if(ps != null) ps.close();
                     
                 } catch (Exception ex) {
                     ex.printStackTrace();
@@ -976,6 +1019,27 @@ public class DatabaseManager {
         {
             return null;
         }
+    }
+    
+    
+    public static ReportData getMemberStatement(int memberRowID)
+    {
+        Vector<BaseEntity.ColumnName> column = new Vector<BaseEntity.ColumnName>();
+        column.add(BaseEntity.ColumnName.ID);
+        
+        Vector<Object> value = new Vector<Object>();
+        value.add(memberRowID);
+        
+        ArrayList<BaseEntity> entities =  getEntitiesWithCondition(column, value, Donor.class);
+        
+        if(entities != null && entities.isEmpty() == false)
+        {
+            return new ReportData(new Vector<BaseEntity>(entities), BaseEntity.DetailsLevel.MemberStatement, Donor.class);
+        }
+        else
+        {
+            return null;
+        }
      }
 
     public static BaseEntity getEntityWithUniqueID(String uniqueID, Class<?> entityClass)
@@ -1008,7 +1072,7 @@ public class DatabaseManager {
         Vector<Object> value = new Vector<Object>();
         value.add(memberID);
         
-        ArrayList<BaseEntity> entities =  getEntitiesWithCondition(column, value, Member.class);
+        ArrayList<BaseEntity> entities =  getEntitiesWithCondition(column, value, Donor.class);
         
         if(entities != null && entities.isEmpty() == false)
         {

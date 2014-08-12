@@ -30,7 +30,7 @@ public abstract class BaseEntity {
     
     public enum DetailsLevel
     {
-        None, OnlyIDAndName, Basic, AllPersonal, AllProfessional, AllSocial,  Complete, MemberStatement, Database  
+        None, OnlyIDAndName, Basic, AllPersonal, AllProfessional, AllSocial,  Complete, MemberStatement, Database, Search  
     }
     
     public enum ColumnName
@@ -39,7 +39,7 @@ public abstract class BaseEntity {
         Cast, SubCast, District, BloodGroup, Gender, Age, PermanentAddress, TemporaryAddress,
         ContactNumber, EmailAddress, Education, Profession, RegisterationDate, Position,
         ImagePath, ReceiptNumber, DonationDate, DonationType, PaymentMode, Status, ExpenseType, Date, ExpenseDate, Amount, Description, ResponsibleMember, ResponsibleMemberName, ResponsibleMemberPosition,
-        MemberID, TransactionDate, UniqueID, MemberUniqueID
+        MemberID, TransactionDate, UniqueID
         
     }
     

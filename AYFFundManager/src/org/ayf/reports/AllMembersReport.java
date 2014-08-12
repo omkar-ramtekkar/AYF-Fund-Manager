@@ -18,7 +18,7 @@ import org.ayf.reports.views.AllMemberReportView;
  *
  * @author om
  */
-public class AllMembersReport extends Report{
+public class AllMembersReport extends GenericSearchReport{
 
     public AllMembersReport() {
         super(ReportCommand.SubCommandType.DetailsAllMembers);

@@ -21,7 +21,6 @@ public class ReportData
 {
     protected Vector<Object> data;
     protected Vector<Object> columns;
-    //TDS cert.
     
     protected DetailsLevel detailLevel;
     protected Vector<BaseEntity> entities;
@@ -44,7 +43,7 @@ public class ReportData
         }
         this.entities = data;
         this.detailLevel = detailLevel;
-        this.data = this.entityToDataArrat(entities);
+        this.data = this.entityToDataArray(entities);
         
     }
   
@@ -77,7 +76,7 @@ public class ReportData
     }
     
       
-    private Vector<Object> entityToDataArrat(Vector<BaseEntity> entities)
+    private Vector<Object> entityToDataArray(Vector<BaseEntity> entities)
     {
         Vector<Object> dataArray = new Vector<Object>();
         for (BaseEntity baseEntity : entities)
