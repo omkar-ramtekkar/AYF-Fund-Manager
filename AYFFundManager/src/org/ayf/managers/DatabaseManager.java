@@ -732,6 +732,7 @@ public class DatabaseManager {
     public static boolean insertEntities(Vector<BaseEntity> entities, Class<?> entityClass)
     {
         boolean bInserted = true; 
+        
         Connection conn = null;
         if(entities != null && entities.size() > 0)
         {
@@ -916,42 +917,11 @@ public class DatabaseManager {
         Connection conn = null;
         if(donor != null)
         {
-            try 
-            {
-                conn = createConnection();
-                PreparedStatement ps = conn.prepareStatement("INSERT INTO "+DONATIONS_TABLE_NAME+" (FirstName, MiddleName, LastName, PermanentAddress, TemporaryAddress, ContactNumber, EmailAddress, Profession, DateOfBirth, Gender, Amount, DonationDate, DonationType, PaymentMode) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            Vector<BaseEntity> entity = new Vector<BaseEntity>(1);
+            entity.add(donor);
+            bDonateSuccess = insertEntities(entity, donor.getClass());
 
-                ps.setString(1, donor.getFirstName());
-                ps.setString(2, donor.getMiddleName());
-                ps.setString(3, donor.getLastName());
-                ps.setString(4, donor.getPermanentAddress());
-                ps.setString(5, donor.getTemporaryAddress());
-                ps.setString(6, donor.getContactNumber());
-                ps.setString(7, donor.getEmailAddress());
-                ps.setString(8, donor.getProfession() != null ? donor.getProfession() : null);
-                ps.setDate(9, donor.getDateOfBirth());
-                ps.setString(10, donor.getGender() == Member.Gender.Male ? "Male" : "Female" );
-                
-                
-                //Donor attributes
-                ps.setFloat(11, donor.getDonationAmount());
-                ps.setDate(12, donor.getDonationDate());
-                ps.setString(13, donor.getDonationType() != null ? donor.getDonationType() : null);
-                ps.setString(14, donor.getPaymentMode()!= null ? donor.getPaymentMode() : null);
-                
-                bDonateSuccess = ps.executeUpdate() > 0;
-                
-                ps.close();
-                
-                
-            } catch (SQLException ex) {
-                Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, ex);
-                JOptionPane.showMessageDialog(null, ex.getLocalizedMessage(), "Unable to save donation", ERROR_MESSAGE);
-            }
-            finally
-            {
-                if(conn != null) closeConnection(conn);
-            }
+            if(conn != null) closeConnection(conn);
         }
         
         return bDonateSuccess;
@@ -1004,21 +974,14 @@ public class DatabaseManager {
     public static ReportData getMemberStatement(String memberRegNumber)
     {
         Vector<BaseEntity.ColumnName> column = new Vector<BaseEntity.ColumnName>();
-        column.add(BaseEntity.ColumnName.UniqueID);
+        column.add(BaseEntity.ColumnName.MemberUniqueID);
         
         Vector<Object> value = new Vector<Object>();
         value.add(memberRegNumber);
         
         ArrayList<BaseEntity> entities =  getEntitiesWithCondition(column, value, Donor.class);
         
-        if(entities != null && entities.isEmpty() == false)
-        {
-            return new ReportData(new Vector<BaseEntity>(entities), BaseEntity.DetailsLevel.MemberStatement, Donor.class);
-        }
-        else
-        {
-            return null;
-        }
+        return new ReportData(new Vector<BaseEntity>(entities), BaseEntity.DetailsLevel.MemberStatement, Donor.class);
     }
     
     
@@ -1032,14 +995,7 @@ public class DatabaseManager {
         
         ArrayList<BaseEntity> entities =  getEntitiesWithCondition(column, value, Donor.class);
         
-        if(entities != null && entities.isEmpty() == false)
-        {
-            return new ReportData(new Vector<BaseEntity>(entities), BaseEntity.DetailsLevel.MemberStatement, Donor.class);
-        }
-        else
-        {
-            return null;
-        }
+        return new ReportData(new Vector<BaseEntity>(entities), BaseEntity.DetailsLevel.MemberStatement, Donor.class);
      }
 
     public static BaseEntity getEntityWithUniqueID(String uniqueID, Class<?> entityClass)

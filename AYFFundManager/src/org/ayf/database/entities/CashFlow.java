@@ -11,6 +11,7 @@ import java.sql.Timestamp;
 import java.util.Vector;
 import org.ayf.reports.ReportData;
 import org.ayf.util.DateTime;
+import org.ayf.util.PreferenceManager;
 
 /**
  *
@@ -22,6 +23,15 @@ public class CashFlow extends BaseEntity{
     String status;
     String description;
 
+    static public String getNextUniqueID()
+    {
+        String id = PreferenceManager.getIntance().getString(PreferenceManager.NEXT_CASHFLOW_ID, "1");
+        return "AUF/cashflow/" + 
+                DateTime.getMonth(DateTime.toSQLDate(new java.util.Date())) + 
+                "/" + 
+                DateTime.getYear(DateTime.toSQLDate(new java.util.Date())) +
+                "/"+id;
+    }
     
     public CashFlow(){}
     
@@ -55,8 +65,6 @@ public class CashFlow extends BaseEntity{
     public void setDescription(String description) {
         this.description = description;
     }
-    
-    
     
     
     public static String getNameForColumnID(CashFlow.ColumnName name)

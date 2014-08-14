@@ -8,9 +8,7 @@ package org.ayf.database.entities;
 
 import java.sql.Date;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.Vector;
-import org.ayf.managers.DatabaseManager;
 import org.ayf.reports.ReportData;
 import org.ayf.util.DateTime;
 import org.ayf.util.PreferenceManager;
@@ -21,17 +19,17 @@ import org.ayf.util.PreferenceManager;
  */
 public class Donor extends Member
 {
-    private float   donationAmount;
-    private  long    receiptNumber;
-    private Date    donationDate;
-    private String    donationType;
-    private String    paymentMode;
+    private float       donationAmount;
+    private  long       receiptNumber;
+    private Date        donationDate;
+    private String      donationType;
+    private String      paymentMode;
+    private String      memberUniqueID;
 
+    
     public Donor() {
     }
     
-    
-
     public Donor(float donationAmount, long receiptNumber, Date donationDate, String donationType, String paymentMode, int memberID, String firstName, String middleName, String lastName, Date dateOfBirth, MaritalStatus maritalStatus, String cast, String subCast, String district, String bloodGroup, Gender gender, String permanentAddress, String temporaryAddress, String contactNumber, String emailAddress, String education, String profession, Date registerationDate, String position, String imagePath, ActiveStatus currentStatus) {
         super(memberID, firstName, middleName, lastName, dateOfBirth, maritalStatus, cast, subCast, district, bloodGroup, gender, permanentAddress, temporaryAddress, contactNumber, emailAddress, education, profession, registerationDate, position, imagePath, currentStatus);
         this.donationAmount = donationAmount;
@@ -50,16 +48,53 @@ public class Donor extends Member
         this.paymentMode = paymentMode;
     }
     
-    static public String getNextDonorID()
+    public Donor(Member member)
     {
-        String id = PreferenceManager.getIntance().getString("nextDonorID", "1");
-        return "AUF/Donation/" + 
+        initializeDonorWithMember(member);
+    }
+    
+    static public String getNextUniqueID()
+    {
+        String id = PreferenceManager.getIntance().getString(PreferenceManager.NEXT_DONATION_ID, "1");
+        return "AUF/don/" + 
                 DateTime.getMonth(DateTime.toSQLDate(new java.util.Date())) + 
                 "/" + 
                 DateTime.getYear(DateTime.toSQLDate(new java.util.Date())) +
                 "/"+id;
     }
-    
+
+    public String getMemberUniqueID() {
+        return memberUniqueID;
+    }
+
+    public void setMemberUniqueID(String memberUniqueID) {
+        this.memberUniqueID = memberUniqueID;
+        
+        /*
+        if(getMemberUniqueID()!= null && getMemberUniqueID().length() > 0)
+        {
+            Vector<Object> value = new Vector<Object>(1);
+            value.add(getMemberUniqueID());
+            
+            Vector<ColumnName> column = new Vector<ColumnName>(1);
+            column.add(ColumnName.UniqueID);
+            
+            
+            ArrayList<BaseEntity> entity = DatabaseManager.getEntitiesWithCondition(column, value, Member.class);
+            
+            if(entity != null && entity.size() > 0)
+            {
+                BaseEntity baseEntity = entity.get(0);
+                
+                Vector<ColumnName> columns = baseEntity.getColumnIDsForDetailLevel(DetailsLevel.Database);
+                
+                for (ColumnName columnName : columns) 
+                {
+                    this.setValueForField(columnName, baseEntity.getValueForField(columnName));
+                }
+            }
+        }*/
+    }
 
     public float getDonationAmount() {
         return donationAmount;
@@ -96,9 +131,11 @@ public class Donor extends Member
     public void setPaymentMode(String paymentMode) {
         this.paymentMode = paymentMode;
     }
-    
-    
 
+    public void setReceiptNumber(long receiptNumber) {
+        this.receiptNumber = receiptNumber;
+    }
+    
     
     public Vector getColumnsForDetailsLevel(DetailsLevel level)
     {
@@ -108,6 +145,7 @@ public class Donor extends Member
             case Database:
                 columnNames.add(getNameForColumnID(ColumnName.ID));
                 columnNames.add(getNameForColumnID(ColumnName.UniqueID));
+                columnNames.add(getNameForColumnID(ColumnName.MemberUniqueID));
                 columnNames.add(getNameForColumnID(ColumnName.FirstName));
                 columnNames.add(getNameForColumnID(ColumnName.MiddleName));
                 columnNames.add(getNameForColumnID(ColumnName.LastName));
@@ -154,6 +192,7 @@ public class Donor extends Member
         {
             case Database:
                 columnIDs.add((ColumnName.UniqueID));
+                columnIDs.add((ColumnName.MemberUniqueID));
                 columnIDs.add((ColumnName.FirstName));
                 columnIDs.add((ColumnName.MiddleName));
                 columnIDs.add((ColumnName.LastName));
@@ -206,50 +245,18 @@ public class Donor extends Member
                 return getDonationType();
             case PaymentMode:
                 return getPaymentMode();
+            case MemberUniqueID:
+                return getMemberUniqueID();
             default:
-                super.getValueForField(fieldName);
+                return super.getValueForField(fieldName);
         }
-        
-        return null;
     }
     
-    @Override
-    protected void setID(int id)
-    {
-        super.setID(id);
-    }
-
-    public void setUniqueID(String uniqueID) 
-    {
-        super.setUniqueID(uniqueID);
-        
-        if(getUniqueID() != null && getUniqueID().length() > 0)
-        {
-            Vector<Object> value = new Vector<Object>(1);
-            value.add(getUniqueID());
-            
-            Vector<ColumnName> column = new Vector<ColumnName>(1);
-            column.add(ColumnName.UniqueID);
-            
-            
-            ArrayList<BaseEntity> entity = DatabaseManager.getEntitiesWithCondition(column, value, Member.class);
-            
-            if(entity != null && entity.size() > 0)
-            {
-                BaseEntity baseEntity = entity.get(0);
-                
-                Vector<ColumnName> columns = baseEntity.getColumnIDsForDetailLevel(DetailsLevel.Database);
-                
-                for (ColumnName columnName : columns) 
-                {
-                    this.setValueForField(columnName, baseEntity.getValueForField(columnName));
-                }
-            }
-        }
-    }
 
     @Override
-    public void setValueForField(ColumnName fieldName, Object value) {
+    public void setValueForField(ColumnName fieldName, Object value) 
+    {
+        if(value == null) return;
         
         switch(fieldName)
         {
@@ -276,6 +283,9 @@ public class Donor extends Member
             case PaymentMode:
                 setPaymentMode((String) value);
                 break;
+            case MemberUniqueID:
+                setMemberUniqueID(value.toString());
+                break;
             default:
                 super.setValueForField(fieldName, value);
         }
@@ -296,6 +306,11 @@ public class Donor extends Member
             memberDetails = new Vector();
         }
         
+        if(detailLevel == DetailsLevel.Database)
+        {
+            memberDetails.add(getValueForField(ColumnName.MemberUniqueID));
+        }
+        
         memberDetails.add(getValueForField(ColumnName.ReceiptNumber));
         memberDetails.add(getValueForField(ColumnName.DonationDate));
         memberDetails.add(getValueForField(ColumnName.Amount));
@@ -313,5 +328,19 @@ public class Donor extends Member
         Vector<Object> rowData = toDataArray(detailsLevel);
         
         return new ReportData(rowData, columnNames);
+    }
+
+    public void initializeDonorWithMember(Member member) {
+        if(member != null)
+        {
+            Vector<ColumnName> columnIDs = member.getColumnIDsForDetailLevel(BaseEntity.DetailsLevel.Database);
+            
+            for (ColumnName columnName : columnIDs) 
+            {
+                setValueForField(columnName, member.getValueForField(columnName));
+            }
+            
+            setMemberUniqueID(member.getUniqueID());
+        }
     }
 }

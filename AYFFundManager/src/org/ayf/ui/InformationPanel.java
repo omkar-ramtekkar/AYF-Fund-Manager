@@ -318,36 +318,37 @@ public class InformationPanel extends BackgroundPanel {
                 this.registerationMonth.setSelectedIndex(DateTime.getMonth(regOrDonationDate));
             }
             
-            
-            Vector<String> donationTypes = new Vector<String>(1);
-            if(getPanelType() == PanelType.View)
-            {
-                donationTypes.add(this.member.getValueForField(BaseEntity.ColumnName.DonationType).toString());
-                setDonationTypeComboBox(donationTypes);
-            }
-            else
-            {
-                donationTypes.addAll(BaseEntity.getAllValuesForColumnName(BaseEntity.ColumnName.DonationType));
-                setDonationTypeComboBox(registerationMonth);
-                this.registerationMonth.setSelectedItem(this.member.getValueForField(BaseEntity.ColumnName.DonationType).toString());
-            }
-            
-            
-            Vector<String> paymentModes = new Vector<String>(1);
-            if(getPanelType() == PanelType.View)
-            {
-                paymentModes.add(this.member.getValueForField(BaseEntity.ColumnName.PaymentMode).toString());
-                setPaymentModeComboBox(paymentModes);
-            }
-            else
-            {
-                paymentModes.addAll(BaseEntity.getAllValuesForColumnName(BaseEntity.ColumnName.PaymentMode));
-                setPaymentModeComboBox(registerationMonth);
-                this.paymentModeCombo.setSelectedItem(this.member.getValueForField(BaseEntity.ColumnName.PaymentMode).toString());
-            }
-            
             this.registerationYear.setText(Integer.toString(DateTime.getYear(regOrDonationDate)));
             
+            if(this.member.getClass().equals(Donor.class))
+            {
+                Vector<String> donationTypes = new Vector<String>(1);
+                if(getPanelType() == PanelType.View)
+                {
+                    donationTypes.add(this.member.getValueForField(BaseEntity.ColumnName.DonationType).toString());
+                    setDonationTypeComboBox(donationTypes);
+                }
+                else
+                {
+                    donationTypes.addAll(BaseEntity.getAllValuesForColumnName(BaseEntity.ColumnName.DonationType));
+                    setDonationTypeComboBox(registerationMonth);
+                    this.registerationMonth.setSelectedItem(this.member.getValueForField(BaseEntity.ColumnName.DonationType).toString());
+                }
+
+
+                Vector<String> paymentModes = new Vector<String>(1);
+                if(getPanelType() == PanelType.View)
+                {
+                    paymentModes.add(this.member.getValueForField(BaseEntity.ColumnName.PaymentMode).toString());
+                    setPaymentModeComboBox(paymentModes);
+                }
+                else
+                {
+                    paymentModes.addAll(BaseEntity.getAllValuesForColumnName(BaseEntity.ColumnName.PaymentMode));
+                    setPaymentModeComboBox(registerationMonth);
+                    this.paymentModeCombo.setSelectedItem(this.member.getValueForField(BaseEntity.ColumnName.PaymentMode).toString());
+                }
+            }
             
             this.genderFemaleButton.setSelected(false);
             this.genderMaleButton.setSelected(false);
@@ -440,6 +441,14 @@ public class InformationPanel extends BackgroundPanel {
             setProfessionTypes(new Vector<String>(DatabaseManager.typesToStrings(DatabaseManager.getProfessionTypes())));
             setPaymentModeComboBox(BaseEntity.getAllValuesForColumnName(BaseEntity.ColumnName.PaymentMode));
             setDonationTypeComboBox(BaseEntity.getAllValuesForColumnName(BaseEntity.ColumnName.DonationType));
+            if(getPanelType() == PanelType.Donate)
+            {
+                this.registerationNumber.setText(Donor.getNextUniqueID());
+            }
+            else
+            {
+                this.registerationNumber.setText(Member.getNextUniqueID());
+            }
         }
     }
     
@@ -688,7 +697,7 @@ public class InformationPanel extends BackgroundPanel {
                         imagePath, 
                         BaseEntity.ActiveStatus.Unknown);
                 
-                donor.setUniqueID(Donor.getNextDonorID());
+                donor.setUniqueID(Donor.getNextUniqueID());
                 return donor;
             }
             else
@@ -716,7 +725,7 @@ public class InformationPanel extends BackgroundPanel {
                         imagePath, 
                         Member.ActiveStatus.Unknown);
                 
-                member.setUniqueID(Member.getNextRegID());
+                member.setUniqueID(Member.getNextUniqueID());
                 return member;
             }
         }

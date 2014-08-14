@@ -12,8 +12,6 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -65,15 +63,15 @@ public class DateTime {
         return cal.get(Calendar.YEAR);
     }
     
-    public static Date getDate(int day, int month, int year)
+    public static java.sql.Date getDate(int day, int month, int year)
     {
         Calendar cal = Calendar.getInstance();
         cal.set(year, month, day);
         
-        return cal.getTime();
+        return toSQLDate(cal.getTime());
     }
     
-    public static Date getDate(int day, String month, int year)
+    public static java.sql.Date getDate(int day, String month, int year)
     {
         int monthIndex = -1;
         

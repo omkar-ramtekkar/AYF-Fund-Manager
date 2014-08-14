@@ -7,10 +7,13 @@
 package org.ayf.reports.views;
 
 import com.sun.tools.corba.se.idl.InvalidArgument;
+import java.sql.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import org.ayf.database.entities.BaseEntity;
+import org.ayf.database.entities.Donor;
 import org.ayf.database.entities.Member;
 import org.ayf.managers.ApplicationManager;
 import org.ayf.managers.DatabaseManager;
@@ -23,6 +26,7 @@ import org.ayf.reports.ReportData;
 import org.ayf.ui.InformationPanel;
 import org.ayf.ui.MemberFrame;
 import org.ayf.util.DateTime;
+import org.ayf.util.ScreenUtil;
 import org.ayf.util.Toast;
 import org.jdesktop.swingx.prompt.PromptSupport;
 
@@ -73,6 +77,10 @@ public class MemberStatementReportView extends BaseReportView implements ReportD
         jLabel6 = new javax.swing.JLabel();
         contactNumberLabel = new javax.swing.JLabel();
         showFullDetailsButton = new javax.swing.JButton();
+        actionPanel = new javax.swing.JPanel();
+        donateButton = new javax.swing.JButton();
+        paySubscriptionButton = new javax.swing.JButton();
+        duesButton = new javax.swing.JButton();
 
         addComponentListener(new java.awt.event.ComponentAdapter() {
             public void componentShown(java.awt.event.ComponentEvent evt) {
@@ -162,7 +170,7 @@ public class MemberStatementReportView extends BaseReportView implements ReportD
                     .add(searchTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(refreshButton))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 170, Short.MAX_VALUE)
+                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -257,6 +265,56 @@ public class MemberStatementReportView extends BaseReportView implements ReportD
                 .addContainerGap())
         );
 
+        actionPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Member Actions"));
+
+        donateButton.setText("Donate");
+        donateButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                donateButtonActionPerformed(evt);
+            }
+        });
+
+        paySubscriptionButton.setText("Pay Subscription");
+        paySubscriptionButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                paySubscriptionButtonActionPerformed(evt);
+            }
+        });
+
+        duesButton.setText("Vew Dues");
+        duesButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                duesButtonActionPerformed(evt);
+            }
+        });
+
+        org.jdesktop.layout.GroupLayout actionPanelLayout = new org.jdesktop.layout.GroupLayout(actionPanel);
+        actionPanel.setLayout(actionPanelLayout);
+        actionPanelLayout.setHorizontalGroup(
+            actionPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(actionPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .add(donateButton)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(paySubscriptionButton)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(duesButton)
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        actionPanelLayout.linkSize(new java.awt.Component[] {donateButton, duesButton, paySubscriptionButton}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
+
+        actionPanelLayout.setVerticalGroup(
+            actionPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(actionPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .add(actionPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(donateButton)
+                    .add(paySubscriptionButton)
+                    .add(duesButton))
+                .add(6, 6, 6))
+        );
+
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -266,7 +324,8 @@ public class MemberStatementReportView extends BaseReportView implements ReportD
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(searchDetailsPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .add(reportPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .add(memberInformationPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .add(memberInformationPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .add(actionPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -276,6 +335,8 @@ public class MemberStatementReportView extends BaseReportView implements ReportD
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(memberInformationPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(actionPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(12, 12, 12)
                 .add(reportPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
@@ -342,6 +403,53 @@ public class MemberStatementReportView extends BaseReportView implements ReportD
     private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
         // TODO add your handling code here:
     }//GEN-LAST:event_formComponentShown
+
+    private void donateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_donateButtonActionPerformed
+        try
+        {
+            String regNumber = ((MemberStatementReport)getReport()).getMemberRegisterationNumber();
+            
+            if(regNumber == null || regNumber.length() == 0)
+                throw new Exception("Member registeration number is invalid. Select valid member.");
+                
+            BaseEntity entity = DatabaseManager.getEntityWithUniqueID(regNumber, Member.class);
+            if(entity == null)
+                throw new Exception("Member not found with registeration number - " + regNumber + ".");
+
+            DonationDialog donationDialog = new DonationDialog(ApplicationManager.getSharedManager().getMainFrame(), true, this);
+            donationDialog.setVisible(true);
+            
+            if(donationDialog.isUserCancelledDialog() == false)
+            {
+                Donor newDonation = new Donor((Member) entity);
+                newDonation.setDonationAmount(donationDialog.getDonationAmount());
+                newDonation.setDonationType(donationDialog.getDonationType().toString());
+                newDonation.setDonationDate((new java.sql.Date(new java.util.Date().getTime())));
+                newDonation.setUniqueID(Donor.getNextUniqueID());
+                newDonation.setPaymentMode(donationDialog.getPaymentMode().toString());
+                newDonation.setReceiptNumber(donationDialog.getReceiptNumber());
+
+                if(!DatabaseManager.performDonate(newDonation))
+                    throw new Exception("Donation failed. Unable to make database entry for the danation.");
+
+                Toast.showToast("Donation Successful", ScreenUtil.getCenterPointOnScreen(this), true);
+
+                getReport().updateReport();
+            }
+        }
+        catch(Exception ex)
+        {
+            Toast.showToast(ex.getMessage(), ScreenUtil.getCenterPointOnScreen(this), false);
+        }
+    }//GEN-LAST:event_donateButtonActionPerformed
+
+    private void paySubscriptionButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_paySubscriptionButtonActionPerformed
+        
+    }//GEN-LAST:event_paySubscriptionButtonActionPerformed
+
+    private void duesButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_duesButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_duesButtonActionPerformed
 
     @Override
     public void updateView(ReportData data) 
@@ -414,9 +522,12 @@ public class MemberStatementReportView extends BaseReportView implements ReportD
     }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel actionPanel;
     private javax.swing.JLabel contactNumberLabel;
     private javax.swing.JLabel dateOfBirthLabel;
     private javax.swing.JLabel districtLabel;
+    private javax.swing.JButton donateButton;
+    private javax.swing.JButton duesButton;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -426,6 +537,7 @@ public class MemberStatementReportView extends BaseReportView implements ReportD
     private javax.swing.JLabel memberImageLabel;
     private javax.swing.JPanel memberInformationPanel;
     private javax.swing.JTable memberStatementTable;
+    private javax.swing.JButton paySubscriptionButton;
     private javax.swing.JButton refreshButton;
     private javax.swing.JLabel registerationDateLabel;
     private javax.swing.JPanel reportPanel;

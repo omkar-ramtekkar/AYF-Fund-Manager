@@ -100,8 +100,9 @@ public class Toast {
                     {
                         tip.setForeground(Color.RED);
                     }
-
+                    
                     view = PopupFactory.getSharedInstance().getPopup(null, tip , location.x, location.y);
+                    
                     view.show();
                     Logger.getLogger(Toast.class.getName()).log(Level.INFO, "Showing Toast: " + message, "");
                     Thread.sleep(duration);

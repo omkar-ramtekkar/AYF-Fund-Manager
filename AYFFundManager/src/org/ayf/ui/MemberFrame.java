@@ -54,8 +54,8 @@ public class MemberFrame extends javax.swing.JFrame {
             }
         });
         
-        setSize(new Dimension((int) panel.getPreferredSize().getWidth() + 25, 600));
-        setLocation(200, 100);
+        setSize(new Dimension((int) panel.getPreferredSize().getWidth() + 25, 800));
+        setLocationRelativeTo(null);
         
         updateTitle(context);
     }
@@ -117,17 +117,25 @@ public class MemberFrame extends javax.swing.JFrame {
         
         if(currentIndex == panels.size() - 1)
         {
-            if(this.panel.getPanelType() == InformationPanel.PanelType.Donate)
+            if(this.panel.getPanelType() == InformationPanel.PanelType.View)
             {
-                this.actionButton.setText("Donate");
+                this.actionButton.setEnabled(false);
             }
             else
             {
-                this.actionButton.setText("Register");
+                if(this.panel.getPanelType() == InformationPanel.PanelType.Donate)
+                {
+                    this.actionButton.setText("Donate");
+                }
+                else
+                {
+                    this.actionButton.setText("Register");
+                }
             }
         }
         else
         {
+            this.actionButton.setEnabled(true);
             this.actionButton.setText("Next");
         }
         
@@ -178,17 +186,15 @@ public class MemberFrame extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        mainScrollView = new javax.swing.JScrollPane();
-        mainContainerPanel = new javax.swing.JPanel();
         actionPanel = new BackgroundPanel(BackgroundStyle.GradientBlueGray);
         actionButton = new javax.swing.JButton();
         previousButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
+        mainScrollView = new javax.swing.JScrollPane();
+        mainContainerPanel = new javax.swing.JPanel();
         allPanels = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-
-        mainContainerPanel.setLayout(new java.awt.BorderLayout());
 
         actionPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
 
@@ -218,7 +224,7 @@ public class MemberFrame extends javax.swing.JFrame {
         actionPanelLayout.setHorizontalGroup(
             actionPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(org.jdesktop.layout.GroupLayout.TRAILING, actionPanelLayout.createSequentialGroup()
-                .addContainerGap(265, Short.MAX_VALUE)
+                .addContainerGap(269, Short.MAX_VALUE)
                 .add(cancelButton)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                 .add(previousButton)
@@ -237,7 +243,9 @@ public class MemberFrame extends javax.swing.JFrame {
                 .add(6, 6, 6))
         );
 
-        mainContainerPanel.add(actionPanel, java.awt.BorderLayout.SOUTH);
+        getContentPane().add(actionPanel, java.awt.BorderLayout.SOUTH);
+
+        mainContainerPanel.setLayout(new java.awt.BorderLayout());
 
         allPanels.setLayout(new java.awt.BorderLayout());
         mainContainerPanel.add(allPanels, java.awt.BorderLayout.CENTER);

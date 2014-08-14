@@ -23,6 +23,8 @@ public class PreferenceManager {
     public static final String IMAGE_PATH = "imagePath";
     public static final String NEXT_REG_ID = "nextRegisterationID";
     public static final String NEXT_DONATION_ID = "nextDonationID";
+    public static final String NEXT_EXPENSE_ID = "nextExpenseID";
+    public static final String NEXT_CASHFLOW_ID = "nextCashFlowID";
     
     public static PreferenceManager getIntance()
     {
@@ -108,5 +110,19 @@ public class PreferenceManager {
         String nextID = PreferenceManager.getNextDonationID();
         int donationNumber = Integer.parseInt(nextID);
         PreferenceManager.getIntance().setString(NEXT_DONATION_ID, Integer.toString(++donationNumber));
+    }
+    
+    public static void updateNextExpenseID()
+    {
+        String nextID = PreferenceManager.getNextDonationID();
+        int donationNumber = Integer.parseInt(nextID);
+        PreferenceManager.getIntance().setString(NEXT_EXPENSE_ID, Integer.toString(++donationNumber));
+    }
+    
+    public static void updateNextCashFlowID()
+    {
+        String nextID = PreferenceManager.getNextDonationID();
+        int donationNumber = Integer.parseInt(nextID);
+        PreferenceManager.getIntance().setString(NEXT_CASHFLOW_ID, Integer.toString(++donationNumber));
     }
 }

@@ -95,9 +95,9 @@ public class Member extends BaseEntity
         this.currentStatus = currentStatus;
     }
     
-    static public String getNextRegID()
+    static public String getNextUniqueID()
     {
-        String id = PreferenceManager.getIntance().getString("nextRegisterationID", "1");
+        String id = PreferenceManager.getIntance().getString(PreferenceManager.NEXT_REG_ID, "1");
         return "AUF/" + 
                 DateTime.getMonth(DateTime.toSQLDate(new java.util.Date())) + 
                 "/" + 
