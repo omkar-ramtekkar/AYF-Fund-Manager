@@ -7,10 +7,8 @@
 package org.ayf.reports.views;
 
 import com.sun.tools.corba.se.idl.InvalidArgument;
-import java.sql.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import org.ayf.database.entities.BaseEntity;
 import org.ayf.database.entities.Donor;
@@ -43,7 +41,7 @@ public class MemberStatementReportView extends BaseReportView implements ReportD
         super(report);
         initComponents();
         PromptSupport.setPrompt("Type text to filter member statement rows", searchTextField);
-        
+        PromptSupport.setPrompt("Type Member registeration number or click on Search Member", searchMemberTxt);
         setupTextSearchForReportTable(searchTextField);
     }
 
@@ -129,6 +127,12 @@ public class MemberStatementReportView extends BaseReportView implements ReportD
         );
 
         reportPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Transactions", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 3, 11))); // NOI18N
+
+        searchTextField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                searchTextFieldActionPerformed(evt);
+            }
+        });
 
         refreshButton.setText("Refresh");
         refreshButton.addActionListener(new java.awt.event.ActionListener() {
@@ -424,7 +428,7 @@ public class MemberStatementReportView extends BaseReportView implements ReportD
                 Donor newDonation = new Donor((Member) entity);
                 newDonation.setDonationAmount(donationDialog.getDonationAmount());
                 newDonation.setDonationType(donationDialog.getDonationType().toString());
-                newDonation.setDonationDate((new java.sql.Date(new java.util.Date().getTime())));
+                newDonation.setDonationDate((new java.sql.Date(DateTime.getToday().getTime())));
                 newDonation.setUniqueID(Donor.getNextUniqueID());
                 newDonation.setPaymentMode(donationDialog.getPaymentMode().toString());
                 newDonation.setReceiptNumber(donationDialog.getReceiptNumber());
@@ -451,6 +455,10 @@ public class MemberStatementReportView extends BaseReportView implements ReportD
         // TODO add your handling code here:
     }//GEN-LAST:event_duesButtonActionPerformed
 
+    private void searchTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchTextFieldActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_searchTextFieldActionPerformed
+
     @Override
     public void updateView(ReportData data) 
     {
@@ -458,6 +466,8 @@ public class MemberStatementReportView extends BaseReportView implements ReportD
         {
             getReportTable().setModel(new GenericDefaultTableModel(data));
             adjustReportTableColumns();
+            
+            Toast.showToast(data.getData().size() + " Records Found", ScreenUtil.getCenterPointOnScreen(getReportTable()), true);
             
             if(report != null)
             {
@@ -467,32 +477,37 @@ public class MemberStatementReportView extends BaseReportView implements ReportD
                     
                     Member member = (Member) DatabaseManager.getEntityWithUniqueID(memberReport.getMemberRegisterationNumber(), Member.class);
                     
-                    if(member != null)
-                    {
-                        String fn = member.getFirstName();
-                        String mn = member.getMiddleName();
-                        String ln = member.getLastName();
-                        String fullName =  (fn != null ? fn : "") + " " + (mn != null ? mn : "") + " " +(ln != null ? ln : "");
-                        this.memberFullName.setText(fullName);
-                        this.registerationDateLabel.setText(DateTime.getFormattedDateSQL(member.getRegisterationDate()));
-                        this.contactNumberLabel.setText(member.getContactNumber());
-                        this.dateOfBirthLabel.setText(DateTime.getFormattedDateSQL(member.getDateOfBirth()));
-                        this.districtLabel.setText(member.getDistrict());
-                        this.memberImageLabel.setIcon(ResourceManager.getIcon("no_photo_men", this.memberImageLabel.getPreferredSize()));
-                    }
-                    else
-                    {
-                        this.memberFullName.setText("");
-                        this.registerationDateLabel.setText("");
-                        this.contactNumberLabel.setText("");
-                        this.dateOfBirthLabel.setText("");
-                        this.districtLabel.setText("");
-                        this.memberImageLabel.setIcon(null);
-                        
-                        Toast.showToast(this.searchMemberTxt, "Member not found with this ID", false);
-                    }
+                    updateViewInternal(member);
                 }
             }
+        }
+    }
+    
+    void updateViewInternal(Member member)
+    {
+        if(member != null)
+        {
+            String fn = member.getFirstName();
+            String mn = member.getMiddleName();
+            String ln = member.getLastName();
+            String fullName =  (fn != null ? fn : "") + " " + (mn != null ? mn : "") + " " +(ln != null ? ln : "");
+            this.memberFullName.setText(fullName);
+            this.registerationDateLabel.setText(DateTime.getFormattedDateSQL(member.getRegisterationDate()));
+            this.contactNumberLabel.setText(member.getContactNumber());
+            this.dateOfBirthLabel.setText(DateTime.getFormattedDateSQL(member.getDateOfBirth()));
+            this.districtLabel.setText(member.getDistrict());
+            this.memberImageLabel.setIcon(ResourceManager.getIcon("no_photo_men", this.memberImageLabel.getPreferredSize()));
+        }
+        else
+        {
+            this.memberFullName.setText("");
+            this.registerationDateLabel.setText("");
+            this.contactNumberLabel.setText("");
+            this.dateOfBirthLabel.setText("");
+            this.districtLabel.setText("");
+            this.memberImageLabel.setIcon(null);
+
+            Toast.showToast(this.searchMemberTxt, "Member not found", false);
         }
     }
 
@@ -516,6 +531,7 @@ public class MemberStatementReportView extends BaseReportView implements ReportD
             if(entity != null)
             {
                 this.searchMemberTxt.setText(entity.getUniqueID());
+                updateViewInternal((Member)entity);
                 updateReportView(entity.getUniqueID());
             }
         }

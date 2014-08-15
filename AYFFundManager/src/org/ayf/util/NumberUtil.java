@@ -46,4 +46,12 @@ public class NumberUtil {
         }
         return null;
     }
+    
+    public static String getFormattedNumber(int number)
+    {
+        if(number < 10)
+            return String.format("%02d", number);
+        else
+            return Integer.toString(number);
+    }
 }

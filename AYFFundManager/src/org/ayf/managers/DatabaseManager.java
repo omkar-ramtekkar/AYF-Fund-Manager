@@ -26,6 +26,7 @@ import net.ucanaccess.jdbc.UcanaccessDriver;
 import org.ayf.database.entities.BaseEntity;
 import org.ayf.database.entities.CashFlow;
 import org.ayf.database.entities.Expense;
+import org.ayf.reports.EntityReportData;
 import org.ayf.reports.ReportData;
 import org.ayf.util.PreferenceManager;
 
@@ -1039,5 +1040,9 @@ public class DatabaseManager {
             return null;
         }
     }
-
+    
+    public static EntityReportData getMemberReportData()
+    {
+        return null;
+    }
 }

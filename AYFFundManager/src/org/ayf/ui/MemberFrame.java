@@ -11,10 +11,16 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Point;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JComponent;
 import javax.swing.JPanel;
+import javax.swing.JRootPane;
+import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import org.ayf.database.entities.BaseEntity;
 import org.ayf.database.entities.Member;
@@ -58,6 +64,24 @@ public class MemberFrame extends javax.swing.JFrame {
         setLocationRelativeTo(null);
         
         updateTitle(context);
+        
+    }
+    
+    @Override
+    protected JRootPane createRootPane() 
+    {
+        ActionListener actionListener = new ActionListener() 
+        {
+            public void actionPerformed(ActionEvent actionEvent) 
+            {
+               dispose();
+            }
+        };
+        
+        KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+        JRootPane rootPane = new JRootPane();
+        rootPane.registerKeyboardAction(actionListener, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
+        return rootPane;
     }
     
     void updatePanel(boolean next)
@@ -278,7 +302,7 @@ public class MemberFrame extends javax.swing.JFrame {
                     this.setVisible(false);
                     if(panel.getPanelType() == InformationPanel.PanelType.Donate)
                     {
-                        Toast.showToast("Donation performed successfully!", centerPoint, true);
+                        Toast.showToast("Donation successful!", centerPoint, true);
                     }
                     else
                     {
@@ -286,7 +310,6 @@ public class MemberFrame extends javax.swing.JFrame {
                     }
 
                     SwingUtilities.invokeLater(new Runnable() {
-
                         @Override
                         public void run() {
                             try {
@@ -310,7 +333,6 @@ public class MemberFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_previousButtonActionPerformed
 
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
-        this.setVisible(false);
         this.dispose();
     }//GEN-LAST:event_cancelButtonActionPerformed
 

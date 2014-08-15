@@ -78,7 +78,7 @@ public class Toast {
     public Toast(String msg, Point toastLocation, final boolean isPositive, long forDuration) 
     {
         this.location = toastLocation;
-        this.message = msg;
+        this.message = isPositive ? msg : "Error: " + msg;
         this.duration = forDuration;
         this.isPositive = isPositive;
         
@@ -94,7 +94,7 @@ public class Toast {
                     tip.setBackground(Color.WHITE);
                     if(isPositive)
                     {
-                        tip.setForeground(Color.BLACK);
+                        tip.setForeground(Color.BLUE);
                     }
                     else
                     {

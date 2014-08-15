@@ -25,6 +25,9 @@ public class PreferenceManager {
     public static final String NEXT_DONATION_ID = "nextDonationID";
     public static final String NEXT_EXPENSE_ID = "nextExpenseID";
     public static final String NEXT_CASHFLOW_ID = "nextCashFlowID";
+    public static final String YEARLY_SUBSCRIPTION_AMOUNT = "yearlySubscriptionAmount";
+    
+    public static final float YEALY_SUBSCRIPTION_DEFAULT_VALUE = 1200;
     
     public static PreferenceManager getIntance()
     {
@@ -124,5 +127,15 @@ public class PreferenceManager {
         String nextID = PreferenceManager.getNextDonationID();
         int donationNumber = Integer.parseInt(nextID);
         PreferenceManager.getIntance().setString(NEXT_CASHFLOW_ID, Integer.toString(++donationNumber));
+    }
+    
+    public static float getYearlySubscription()
+    {
+         return Float.parseFloat(getIntance().getString(YEARLY_SUBSCRIPTION_AMOUNT, Float.toString(YEALY_SUBSCRIPTION_DEFAULT_VALUE)));
+    }
+    
+    public static void setYearlySubscription(float amount)
+    {
+         getIntance().setString(YEARLY_SUBSCRIPTION_AMOUNT, Float.toString(amount));
     }
 }

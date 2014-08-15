@@ -6,8 +6,8 @@
 
 package org.ayf.util;
 
-import java.awt.Component;
 import java.awt.Point;
+import javax.swing.JComponent;
 
 /**
  *
@@ -15,13 +15,13 @@ import java.awt.Point;
  */
 public class ScreenUtil {
     
-    static public Point getCenterPointOnScreen(Component component)
+    static public Point getCenterPointOnScreen(JComponent component)
     {
         if(component == null) return null;
         
         Point point = component.getLocationOnScreen();
-        point.x += component.getWidth() / 2.0;
-        point.y += component.getHeight()/ 2.0;
+        point.x += component.getVisibleRect().getWidth()/ 2.0;
+        point.y += component.getVisibleRect().getHeight()/ 2.0;
         
         return point;
     }

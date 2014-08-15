@@ -11,6 +11,7 @@ import java.sql.Timestamp;
 import java.util.Vector;
 import org.ayf.reports.ReportData;
 import org.ayf.util.DateTime;
+import org.ayf.util.NumberUtil;
 import org.ayf.util.PreferenceManager;
 
 /**
@@ -25,7 +26,8 @@ public class Donor extends Member
     private String      donationType;
     private String      paymentMode;
     private String      memberUniqueID;
-
+    
+    public static final String SUBSCRIPTION_TYPE = "Subscription";
     
     public Donor() {
     }
@@ -57,10 +59,10 @@ public class Donor extends Member
     {
         String id = PreferenceManager.getIntance().getString(PreferenceManager.NEXT_DONATION_ID, "1");
         return "AUF/don/" + 
-                DateTime.getMonth(DateTime.toSQLDate(new java.util.Date())) + 
+                NumberUtil.getFormattedNumber(DateTime.getMonth(DateTime.getToday()) + 1) + 
                 "/" + 
-                DateTime.getYear(DateTime.toSQLDate(new java.util.Date())) +
-                "/"+id;
+                DateTime.getYear(DateTime.getToday()) +
+                "/"+ NumberUtil.getFormattedNumber(Integer.parseInt(id));
     }
 
     public String getMemberUniqueID() {
@@ -94,6 +96,14 @@ public class Donor extends Member
                 }
             }
         }*/
+    }
+    
+    public boolean isSubscription()
+    {
+        if(getDonationType() != null)
+            return SUBSCRIPTION_TYPE.equalsIgnoreCase(getDonationType());
+        else
+            return false;
     }
 
     public float getDonationAmount() {
@@ -276,6 +286,9 @@ public class Donor extends Member
                 {
                     setDonationDate(DateTime.toSQLDate((String)value));
                 }
+                break;
+            case ReceiptNumber:
+                setReceiptNumber(Integer.valueOf(value.toString()).intValue());
                 break;
             case DonationType:
                 setDonationType((String) value);

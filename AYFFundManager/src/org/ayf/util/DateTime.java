@@ -10,7 +10,6 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.Locale;
 
 /**
@@ -21,12 +20,13 @@ public class DateTime {
    
     private static final DateFormat timeFormat = new SimpleDateFormat("hh:mm:ss");
     private static final DateFormat dateFormat = new SimpleDateFormat(" dd-MMM-yyyy ");
+    private static java.util.Date today = new java.util.Date();
+    public static final String[] Months = { "Jan", "Feb", "March", "April", "May", "June", "July", "Aug", "Sep", "Oct", "Nov", "Dec" };
     
-        public static final String[] Months = { "Jan", "Feb", "March", "April", "May", "June", "July", "Aug", "Sep", "Oct", "Nov", "Dec" };
 
     public static String getFormattedDate()
     {
-        return dateFormat.format(new Date());
+        return dateFormat.format(getToday());
     }
     
     public static String getFormattedDateSQL(java.sql.Date date)
@@ -34,9 +34,15 @@ public class DateTime {
         return dateFormat.format(date);
     }
     
+    public static String getFormattedDate(java.util.Date date)
+    {
+        return getFormattedDateSQL(toSQLDate(date));
+    }
+    
     public static String getFormattedTime()
     {
-        return timeFormat.format(new Date());
+        today = new java.util.Date();
+        return timeFormat.format(getToday());
     }
     
     public static int getDay(java.sql.Date date)
@@ -47,7 +53,20 @@ public class DateTime {
         return cal.get(Calendar.DAY_OF_MONTH);
     }
     
+    public static int getDay(java.util.Date date)
+    {
+        return getDay(toSQLDate(date));
+    }
+    
     public static int getMonth(java.sql.Date date)
+    {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        
+        return cal.get(Calendar.MONTH);
+    }
+    
+    public static int getMonth(java.util.Date date)
     {
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
@@ -63,6 +82,11 @@ public class DateTime {
         return cal.get(Calendar.YEAR);
     }
     
+    public static int getYear(java.util.Date date)
+    {
+        return getYear(toSQLDate(date));
+    }
+    
     public static java.sql.Date getDate(int day, int month, int year)
     {
         Calendar cal = Calendar.getInstance();
@@ -70,6 +94,7 @@ public class DateTime {
         
         return toSQLDate(cal.getTime());
     }
+    
     
     public static java.sql.Date getDate(int day, String month, int year)
     {
@@ -79,7 +104,7 @@ public class DateTime {
         {
             if(Months[i].equalsIgnoreCase(month))
             {
-                monthIndex = i + 1;
+                monthIndex = i;
                 break;
             }
         }
@@ -126,5 +151,46 @@ public class DateTime {
         }
         
         return null;
+    }
+    
+    public static java.util.Date getToday()
+    {
+        return today;
+    }
+    
+    public java.util.Date getBeforeDate(java.util.Date date1, java.util.Date date2)
+    {
+        if(date1 != null && date2 != null)
+        {
+            if(date1.before(date2))
+                return date1;
+            else
+                return date2;
+        }
+        
+        return null;
+    }
+    
+    public java.util.Date getAfterDate(java.util.Date date1, java.util.Date date2)
+    {
+        if(date1 != null && date2 != null)
+        {
+            if(date1.after(date2))
+                return date1;
+            else
+                return date2;
+        }
+        
+        return null;
+    }
+    
+    static public java.sql.Date getBeforeDate(java.sql.Date date1, java.sql.Date date2)
+    {
+        return toSQLDate(getBeforeDate(toSQLDate(date1), toSQLDate(date2)));
+    }
+    
+    static public java.sql.Date getAfterDate(java.sql.Date date1, java.sql.Date date2)
+    {
+        return toSQLDate(getAfterDate(toSQLDate(date1), toSQLDate(date2)));
     }
 }

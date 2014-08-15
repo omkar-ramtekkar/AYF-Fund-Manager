@@ -11,6 +11,7 @@ import org.ayf.models.GenericDefaultTableModel;
 import org.ayf.reports.AllMembersReport;
 import org.ayf.reports.Report;
 import org.ayf.reports.ReportData;
+import org.ayf.util.ScreenUtil;
 import org.ayf.util.Toast;
 import org.jdesktop.swingx.prompt.PromptSupport;
 
@@ -139,13 +140,13 @@ public class AllMemberReportView extends BaseReportView {
                 }
             }
             
-            Toast.showToast(this.memberEditButton, toastMessage, success);
+            Toast.showToast(toastMessage, ScreenUtil.getCenterPointOnScreen(getReportTable()), success);
             finishEditingReportTable();
         }
         else
         {
             this.memberEditButton.setText("Save");
-            Toast.showToast(this.memberEditButton, "Click 'Save' to save details", true);
+            Toast.showToast("Click 'Save' to save details", ScreenUtil.getCenterPointOnScreen(getReportTable()), true);
             startEditingReportTable();
         }
     }//GEN-LAST:event_memberEditButtonActionPerformed

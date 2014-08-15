@@ -11,6 +11,7 @@ import java.sql.Timestamp;
 import java.util.Vector;
 import org.ayf.reports.ReportData;
 import org.ayf.util.DateTime;
+import org.ayf.util.NumberUtil;
 import org.ayf.util.PreferenceManager;
 
 /**
@@ -65,10 +66,10 @@ public class Expense extends BaseEntity{
     {
         String id = PreferenceManager.getIntance().getString(PreferenceManager.NEXT_EXPENSE_ID, "1");
         return "AUF/expense/" + 
-                DateTime.getMonth(DateTime.toSQLDate(new java.util.Date())) + 
+                NumberUtil.getFormattedNumber(DateTime.getMonth(DateTime.getToday()) + 1) + 
                 "/" + 
-                DateTime.getYear(DateTime.toSQLDate(new java.util.Date())) +
-                "/"+id;
+                DateTime.getYear(DateTime.getToday()) +
+                "/"+ NumberUtil.getFormattedNumber(Integer.parseInt(id));
     }
     
     
