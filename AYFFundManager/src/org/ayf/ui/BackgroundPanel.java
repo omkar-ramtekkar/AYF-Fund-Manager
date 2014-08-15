@@ -20,7 +20,7 @@ public class BackgroundPanel extends javax.swing.JPanel
     protected BufferedImage backgroundImage = null;
     protected BackgroundStyle style = BackgroundStyle.Default;
     
-    protected enum BackgroundStyle
+    public enum BackgroundStyle
     {
         Default,
         GradientBlueGray,

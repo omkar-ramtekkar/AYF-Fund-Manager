@@ -27,7 +27,7 @@ public class CashFlow extends BaseEntity{
     static public String getNextUniqueID()
     {
         String id = PreferenceManager.getIntance().getString(PreferenceManager.NEXT_CASHFLOW_ID, "1");
-        return "AUF/cashflow/" + 
+        return "AYF/cashflow/" + 
                 NumberUtil.getFormattedNumber(DateTime.getMonth(DateTime.getToday()) + 1) + 
                 "/" + 
                 DateTime.getYear(DateTime.getToday()) +

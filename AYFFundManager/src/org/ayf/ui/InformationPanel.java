@@ -1192,16 +1192,15 @@ public class InformationPanel extends BackgroundPanel {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 imageLabelMouseClicked(evt);
             }
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                imageLabelMouseEntered(evt);
-            }
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 imageLabelMouseExited(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                imageLabelMouseEntered(evt);
             }
         });
 
         registerationNumber.setFont(new java.awt.Font("Lucida Grande", 1, 18)); // NOI18N
-        registerationNumber.setText("AUF12023");
         registerationNumber.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 registerationNumberMouseClicked(evt);

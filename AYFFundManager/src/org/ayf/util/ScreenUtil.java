@@ -6,6 +6,7 @@
 
 package org.ayf.util;
 
+import java.awt.GraphicsEnvironment;
 import java.awt.Point;
 import javax.swing.JComponent;
 
@@ -24,5 +25,10 @@ public class ScreenUtil {
         point.y += component.getVisibleRect().getHeight()/ 2.0;
         
         return point;
+    }
+    
+    static public Point getScreenCenterPoint()
+    {
+        return GraphicsEnvironment.getLocalGraphicsEnvironment().getCenterPoint();
     }
 }

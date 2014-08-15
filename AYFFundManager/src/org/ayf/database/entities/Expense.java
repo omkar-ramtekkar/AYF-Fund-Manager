@@ -65,7 +65,7 @@ public class Expense extends BaseEntity{
     static public String getNextUniqueID()
     {
         String id = PreferenceManager.getIntance().getString(PreferenceManager.NEXT_EXPENSE_ID, "1");
-        return "AUF/expense/" + 
+        return "AYF/expense/" + 
                 NumberUtil.getFormattedNumber(DateTime.getMonth(DateTime.getToday()) + 1) + 
                 "/" + 
                 DateTime.getYear(DateTime.getToday()) +

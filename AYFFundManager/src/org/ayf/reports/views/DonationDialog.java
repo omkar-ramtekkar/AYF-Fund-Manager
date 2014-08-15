@@ -17,6 +17,7 @@ import javax.swing.JComponent;
 import javax.swing.JRootPane;
 import javax.swing.KeyStroke;
 import org.ayf.database.entities.BaseEntity;
+import org.ayf.database.entities.Donor;
 import org.ayf.util.DateTime;
 import org.ayf.util.Toast;
 
@@ -31,7 +32,7 @@ public class DonationDialog extends javax.swing.JDialog {
      */
     
     ReportDataProcessor processor;
-    boolean userCancelledDialog = false;
+    boolean userCancelledDialog = true;
     
     public DonationDialog(java.awt.Frame parent, boolean modal, ReportDataProcessor processor)
     {
@@ -75,7 +76,6 @@ public class DonationDialog extends javax.swing.JDialog {
         {
             public void actionPerformed(ActionEvent actionEvent) 
             {
-                userCancelledDialog = true;
                 dispose();
             }
         };
@@ -90,6 +90,11 @@ public class DonationDialog extends javax.swing.JDialog {
         return userCancelledDialog;
     }
     
+    
+    public void setSubscriptionPayment()
+    {
+        this.donationTypeCombo.setModel(new DefaultComboBoxModel(new String[]{Donor.SUBSCRIPTION_TYPE}));
+    }
     
     
     public boolean isValidFormData()
@@ -112,7 +117,7 @@ public class DonationDialog extends javax.swing.JDialog {
             Integer.parseInt(this.receiptNumberTxt.getText());
         }catch(NumberFormatException ex)
         {
-            Toast.showToast(this.donationAmountTxt, "Invalid receipt number.", false); 
+            Toast.showToast(this.receiptNumberTxt, "Invalid receipt number.", false); 
             isValid = false;
         }
         
@@ -220,10 +225,6 @@ public class DonationDialog extends javax.swing.JDialog {
         jLabel3.setText("Donation Type");
 
         jLabel4.setText("Payment Mode");
-
-        paymentModeCombo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-
-        donationTypeCombo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         donationDescriptionTxt.setColumns(20);
         donationDescriptionTxt.setRows(5);
@@ -388,6 +389,7 @@ public class DonationDialog extends javax.swing.JDialog {
         // TODO add your handling code here:
         if(isValidFormData())
         {
+            this.userCancelledDialog = false;
             if(this.processor != null)
             {
                 this.processor.processSelectedData(null, null);
@@ -398,7 +400,6 @@ public class DonationDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_donateButtonActionPerformed
 
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
-        this.userCancelledDialog = true;
         dispose();
     }//GEN-LAST:event_cancelButtonActionPerformed
 

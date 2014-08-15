@@ -216,7 +216,7 @@ public class MemberFrame extends javax.swing.JFrame {
         cancelButton = new javax.swing.JButton();
         mainScrollView = new javax.swing.JScrollPane();
         mainContainerPanel = new javax.swing.JPanel();
-        allPanels = new javax.swing.JPanel();
+        allPanels = new BackgroundPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -294,7 +294,7 @@ public class MemberFrame extends javax.swing.JFrame {
             {
                 Vector<BaseEntity> entity = new Vector<BaseEntity>();
                 entity.add(member);
-                boolean bRegistered = DatabaseManager.insertEntities(entity, Member.class);
+                boolean bRegistered = DatabaseManager.insertEntities(entity, member.getClass());
                 if(bRegistered)
                 {
                     Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();

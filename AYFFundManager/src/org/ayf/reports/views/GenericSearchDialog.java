@@ -7,7 +7,6 @@
 package org.ayf.reports.views;
 
 import com.sun.tools.corba.se.idl.InvalidArgument;
-import java.awt.AWTEvent;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -17,6 +16,7 @@ import javax.swing.JComponent;
 import javax.swing.JRootPane;
 import javax.swing.KeyStroke;
 import org.ayf.reports.Report;
+import org.ayf.ui.BackgroundPanel;
 
 /**
  *
@@ -102,7 +102,7 @@ public class GenericSearchDialog extends javax.swing.JDialog
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanel2 = new javax.swing.JPanel();
+        jPanel2 = new BackgroundPanel(BackgroundPanel.BackgroundStyle.GradientBlueGray);
         selectButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
 

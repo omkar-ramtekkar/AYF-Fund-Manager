@@ -13,6 +13,7 @@ import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.Popup;
 import javax.swing.PopupFactory;
 
@@ -74,6 +75,8 @@ public class Toast {
     private long duration; //in millisecond
     boolean isPositive;
     private Thread toastThread;
+    
+    private static JLabel testLabel = null;
 
     public Toast(String msg, Point toastLocation, final boolean isPositive, long forDuration) 
     {
@@ -100,8 +103,8 @@ public class Toast {
                     {
                         tip.setForeground(Color.RED);
                     }
-                    
-                    view = PopupFactory.getSharedInstance().getPopup(null, tip , location.x, location.y);
+                                        
+                    view = PopupFactory.getSharedInstance().getPopup(null, tip , location.x + 2, location.y + 5);
                     
                     view.show();
                     Logger.getLogger(Toast.class.getName()).log(Level.INFO, "Showing Toast: " + message, "");
@@ -122,6 +125,22 @@ public class Toast {
         toastThread.start();
     }
     
+    
+    static public Point getProperLocationOfToast(String message, Point currentLocation)
+    {
+        Point p = new Point(currentLocation);
+        if(testLabel == null)
+        {
+            testLabel = new JLabel();
+        }
+        
+        testLabel.setText(message);
+        testLabel.doLayout();
+        
+        p.x -= (testLabel.getPreferredSize().getWidth() / 2.0);
+        
+        return p;
+    }
     
     
     private void clean()
@@ -157,5 +176,15 @@ public class Toast {
     public static void showToast(String message, Point location, boolean isPositive, long forDuration)
     {
         Toast toast = new Toast(message, location, isPositive, forDuration);
+    }
+    
+    public static void showToastOnScreenCenter(String message, boolean isPositive)
+    {
+        showToast(message, getProperLocationOfToast(message, ScreenUtil.getScreenCenterPoint()), isPositive);
+    }
+    
+    public static void showToastOnComponentCenter(JComponent component, String message, boolean isPositive)
+    {
+        showToast(message, getProperLocationOfToast(message, ScreenUtil.getCenterPointOnScreen(component)), isPositive);
     }
 }

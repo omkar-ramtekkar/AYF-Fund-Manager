@@ -285,7 +285,7 @@ public class MemberStatementReportView extends BaseReportView implements ReportD
             }
         });
 
-        duesButton.setText("Vew Dues");
+        duesButton.setText("Dues");
         duesButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 duesButtonActionPerformed(evt);
@@ -448,7 +448,44 @@ public class MemberStatementReportView extends BaseReportView implements ReportD
     }//GEN-LAST:event_donateButtonActionPerformed
 
     private void paySubscriptionButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_paySubscriptionButtonActionPerformed
-        
+        try
+        {
+            String regNumber = ((MemberStatementReport)getReport()).getMemberRegisterationNumber();
+            
+            if(regNumber == null || regNumber.length() == 0)
+                throw new Exception("Member registeration number is invalid. Select valid member.");
+                
+            BaseEntity entity = DatabaseManager.getEntityWithUniqueID(regNumber, Member.class);
+            if(entity == null)
+                throw new Exception("Member not found with registeration number - " + regNumber + ".");
+
+            DonationDialog donationDialog = new DonationDialog(ApplicationManager.getSharedManager().getMainFrame(), true, this);
+            donationDialog.setSubscriptionPayment();
+            donationDialog.setTitle("Subscription Payment Form");
+            donationDialog.setVisible(true);
+            
+            if(donationDialog.isUserCancelledDialog() == false)
+            {
+                Donor newDonation = new Donor((Member) entity);
+                newDonation.setDonationAmount(donationDialog.getDonationAmount());
+                newDonation.setDonationType(donationDialog.getDonationType().toString());
+                newDonation.setDonationDate((new java.sql.Date(DateTime.getToday().getTime())));
+                newDonation.setUniqueID(Donor.getNextUniqueID());
+                newDonation.setPaymentMode(donationDialog.getPaymentMode().toString());
+                newDonation.setReceiptNumber(donationDialog.getReceiptNumber());
+
+                if(!DatabaseManager.performDonate(newDonation))
+                    throw new Exception("Donation failed. Unable to make database entry for the danation.");
+
+                Toast.showToast("Donation Successful", ScreenUtil.getCenterPointOnScreen(this), true);
+
+                getReport().updateReport();
+            }
+        }
+        catch(Exception ex)
+        {
+            Toast.showToast(ex.getMessage(), ScreenUtil.getCenterPointOnScreen(this), false);
+        }
     }//GEN-LAST:event_paySubscriptionButtonActionPerformed
 
     private void duesButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_duesButtonActionPerformed

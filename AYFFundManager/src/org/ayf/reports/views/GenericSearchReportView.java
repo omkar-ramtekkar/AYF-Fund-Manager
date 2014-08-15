@@ -43,7 +43,7 @@ public class GenericSearchReportView extends BaseReportView {
         jLabel2 = new javax.swing.JLabel();
         tablePanel = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        reportTable = new javax.swing.JTable();
+        reportTable = new ReportTable();
         footerPanel = new javax.swing.JPanel();
         caseSensitiveButton = new javax.swing.JCheckBox();
 

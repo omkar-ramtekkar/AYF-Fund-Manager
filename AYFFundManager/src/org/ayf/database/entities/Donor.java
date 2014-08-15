@@ -58,7 +58,7 @@ public class Donor extends Member
     static public String getNextUniqueID()
     {
         String id = PreferenceManager.getIntance().getString(PreferenceManager.NEXT_DONATION_ID, "1");
-        return "AUF/don/" + 
+        return "AYF/don/" + 
                 NumberUtil.getFormattedNumber(DateTime.getMonth(DateTime.getToday()) + 1) + 
                 "/" + 
                 DateTime.getYear(DateTime.getToday()) +

@@ -99,7 +99,7 @@ public class Member extends BaseEntity
     static public String getNextUniqueID()
     {
         String id = PreferenceManager.getIntance().getString(PreferenceManager.NEXT_REG_ID, "1");
-        return "AUF/" + 
+        return "AYF/" + 
                 NumberUtil.getFormattedNumber(DateTime.getMonth(DateTime.getToday()) + 1) + 
                 "/" + 
                 DateTime.getYear(DateTime.getToday()) +

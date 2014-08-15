@@ -6,12 +6,10 @@
 
 package org.ayf.reports.views;
 
-import java.awt.Label;
 import java.awt.Point;
 import java.util.Vector;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JComboBox;
-import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import javax.swing.table.TableCellEditor;
