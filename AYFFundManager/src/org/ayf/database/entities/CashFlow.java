@@ -7,64 +7,78 @@
 package org.ayf.database.entities;
 
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.Vector;
 import org.ayf.reports.ReportData;
+import org.ayf.util.DateTime;
+import org.ayf.util.NumberUtil;
+import org.ayf.util.PreferenceManager;
 
 /**
  *
  * @author om
  */
-public class CashFlow {
+public class CashFlow extends BaseEntity{
     int id;
     Date date;
-    Type status;
+    String status;
     String description;
 
-    public enum ColumnNames
+    static public String getNextUniqueID()
     {
-        TransactionID, Date, CurrentStatus, Description
+        String id = PreferenceManager.getIntance().getString(PreferenceManager.NEXT_CASHFLOW_ID, "1");
+        return "AYF/cashflow/" + 
+                NumberUtil.getFormattedNumber(DateTime.getMonth(DateTime.getToday()) + 1) + 
+                "/" + 
+                DateTime.getYear(DateTime.getToday()) +
+                "/"+ NumberUtil.getFormattedNumber(Integer.parseInt(id));
     }
     
-    public enum DetailsLevel
-    {
-        Complete
-    }
-
-    public CashFlow(int id, Date date, Type status, String description) {
-        this.id = id;
+    public CashFlow(){}
+    
+    public CashFlow(int id, Date date, String status, String description) {
+        setID(id);
         this.date = date;
         this.status = status;
         this.description = description;
     }
     
-    public int getId() {
-        return id;
-    }
-
     public Date getDate() {
         return date;
     }
 
-    public Type getStatus() {
+    public String getStatus() {
         return status;
     }
 
     public String getDescription() {
         return description;
     }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
     
     
-    
-    public static String getNameForColumnID(CashFlow.ColumnNames name)
+    public static String getNameForColumnID(CashFlow.ColumnName name)
     {
         switch(name)
         {
-            case TransactionID:
-                return "ID";
+            case UniqueID:
+                return "Transaction ID";
             case Date:
-                return "Date";
-            case CurrentStatus:
-                return "Status";
+            case TransactionDate:
+                return "Transaction Date";
+            case Status:
+                return "Transaction Status";
             case Description:
                 return "Description of Transaction";
         }
@@ -72,44 +86,89 @@ public class CashFlow {
         return null;
     }
     
-    public Object getValueForField(CashFlow.ColumnNames fieldName)
+    public Object getValueForField(CashFlow.ColumnName fieldName)
     {
         switch(fieldName)
         {
-            case TransactionID:
-                return getId();
             case Date:
+            case TransactionDate:
                 return getDate();
-            case CurrentStatus:
+            case Status:
                 return getStatus();
             case Description:
                 return getDescription();
+            default:
+                return super.getValueForField(fieldName);
         }
-        
-        return null;
     }
     
-    public static Vector getColumnsForDetailsLevel(CashFlow.DetailsLevel level)
+    public void setValueForField(ColumnName fieldName, Object value)
+    {
+        if(value == null) return ;
+        
+        switch(fieldName)
+        {
+            case Date:
+            case TransactionDate:
+                if(value instanceof Date)
+                {
+                    setDate((Date) value);
+                }
+                else if(value instanceof Timestamp)
+                {
+                    setDate((new Date(((Timestamp)value).getTime())));
+                }
+                else
+                {
+                    setDate(DateTime.toSQLDate((String)value));
+                }
+                break;
+            case Status:
+                setStatus((String) value);
+                break;
+            case Description:
+                setDescription((String)value);
+                break;
+            default:
+                super.setValueForField(fieldName, value);
+        }
+    }
+    
+    @Override
+    public Vector<ColumnName> getColumnIDsForDetailLevel(CashFlow.DetailsLevel level)
     {
         Vector columnNames = new Vector(4);
-        columnNames.add(getNameForColumnID(CashFlow.ColumnNames.TransactionID));
-        columnNames.add(getNameForColumnID(CashFlow.ColumnNames.Date));
-        columnNames.add(getNameForColumnID(CashFlow.ColumnNames.CurrentStatus));
-        columnNames.add(getNameForColumnID(CashFlow.ColumnNames.Description));
+        columnNames.add((CashFlow.ColumnName.UniqueID));
+        columnNames.add((CashFlow.ColumnName.TransactionDate));
+        columnNames.add((CashFlow.ColumnName.Status));
+        columnNames.add((CashFlow.ColumnName.Description));
         
         columnNames.trimToSize();
         
         return columnNames;
     }
     
-    public Vector getTransactionDetailsForLevel(CashFlow.DetailsLevel detailLevel)
+    public Vector<Object> getColumnsForDetailsLevel(CashFlow.DetailsLevel level)
+    {
+        Vector columnNames = new Vector(4);
+        columnNames.add(getNameForColumnID(CashFlow.ColumnName.UniqueID));
+        columnNames.add(getNameForColumnID(CashFlow.ColumnName.TransactionDate));
+        columnNames.add(getNameForColumnID(CashFlow.ColumnName.Status));
+        columnNames.add(getNameForColumnID(CashFlow.ColumnName.Description));
+        
+        columnNames.trimToSize();
+        
+        return columnNames;
+    }
+    
+    public Vector<Object> toDataArray(DetailsLevel level)
     {
         Vector transactionDetails = new Vector(10);
         
-        transactionDetails.add(getValueForField(CashFlow.ColumnNames.TransactionID));
-        transactionDetails.add(getValueForField(CashFlow.ColumnNames.Date));
-        transactionDetails.add(getValueForField(CashFlow.ColumnNames.CurrentStatus));
-        transactionDetails.add(getValueForField(CashFlow.ColumnNames.Description));
+        transactionDetails.add(getValueForField(CashFlow.ColumnName.UniqueID));
+        transactionDetails.add(getValueForField(CashFlow.ColumnName.TransactionDate));
+        transactionDetails.add(getValueForField(CashFlow.ColumnName.Status));
+        transactionDetails.add(getValueForField(CashFlow.ColumnName.Description));
         
         transactionDetails.trimToSize();
         
@@ -117,11 +176,29 @@ public class CashFlow {
     }
     
     
-    public ReportData getDataForDetails(CashFlow.DetailsLevel detailsLevel)
+    @Override
+    public ReportData getReportDataForDetails(DetailsLevel detailsLevel)
     {
-        Vector columnNames = CashFlow.getColumnsForDetailsLevel(detailsLevel);
-        Vector rowData = getTransactionDetailsForLevel(detailsLevel);
+        Vector<BaseEntity> entity = new Vector<BaseEntity>();
+        entity.add(this);
+        return new ReportData(entity, detailsLevel, this.getClass());
+    }
+
+    @Override
+    public EditorType getColumnEditorTypeForColumnName(ColumnName columnName) {
+        switch(columnName)
+        {
+            case UniqueID:
+            case ID:
+            case Description:
+                return EditorType.Label;
+            case Date:
+            case TransactionDate:
+                return EditorType.Date;
+            case Status:
+                return EditorType.ComboBox;
+        }
         
-        return new ReportData(rowData, columnNames);
+        return null;
     }
 }

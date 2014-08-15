@@ -20,7 +20,7 @@ public class BackgroundPanel extends javax.swing.JPanel
     protected BufferedImage backgroundImage = null;
     protected BackgroundStyle style = BackgroundStyle.Default;
     
-    protected enum BackgroundStyle
+    public enum BackgroundStyle
     {
         Default,
         GradientBlueGray,
@@ -28,6 +28,7 @@ public class BackgroundPanel extends javax.swing.JPanel
         NatureGreen,
         TextureLightGray,
         GradientGray,
+        NewStyle
     }
     
     public BackgroundPanel() {
@@ -44,10 +45,8 @@ public class BackgroundPanel extends javax.swing.JPanel
     }
     
     
-    
     protected void paintComponent(Graphics g) 
     {
-        
         if(backgroundImage == null)
         {
             backgroundImage = ResourceManager.getImage("background_" + this.style.toString(), getSize());

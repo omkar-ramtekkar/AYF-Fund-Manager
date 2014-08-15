@@ -1,0 +1,149 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>SwingLabs README</title>
+        <link rel="stylesheet" type="text/css" href="swinglabs.css" />
+    </head>
+    <body>
+        <div id="container">
+            <div id="stitch-hack">
+                            <div id="banner">
+            </div>
+            <div id="menu">
+                <img class="menu-left" src="images/menu-left.png" alt="" /><a href="README.html">Readme</a><img class="menu-right" src="images/menu-right.png" alt="" />
+                <img class="menu-left" src="images/menu-left.png" alt="" /><a href="ReleaseNotes.html">Release Notes</a><img class="menu-right" src="images/menu-right.png" alt="" />
+                    <img class="menu-left" src="images/menu-left.png" alt="" /><a href="docs/api/index.html">JavaDoc</a><img class="menu-right" src="images/menu-right.png" alt="" />
+                <img class="menu-left" src="images/menu-left.png" alt="" /><a href="http://swinglabs.org/">Main Website</a><img class="menu-right" src="images/menu-right.png" alt="" />
+            </div>
+
+                <div id="content">
+                    <div id="section">
+                        <h3>Introduction</h3>
+                        <p><a href="http://swinglabs.org">SwingLabs</a> is an Open Source laboratory for
+                        exploring new ways to make Swing applications
+                        easier to write, with improved performance and greater visual appeal.
+                        It is an umbrella project for various Open Source
+                        initiatives sponsored by
+                        <a href="http://www.sun.com">Sun Microsystems</a>
+                        and is part of the <a href="http://www.java.net">java.net</a>
+                        community. Successful code and concepts may be migrated
+                        to future versions of the Java&#169; platform.</p>
+
+                        <p>As mentioned, <a href="http://swinglabs.org">SwingLabs</a> is an umbrella project. Some of the main
+                        sub projects include SwingX, DataBinding, and JDIC. Several supporting
+                        subprojects also exist, including Deployment and SwingWorker.</p>
+                        
+                        <p>SwingLab&apos;s SwingX provides a powerful suite of desktop
+                        components for all your Swing projects. Available under the LGPL
+                        license, the SwingX project is the perfect match for both your
+                        professional and personal projects.</p>
+                        
+                        <p>DataBinding contains lower level building blocks required for
+                        most any data oriented application. It contains Converter and Converters
+                        classes for handling data type conversion to/from String. It has a 
+                        DataSet data structure that is excellent for modeling relational
+                        data. Finally, it contains the SwingLabs databinding framework for
+                        creating data-aware components and applications that seemlessly
+                        hook UI components up to domain data</p>
+                        
+                        <p>JDIC provides Java applications with access to facilities provided
+                        by the native desktop such as the mailer, the browser, and registered
+                        document viewing applications. Additionally it provides the mechanisms
+                        by which Java applications can integrate into the native desktop such
+                        as registering Java applications as document viewers on the desktop, 
+                        creating tray icons on the desktop and creating installer packages.</p>
+
+                        <h3>System Requirements</h3>
+                        <p>SwingLabs is a Java 5 ("Tiger") based library. The
+                        Java Virtual Machine on your target systems must be
+                        1.5 or later.</p>
+                        
+                        <p>Because the JDIC project uses native code to integrate
+                        with the system desktop, it takes a little more work to
+                        install.</p>
+                        
+                        <p><b>JDIC API</b>:</p>
+                        <ul>
+                            <li>Supported platforms
+                                <ul>
+                                    <li>WinME/NT/2000/XP/2003, Sun Java Desktop System (JDS)
+                                        Release 1 or later, SuSE Linux 7.1 or later, RedHat Linux 8 or later,
+                                        Solaris 8 or later (package <code>org.jdesktop.jdic.tray requires </code>
+                                        Solaris JDS 3).
+                                    </li>
+                                </ul>
+                            </li>
+                            <li> Additional software
+                                <ul>
+                                    <li>Windows: Internet Explorer 5 or later, or Mozilla 1.4 or
+                                        later.
+                                    </li>
+                                    <li>Linux/Solaris: Gnome 2.0, Ximian Evolution 1.4 or later,
+                                        Mozilla 1.4 or later.
+                                    </li>
+                                    <li>J2SE v1.4.2 or later.</li>
+                                </ul>
+                            </li>
+                        </ul>
+                        <p><b>JDIC Packager</b>:</p>
+                        <ul>
+                            <li>Supported platforms
+                                <ul>
+                                    <li>WinME/NT/2000/XP/2003, Sun Java Desktop System (JDS)
+                                    Release 1 or later, SuSE Linux 7.1 or later, RedHat Linux 8 or later,
+                                    Solaris 8 or later.</li>
+                                </ul>
+                            </li>
+                            <li> Additional software
+                                <ul>
+                                    <li>Windows Developers need to download and install windows <a href="http://www.microsoft.com/msdownload/platformsdk/sdkupdate/downlevel.htm">MSI
+                                        SDK 1.5</a> to generate MSI packages.</li>
+                                    <li>End user using Windows98/NT needs MSI service package to
+                                        install MSI packages. Download the following executable and install.<br>
+                                        <a href="http://download.microsoft.com/download/WindowsInstaller/Install/2.0/NT45/EN-US/InstMsiW.exe">Windows
+                                        NT4 MSI Service Package</a>, <a href="http://download.microsoft.com/download/WindowsInstaller/Install/2.0/W9XMe/EN-US/InstMsiA.exe">Windows
+                                        9x MSI Service Package</a>
+                                    </li>
+                                    <li>Linux: rpm-build package.</li>
+                                    <li>J2SE v1.5.0 or later.</li>
+                                </ul>
+                            </li>
+                        </ul>
+                        
+                        <h3>Installation Instructions</h3>
+                        <p>For all projects <em>other than</em> JDIC, you simply
+                        need to put the proper jar files on the classpath prior
+                        to running your application. In the root swinglabs directory,
+                        you will see the swinglabs-X.X.jar (where X.X is the build
+                        number of the jar file). This jar contains SwingWorker,
+                        SwingX, DataBinding, and JDIC API. This is a convenience
+                        build containing the 4 most common jar files.</p>
+                        
+                        <p>Individual jar files are located in the dist/ directory,
+                        and dependent libraries (libraries you must have on your
+                        classpath from 3rd party projects) are found in /lib.</p>
+                        
+                        <p>For example, the following will launch MyApp assuming it requires DataBinding,
+                        SwingX, and SwingWorker to function properly:</p>
+                        
+                        <p>In Windows<pre class="code">
+c:\myapp>java -cp swinglabs-0.8.0.jar;jga-0.7.2-cddl.jar;myapp.jar com.myapp.Main
+                        </pre></p>
+
+                        <p>In Unix/Linux<pre class="code">
+/myap$ java -cp swinglabs-0.8.0.jar:jga-0.7.2-cddl.jar:myapp.jar com.myapp.Main
+                        </pre></p>
+                        
+                        <p>As before, instructions are more complicated for JDIC.
+                        For full instructions, see 
+                        <a href="https://jdic.dev.java.net/documentation/README.html#System%20Instruction">the official JDIC installation instructions</a></p>
+                    </div>
+                </div>
+                            <div id="footer">
+            </div>
+            </div>
+        </div>
+    </body>
+</html>

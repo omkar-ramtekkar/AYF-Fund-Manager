@@ -40,7 +40,7 @@ public class JTableUpdateTask extends SwingWorker<JTable, Row> {
         
         for (Member member : members)
         {
-            rows.add(new Row(member.getMemberDetailsForLevel(Member.DetailsLevel.Complete).toArray()));
+            //rows.add(new Row(member.getMemberDetailsForLevel(Member.DetailsLevel.Complete).toArray()));
         }
         
         process(rows); 

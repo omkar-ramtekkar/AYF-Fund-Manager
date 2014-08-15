@@ -227,6 +227,10 @@ public final class SideBarTableModel extends AbstractTableModel implements Mouse
         }
     }
     
+    public void selectOption(Command.SubCommandType type, Command.SubCommandType subType) {
+        
+    }
+    
     @Override
     public void mousePressed(MouseEvent e) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.

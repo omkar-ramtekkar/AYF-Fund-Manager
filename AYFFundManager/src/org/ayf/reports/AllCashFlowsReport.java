@@ -11,6 +11,7 @@ import java.util.Vector;
 import org.ayf.database.entities.CashFlow;
 import org.ayf.managers.DatabaseManager;
 import org.ayf.command.ReportCommand;
+import org.ayf.database.entities.BaseEntity;
 import org.ayf.reports.views.AllCashFlowsReportView;
 
 /**
@@ -27,17 +28,11 @@ public class AllCashFlowsReport extends Report{
 
     @Override
     public ReportData getData() {
-        ArrayList<CashFlow> cashFlows = DatabaseManager.getCashFlows();
+        ArrayList<BaseEntity> cashFlows = DatabaseManager.getAllEntities(CashFlow.class);
         
-        Vector rows = new Vector(cashFlows.size());
+        Vector<BaseEntity> rows = new Vector<BaseEntity>(cashFlows);
         
-        for(CashFlow transaction : cashFlows)
-        {
-            Vector rowData = transaction.getTransactionDetailsForLevel(CashFlow.DetailsLevel.Complete);
-            rows.add(rowData);
-        }
-        
-        return new ReportData(rows, CashFlow.getColumnsForDetailsLevel(CashFlow.DetailsLevel.Complete));
+        return new ReportData(rows, BaseEntity.DetailsLevel.Complete, CashFlow.class);
     }
     
 }

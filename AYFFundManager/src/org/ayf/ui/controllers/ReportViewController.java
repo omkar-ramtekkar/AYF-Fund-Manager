@@ -12,11 +12,14 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.Vector;
 import javax.swing.JPanel;
+import org.ayf.command.Command;
 import org.ayf.managers.ApplicationManager;
 import org.ayf.managers.ReportManager;
 import org.ayf.command.ReportCommand;
 import org.ayf.models.SideBarTableModel.Option;
 import org.ayf.reports.Report;
+import org.ayf.reports.views.BaseReportView;
+import org.ayf.reports.views.ReportViewDelegate;
 import org.ayf.ui.ReportView;
 
 /**
@@ -78,6 +81,26 @@ public class ReportViewController implements ActionListener, MouseListener
         updateReportViewWithReports(reports);
     }
     
+    public void openReport(Command.SubCommandType type, Command.SubCommandType subType)
+    {
+        Vector<Report> reports = null;
+        if(type != null && subType != null)
+        {
+            reports = new Vector<Report>();
+            Report report = reportManager.getReportsForType(type, subType);
+            if(report != null)
+            {
+                reports.add(report);
+            }
+        }
+        else if(type != null)
+        {
+            reports = reportManager.getReports(type);
+        }
+        
+        updateReportViewWithReports(reports);
+    }
+    
     void updateReportViewWithReports(Vector<Report> reports)
     {
         if(reports != null && !reports.isEmpty())
@@ -86,15 +109,36 @@ public class ReportViewController implements ActionListener, MouseListener
             
             for (Report report : reports) 
             {
+                ReportViewDelegate delegate = (ReportViewDelegate) report.getView();
+                delegate.reportWillLoad();
                 reportView.addView(report.getView());
                 report.updateReport();
+                delegate.reportDidLoad();
             }
         }
     }
     
     void cleanReportView()
     {
+        Vector<BaseReportView> reportViews = this.reportView.getReportViews();
+        
+        for (BaseReportView baseReportView : reportViews) {
+            ReportViewDelegate delegate = (ReportViewDelegate) baseReportView;
+            if(delegate != null)
+            {
+                delegate.reportWillUnLoad();
+            }
+        }
+        
         this.reportView.cleanView();
+        
+        for (BaseReportView baseReportView : reportViews) {
+            ReportViewDelegate delegate = (ReportViewDelegate) baseReportView;
+            if(delegate != null)
+            {
+                delegate.reportDidUnLoad();
+            }
+        }
     }
 
     @Override
@@ -120,6 +164,10 @@ public class ReportViewController implements ActionListener, MouseListener
     @Override
     public void mouseExited(MouseEvent e) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    public void refresh() {
+        openReport(Command.SubCommandType.Dashboard, Command.SubCommandType.None);
     }
     
     

@@ -7,23 +7,26 @@
 package org.ayf.database.entities;
 
 import java.sql.Date;
+import java.sql.Timestamp;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Vector;
 import org.ayf.reports.ReportData;
+import org.ayf.util.DateTime;
+import org.ayf.util.NumberUtil;
+import org.ayf.util.PreferenceManager;
 
 /**
  *
  * @author om
  */
-public class Member {
-    
-    public enum Gender { Male, Female }
-    
-    int     memberID;
+public class Member extends BaseEntity 
+{
     String  firstName;
     String  middleName;
     String  lastName;
     Date    dateOfBirth;
-    String  maritalStatus;
+    MaritalStatus  maritalStatus;
     String  cast;
     String  subCast;
     String  district;
@@ -37,28 +40,26 @@ public class Member {
     String  emailAddress;
     
     String  education;
-    Type    profession;
+    String  profession;
     
     Date    registerationDate;
     String  position;
     String  imagePath;
-    String currentStatus;
+    ActiveStatus currentStatus;
     
-    public enum DetailsLevel
-    {
-        OnlyIDAndName, Basic, AllPersonal, AllProfessional, AllSocial,  Complete  
-    }
+    static Map<DetailsLevel, Vector<ColumnName> > detailLevelVsColumnsMap = null;
     
-    public enum ColumnNames
+    static 
     {
-        MemberID, FirstName, MiddleName, LastName, DateOfBirth, MaritalStatus, 
-        Cast, SubCast, District, BloodGroup, Gender, Age, PermanentAddress, TemporaryAddress,
-        ContactNumber, EmailAddress, Education, Profession, RegisterationDate, Position,
-        ImagePath, ReceiptNumber, Amount, DonationDate, DonationType, PaymentMode, Status
+         detailLevelVsColumnsMap = new HashMap<DetailsLevel, Vector<ColumnName>>(4);
+        init();
     }
 
-    public Member(int memberID, String firstName, String middleName, String lastName, Date dateOfBirth, String maritalStatus, String cast, String subCast, String district, String bloodGroup, Gender gender, String permanentAddress, String temporaryAddress, String contactNumber, String emailAddress, String education, Type profession, Date registerationDate, String position, String imagePath, String currentStatus) {
-        this.memberID = memberID;
+    public Member() {
+    }
+    
+    public Member(int memberID, String firstName, String middleName, String lastName, Date dateOfBirth, MaritalStatus maritalStatus, String cast, String subCast, String district, String bloodGroup, Gender gender, String permanentAddress, String temporaryAddress, String contactNumber, String emailAddress, String education, String profession, Date registerationDate, String position, String imagePath, ActiveStatus currentStatus) {
+        this.setID(memberID);
         this.firstName = firstName;
         this.middleName = middleName;
         this.lastName = lastName;
@@ -81,8 +82,8 @@ public class Member {
         this.currentStatus = currentStatus;
     }
 
-    public Member(int memberID, String firstName, String middleName, String lastName, Date dateOfBirth, String maritalStatus, String cast, Gender gender, Date registerationDate, String position, String currentStatus) {
-        this.memberID = memberID;
+    public Member(int memberID, String firstName, String middleName, String lastName, Date dateOfBirth, MaritalStatus maritalStatus, String cast, Gender gender, Date registerationDate, String position, ActiveStatus currentStatus) {
+        this.setID(memberID);
         this.firstName = firstName;
         this.middleName = middleName;
         this.lastName = lastName;
@@ -94,8 +95,157 @@ public class Member {
         this.position = position;
         this.currentStatus = currentStatus;
     }
+    
+    static public String getNextUniqueID()
+    {
+        String id = PreferenceManager.getIntance().getString(PreferenceManager.NEXT_REG_ID, "1");
+        return "AYF/" + 
+                NumberUtil.getFormattedNumber(DateTime.getMonth(DateTime.getToday()) + 1) + 
+                "/" + 
+                DateTime.getYear(DateTime.getToday()) +
+                "/"+ NumberUtil.getFormattedNumber(Integer.parseInt(id));
+    }
 
-    public String getMaritalStatus() {
+    static void init()
+    {
+        {
+            Vector columnNames = new Vector(20);
+        
+            columnNames.add(ColumnName.UniqueID);
+            columnNames.add(ColumnName.FirstName);
+            columnNames.add(ColumnName.MiddleName);
+            columnNames.add(ColumnName.LastName);
+            columnNames.add(ColumnName.Gender);
+            columnNames.add(ColumnName.DateOfBirth);
+            
+            detailLevelVsColumnsMap.put(DetailsLevel.OnlyIDAndName, columnNames);
+        }
+        {
+            Vector columnNames = new Vector(20);
+        
+            columnNames.add(ColumnName.UniqueID);
+            columnNames.add(ColumnName.FirstName);
+            columnNames.add(ColumnName.MiddleName);
+            columnNames.add(ColumnName.LastName);
+            columnNames.add(ColumnName.Gender);
+            columnNames.add(ColumnName.DateOfBirth);
+            columnNames.add(ColumnName.MaritalStatus);
+            columnNames.add(ColumnName.ContactNumber);
+            columnNames.add(ColumnName.EmailAddress);
+            columnNames.add(ColumnName.Education);
+            columnNames.add(ColumnName.Profession);
+            columnNames.add(ColumnName.District);
+            columnNames.add(ColumnName.RegisterationDate);
+            columnNames.add(ColumnName.Position);
+            
+            detailLevelVsColumnsMap.put(DetailsLevel.Basic, columnNames);
+        }
+        
+        {
+            Vector columnNames = new Vector(20);
+        
+            columnNames.add((ColumnName.ID));
+            columnNames.add((ColumnName.UniqueID));
+            columnNames.add((ColumnName.FirstName));
+            columnNames.add((ColumnName.MiddleName));
+            columnNames.add((ColumnName.LastName));
+            columnNames.add((ColumnName.Gender));
+            columnNames.add((ColumnName.DateOfBirth));
+            
+            columnNames.add((ColumnName.Age));
+            columnNames.add((ColumnName.MaritalStatus));
+            columnNames.add((ColumnName.BloodGroup));
+            columnNames.add((ColumnName.ContactNumber));
+            columnNames.add((ColumnName.EmailAddress));
+            columnNames.add((ColumnName.Education));
+            columnNames.add((ColumnName.Profession));
+            columnNames.add((ColumnName.District));
+            columnNames.add((ColumnName.PermanentAddress));
+            columnNames.add((ColumnName.TemporaryAddress));
+            
+            detailLevelVsColumnsMap.put(DetailsLevel.AllPersonal, columnNames);
+        }
+        
+        {
+            Vector columnNames = new Vector(20);
+        
+            columnNames.add((ColumnName.ID));
+            columnNames.add((ColumnName.UniqueID));
+            columnNames.add((ColumnName.FirstName));
+            columnNames.add((ColumnName.MiddleName));
+            columnNames.add((ColumnName.LastName));
+            columnNames.add((ColumnName.Gender));
+            columnNames.add((ColumnName.DateOfBirth));
+            columnNames.add((ColumnName.ContactNumber));
+            columnNames.add((ColumnName.EmailAddress));
+            columnNames.add((ColumnName.Education));
+            columnNames.add((ColumnName.Profession));
+            
+            detailLevelVsColumnsMap.put(DetailsLevel.AllProfessional, columnNames);
+        }
+        
+        {
+            Vector columnNames = new Vector(20);
+            columnNames.add((ColumnName.ID));
+            columnNames.add((ColumnName.UniqueID));
+            columnNames.add((ColumnName.FirstName));
+            columnNames.add((ColumnName.MiddleName));
+            columnNames.add((ColumnName.LastName));
+            columnNames.add((ColumnName.Gender));
+            columnNames.add((ColumnName.DateOfBirth));
+            columnNames.add((ColumnName.Education));
+            columnNames.add((ColumnName.ContactNumber));
+            columnNames.add((ColumnName.EmailAddress));
+            columnNames.add((ColumnName.Cast));
+            columnNames.add((ColumnName.SubCast));                
+            columnNames.add((ColumnName.RegisterationDate));
+            columnNames.add((ColumnName.Position));
+            
+            detailLevelVsColumnsMap.put(DetailsLevel.AllSocial, columnNames);
+        }
+        
+        {
+            Vector columnNames = new Vector(20);
+            columnNames.add((ColumnName.ID));
+            columnNames.add((ColumnName.UniqueID));
+            columnNames.add((ColumnName.FirstName));
+            columnNames.add((ColumnName.MiddleName));
+            columnNames.add((ColumnName.LastName));
+            columnNames.add((ColumnName.Gender));
+            columnNames.add((ColumnName.DateOfBirth));
+            columnNames.add((ColumnName.MaritalStatus));
+            columnNames.add((ColumnName.ContactNumber));
+            columnNames.add((ColumnName.EmailAddress));
+            columnNames.add((ColumnName.Education));
+            columnNames.add((ColumnName.Profession));
+            columnNames.add((ColumnName.District));
+            columnNames.add((ColumnName.RegisterationDate));
+            columnNames.add((ColumnName.Position));
+            columnNames.add((ColumnName.Cast));
+            columnNames.add((ColumnName.SubCast)); 
+            columnNames.add((ColumnName.ImagePath)); 
+            columnNames.add((ColumnName.BloodGroup));
+            columnNames.add((ColumnName.Status));
+            
+            detailLevelVsColumnsMap.put(DetailsLevel.Database, columnNames);
+        }
+        
+        {
+            Vector columnNames = new Vector(20);
+            columnNames.add((ColumnName.UniqueID));
+            columnNames.add((ColumnName.FirstName));
+            columnNames.add((ColumnName.MiddleName));
+            columnNames.add((ColumnName.LastName));
+            columnNames.add((ColumnName.ContactNumber));
+            columnNames.add((ColumnName.EmailAddress));
+            columnNames.add((ColumnName.RegisterationDate));
+            columnNames.add((ColumnName.Status));
+            
+            detailLevelVsColumnsMap.put(DetailsLevel.Search, columnNames);
+        }
+    }
+    
+    public MaritalStatus getMaritalStatus() {
         return maritalStatus;
     }
 
@@ -117,10 +267,6 @@ public class Member {
 
     public String getEducation() {
         return education;
-    }
-
-    public int getMemberID() {
-        return memberID;
     }
 
     public String getFirstName() {
@@ -163,7 +309,7 @@ public class Member {
         return position;
     }
 
-    public Type getProfession() {
+    public String getProfession() {
         return profession;
     }
 
@@ -179,15 +325,14 @@ public class Member {
         return imagePath;
     }
 
-    public String getCurrentStatus() {
+    public ActiveStatus getCurrentStatus() {
         return currentStatus;
     }
 
-    public void setCurrentStatus(String currentStatus) {
+    public void setCurrentStatus(ActiveStatus currentStatus) {
         this.currentStatus = currentStatus;
     }
     
-
     public void setPermanentAddress(String permanentAddress) {
         this.permanentAddress = permanentAddress;
     }
@@ -204,7 +349,7 @@ public class Member {
         this.position = position;
     }
 
-    public void setProfession(Type profession) {
+    public void setProfession(String profession) {
         this.profession = profession;
     }
 
@@ -214,10 +359,6 @@ public class Member {
 
     public void setImagePath(String imagePath) {
         this.imagePath = imagePath;
-    }
-
-    public void setMemberID(int memberID) {
-        this.memberID = memberID;
     }
 
     public void setFirstName(String firstName) {
@@ -236,7 +377,7 @@ public class Member {
         this.dateOfBirth = dateOfBirth;
     }
 
-    public void setMaritalStatus(String maritalStatus) {
+    public void setMaritalStatus(MaritalStatus maritalStatus) {
         this.maritalStatus = maritalStatus;
     }
 
@@ -268,12 +409,14 @@ public class Member {
         this.registerationDate = registerationDate;
     }
     
-    public static String getNameForColumnID(ColumnNames name)
+    public static String getNameForColumnID(ColumnName name)
     {
         switch(name)
         {
-            case MemberID:
-                return "ID";
+            case ID:
+                return "Member ID";
+            case UniqueID:
+                return "Registeration Number";
             case FirstName:
                 return "First Name";
             case MiddleName:
@@ -314,17 +457,25 @@ public class Member {
                 return "Position in Foundation";
             case ImagePath:
                 return "Image Location";
+            case ReceiptNumber:
+                return "Receipt Number";
+            case Amount:
+                return "Amount";
+            case DonationDate:
+                return "Donation Date";
+            case DonationType:
+                return "Donation Type";
+            case PaymentMode:
+                return "Payment Mode";
         }
         
         return null;
     }
     
-    public Object getValueForField(ColumnNames fieldName)
+    public Object getValueForField(ColumnName fieldName)
     {
         switch(fieldName)
         {
-            case MemberID:
-                return getMemberID();
             case FirstName:
                 return getFirstName();
             case MiddleName:
@@ -365,126 +516,94 @@ public class Member {
                 return getPosition();
             case ImagePath:
                 return getImagePath();
+            default:
+                return super.getValueForField(fieldName);
+        }
+    }
+    
+    @Override
+    public  EditorType getColumnEditorTypeForColumnName(ColumnName columnNames) {
+        switch(columnNames)
+        {
+            case ID:
+            case UniqueID:
+            case FirstName:
+            case MiddleName:
+            case LastName:
+            case Cast:
+            case SubCast:
+            case District:
+            case Age:
+            case PermanentAddress:
+            case TemporaryAddress:
+            case ContactNumber:
+            case EmailAddress:
+            case Education:
+            case ImagePath:
+                return EditorType.Label;
+                
+            case DateOfBirth:
+            case RegisterationDate:
+            case DonationDate:
+                return EditorType.Date;
+                
+            case MaritalStatus:
+            case BloodGroup:
+            case Gender:
+            case Profession:
+            case Position:
+                return EditorType.ComboBox;
+        }
+        
+        return null;
+    }
+
+    @Override
+    public Vector<ColumnName> getColumnIDsForDetailLevel(DetailsLevel level) 
+    {
+        return detailLevelVsColumnsMap.get(level);
+    }
+    
+    @Override
+    public Vector<Object> getColumnsForDetailsLevel(DetailsLevel level)
+    {
+        Vector<ColumnName> columnIDs = detailLevelVsColumnsMap.get(level);
+        
+        if(columnIDs == null)
+        {
+            columnIDs = detailLevelVsColumnsMap.get(DetailsLevel.OnlyIDAndName);
+        }
+        
+        if(columnIDs != null)
+        {
+            Vector<Object> columnNames = new Vector<Object>(columnIDs.size());
+            for (ColumnName columnID : columnIDs) {
+                columnNames.add(getNameForColumnID(columnID));
+            }
+            
+            return columnNames;
         }
         
         return null;
     }
     
-    public static Vector getColumnsForDetailsLevel(DetailsLevel level)
+    public Vector<Object> toDataArray(DetailsLevel level)
     {
-        Vector columnNames = new Vector();
+        Vector<ColumnName> columnIDs = detailLevelVsColumnsMap.get(level);
+        Vector memberDetails = new Vector(columnIDs.size());
         
-        columnNames.add(getNameForColumnID(ColumnNames.MemberID));
-        columnNames.add(getNameForColumnID(ColumnNames.FirstName));
-        columnNames.add(getNameForColumnID(ColumnNames.MiddleName));
-        columnNames.add(getNameForColumnID(ColumnNames.LastName));
-        columnNames.add(getNameForColumnID(ColumnNames.Gender));
-        columnNames.add(getNameForColumnID(ColumnNames.DateOfBirth));
-        
-        switch(level)
-        {
-            case Basic:
-                columnNames.add(getNameForColumnID(ColumnNames.District));
-                columnNames.add(getNameForColumnID(ColumnNames.MaritalStatus));
-                columnNames.add(getNameForColumnID(ColumnNames.ContactNumber));
-                columnNames.add(getNameForColumnID(ColumnNames.EmailAddress));
-                columnNames.add(getNameForColumnID(ColumnNames.Education));
-                columnNames.add(getNameForColumnID(ColumnNames.Profession));
-                columnNames.add(getNameForColumnID(ColumnNames.RegisterationDate));
-                columnNames.add(getNameForColumnID(ColumnNames.Position));
-                break;
-            case AllPersonal:
-                columnNames.add(getNameForColumnID(ColumnNames.Age));
-                columnNames.add(getNameForColumnID(ColumnNames.MaritalStatus));
-                columnNames.add(getNameForColumnID(ColumnNames.BloodGroup));
-                columnNames.add(getNameForColumnID(ColumnNames.ContactNumber));
-                columnNames.add(getNameForColumnID(ColumnNames.EmailAddress));
-                columnNames.add(getNameForColumnID(ColumnNames.Education));
-                columnNames.add(getNameForColumnID(ColumnNames.Profession));
-                columnNames.add(getNameForColumnID(ColumnNames.District));
-                columnNames.add(getNameForColumnID(ColumnNames.PermanentAddress));
-                columnNames.add(getNameForColumnID(ColumnNames.TemporaryAddress));
-                break;
-            case AllProfessional:
-                columnNames.add(getNameForColumnID(ColumnNames.ContactNumber));
-                columnNames.add(getNameForColumnID(ColumnNames.EmailAddress));
-                columnNames.add(getNameForColumnID(ColumnNames.Education));
-                columnNames.add(getNameForColumnID(ColumnNames.Profession));
-                break;
-            case AllSocial:
-                columnNames.add(getNameForColumnID(ColumnNames.Education));
-                columnNames.add(getNameForColumnID(ColumnNames.ContactNumber));
-                columnNames.add(getNameForColumnID(ColumnNames.EmailAddress));
-                columnNames.add(getNameForColumnID(ColumnNames.Cast));
-                columnNames.add(getNameForColumnID(ColumnNames.SubCast));                
-                columnNames.add(getNameForColumnID(ColumnNames.RegisterationDate));
-                columnNames.add(getNameForColumnID(ColumnNames.Position));
-                break;
-        }
-        
-        return columnNames;
-    }
-    
-    public Vector getMemberDetailsForLevel(DetailsLevel detailLevel)
-    {
-        Vector memberDetails = new Vector();
-        
-        memberDetails.add(getValueForField(ColumnNames.MemberID));
-        memberDetails.add(getValueForField(ColumnNames.FirstName));
-        memberDetails.add(getValueForField(ColumnNames.MiddleName));
-        memberDetails.add(getValueForField(ColumnNames.LastName));
-        memberDetails.add(getValueForField(ColumnNames.Gender));
-        memberDetails.add(getValueForField(ColumnNames.DateOfBirth));
-        
-        switch(detailLevel)
-        {
-            case Basic:
-                memberDetails.add(getValueForField(ColumnNames.MaritalStatus));
-                memberDetails.add(getValueForField(ColumnNames.ContactNumber));
-                memberDetails.add(getValueForField(ColumnNames.EmailAddress));
-                memberDetails.add(getValueForField(ColumnNames.Education));
-                memberDetails.add(getValueForField(ColumnNames.Profession));
-                memberDetails.add(getValueForField(ColumnNames.District));
-                memberDetails.add(getValueForField(ColumnNames.RegisterationDate));
-                memberDetails.add(getValueForField(ColumnNames.Position));
-                break;
-            case AllPersonal:
-                memberDetails.add(getValueForField(ColumnNames.Age));
-                memberDetails.add(getValueForField(ColumnNames.MaritalStatus));
-                memberDetails.add(getValueForField(ColumnNames.BloodGroup));
-                memberDetails.add(getValueForField(ColumnNames.ContactNumber));
-                memberDetails.add(getValueForField(ColumnNames.EmailAddress));
-                memberDetails.add(getValueForField(ColumnNames.Education));
-                memberDetails.add(getValueForField(ColumnNames.Profession));
-                memberDetails.add(getValueForField(ColumnNames.District));
-                memberDetails.add(getValueForField(ColumnNames.PermanentAddress));
-                memberDetails.add(getValueForField(ColumnNames.TemporaryAddress));
-                break;
-            case AllProfessional:
-                memberDetails.add(getValueForField(ColumnNames.ContactNumber));
-                memberDetails.add(getValueForField(ColumnNames.EmailAddress));
-                memberDetails.add(getValueForField(ColumnNames.Education));
-                memberDetails.add(getValueForField(ColumnNames.Profession));
-                break;
-            case AllSocial:
-                memberDetails.add(getValueForField(ColumnNames.Education));
-                memberDetails.add(getValueForField(ColumnNames.ContactNumber));
-                memberDetails.add(getValueForField(ColumnNames.EmailAddress));
-                memberDetails.add(getValueForField(ColumnNames.Cast));
-                memberDetails.add(getValueForField(ColumnNames.SubCast));                
-                memberDetails.add(getValueForField(ColumnNames.RegisterationDate));
-                memberDetails.add(getValueForField(ColumnNames.Position));
-                break;
+        for (ColumnName columnID : columnIDs) {
+            memberDetails.add(getValueForField(columnID));
         }
         
         return memberDetails;
     }
     
-    
-    public ReportData getDataForDetails(DetailsLevel detailsLevel)
+    @Override
+    public ReportData getReportDataForDetails(DetailsLevel detailsLevel)
     {
-        Vector columnNames = Member.getColumnsForDetailsLevel(detailsLevel);
-        Vector rowData = getMemberDetailsForLevel(detailsLevel);
+        Vector columnNames = getColumnsForDetailsLevel(detailsLevel);
+        Vector rowData = toDataArray(detailsLevel);
         
         return new ReportData(rowData, columnNames);
     }
@@ -492,13 +611,11 @@ public class Member {
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 47 * hash + this.memberID;
+        hash = 47 * hash + this.getID();
         hash = 47 * hash + (this.dateOfBirth != null ? this.dateOfBirth.hashCode() : 0);
         hash = 47 * hash + (this.gender != null ? this.gender.hashCode() : 0);
         return hash;
     }
-
-    
 
     @Override
     public boolean equals(Object obj) {
@@ -509,7 +626,7 @@ public class Member {
             return false;
         }
         final Member other = (Member) obj;
-        if (this.memberID != other.memberID) {
+        if (this.getID() != other.getID()) {
             return false;
         }
         if (this.dateOfBirth.equals(other.dateOfBirth)) {
@@ -520,7 +637,99 @@ public class Member {
     
     @Override
     public String toString() {
-        return "Member{" + "memberID=" + memberID + ", firstName=" + firstName + ", middleName=" + middleName + ", lastName=" + lastName + ", dateOfBirth=" + dateOfBirth + ", maritalStatus=" + maritalStatus + ", cast=" + cast + ", subCast=" + subCast + ", district=" + district + ", bloodGroup=" + bloodGroup + ", gender=" + gender + ", age=" + age + ", permanentAddress=" + permanentAddress + ", temporaryAddress=" + temporaryAddress + ", contactNumber=" + contactNumber + ", emailAddress=" + emailAddress + ", education=" + education + ", profession=" + profession + ", registerationDate=" + registerationDate + ", position=" + position + ", imagePath=" + imagePath + '}';
+        StringBuilder memberString = new StringBuilder(30);
+        memberString.append(getUniqueID()).append(" ").append(getFirstName()).append(" ").append(getMiddleName()).append(" ").append(getLastName());
+        return  memberString.toString();
+    }
+
+    @Override
+    public void setValueForField(ColumnName fieldName, Object value) {
+        if(value == null) return;
+        
+        switch(fieldName)
+        {
+             case FirstName:
+                setFirstName((String) value);
+                 break;
+            case MiddleName:
+                setMiddleName((String) value);
+                break;
+            case LastName:
+                setLastName((String) value);
+                break;
+            case DateOfBirth:
+                if(value instanceof Date)
+                {
+                    setDateOfBirth((Date) value);
+                }
+                else if(value instanceof Timestamp)
+                {
+                    setDateOfBirth((new Date(((Timestamp)value).getTime())));
+                }
+                else
+                {
+                    setDateOfBirth(DateTime.toSQLDate((String)value));
+                }
+                break;
+            case MaritalStatus:
+                setMaritalStatus(MaritalStatus.valueOf(value.toString()));
+                break;
+            case Cast:
+                setCast((String) value);
+                break;
+            case SubCast:
+                setSubCast((String) value);
+                break;
+            case District:
+                setDistrict((String) value);
+                break;
+            case BloodGroup:
+                setBloodGroup((String) value);
+                break;
+            case Gender:
+                setGender(Gender.valueOf(value.toString()));
+                break;
+            case PermanentAddress:
+                setPermanentAddress((String) value);
+                break;
+            case TemporaryAddress:
+                setTemporaryAddress((String) value);
+                break;
+            case ContactNumber:
+                setContactNumber((String) value);
+                break;
+            case EmailAddress:
+                setEmailAddress((String) value);
+                break;
+            case Education:
+                setEducation((String) value);
+                break;
+            case Profession:
+                setProfession((String) value);
+                break;
+            case RegisterationDate:
+                if(value instanceof Date)
+                {
+                    setRegisterationDate((Date) value);
+                }
+                else if(value instanceof Timestamp)
+                {
+                    setRegisterationDate((new Date(((Timestamp)value).getTime())));
+                }
+                else
+                {
+                    setRegisterationDate(DateTime.toSQLDate((String)value));
+                }
+                break;
+            case Position:
+                setPosition((String) value);
+                break;
+            case ImagePath:
+                setImagePath((String) value);
+                break;
+            default:
+                super.setValueForField(fieldName, value);
+        }
     }
         
 }

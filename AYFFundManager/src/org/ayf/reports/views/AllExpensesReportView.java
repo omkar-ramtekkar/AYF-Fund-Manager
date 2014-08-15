@@ -41,7 +41,7 @@ public class AllExpensesReportView extends BaseReportView {
         searchTextField = new javax.swing.JTextField();
         refreshButton = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
-        allExpensesTable = new javax.swing.JTable();
+        allExpensesTable = new ReportTable();
 
         refreshButton.setText("Refresh");
         refreshButton.addActionListener(new java.awt.event.ActionListener() {
@@ -89,7 +89,6 @@ public class AllExpensesReportView extends BaseReportView {
     }// </editor-fold>//GEN-END:initComponents
 
     private void refreshButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshButtonActionPerformed
-        // TODO add your handling code here:
         if(report != null)
         {
             report.updateReport();
@@ -108,7 +107,7 @@ public class AllExpensesReportView extends BaseReportView {
     public void updateView(ReportData data) {
         if(data != null)
         {
-            this.allExpensesTable.setModel(new GenericDefaultTableModel(data.getData(), data.getColumns()));
+            this.allExpensesTable.setModel(new GenericDefaultTableModel(data));
             adjustReportTableColumns();
         }
     }

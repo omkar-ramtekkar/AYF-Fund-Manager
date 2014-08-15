@@ -7,18 +7,18 @@
 package org.ayf.reports;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Vector;
 import org.ayf.database.entities.Member;
 import org.ayf.managers.DatabaseManager;
 import org.ayf.command.ReportCommand;
+import org.ayf.database.entities.BaseEntity;
 import org.ayf.reports.views.AllMemberReportView;
 
 /**
  *
  * @author om
  */
-public class AllMembersReport extends Report{
+public class AllMembersReport extends GenericSearchReport{
 
     public AllMembersReport() {
         super(ReportCommand.SubCommandType.DetailsAllMembers);
@@ -27,16 +27,10 @@ public class AllMembersReport extends Report{
 
     @Override
     public ReportData getData() {
-        ArrayList<Member> members = DatabaseManager.getRegisteredMembers();
+        ArrayList<BaseEntity> members = DatabaseManager.getAllEntities(Member.class);
         
-        Vector rows = new Vector(members.size());
+        Vector<BaseEntity> rows = new Vector<BaseEntity>(members);
         
-        for(Member member : members)
-        {
-            Vector rowData = member.getMemberDetailsForLevel(Member.DetailsLevel.Basic);
-            rows.add(rowData);
-        }
-        
-        return new ReportData(rows, Member.getColumnsForDetailsLevel(Member.DetailsLevel.Basic));
-    }    
+        return new ReportData(rows, BaseEntity.DetailsLevel.Basic, Member.class);
+    }
 }

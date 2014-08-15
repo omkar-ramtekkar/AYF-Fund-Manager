@@ -6,20 +6,25 @@
 
 package org.ayf.managers;
 
-import java.awt.BorderLayout;
+import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.JFrame;
+import java.io.File;
 import org.ayf.command.Command;
-import org.ayf.command.ReportCommand;
-import org.ayf.command.ToolbarCommand;
+import org.ayf.database.entities.BaseEntity;
+import org.ayf.database.entities.Donor;
+import org.ayf.database.entities.Member;
 import org.ayf.mainmenubar.MainMenuController;
-import org.ayf.models.SideBarTableModel.Option;
 import org.ayf.toolbar.ToolbarController;
 import org.ayf.ui.InformationPanel;
 import org.ayf.ui.MainFrame;
+import org.ayf.ui.MemberFrame;
 import org.ayf.ui.controllers.ReportViewController;
+import org.ayf.ui.controllers.SettingsViewController;
 import org.ayf.ui.controllers.SideBarTableController;
+import org.ayf.util.PreferenceManager;
+import org.ayf.util.Toast;
 
 /**
  
@@ -32,6 +37,7 @@ public class ApplicationManager implements ActionListener
     private ReportViewController reportController;
     private ToolbarController   toolbarController;
     private MainMenuController  mainMenuBarController;
+    private SettingsViewController settingViewController;
     
     private static ApplicationManager instance = null;
 
@@ -52,17 +58,27 @@ public class ApplicationManager implements ActionListener
     
     public void initialize()
     {
+        DatabaseManager.loadDatabaseClass();
+        
+        this.settingViewController = new SettingsViewController();
+        
+        File databaseFile = new File(PreferenceManager.getDatabaseDir());
+        if(!databaseFile.isDirectory() && databaseFile.exists())
+        {
+            DatabaseManager.initializeDatabaseManager();
+        }
+        
         this.mainFrame = new MainFrame();
+
+        this.toolbarController = new ToolbarController();        
+        this.mainMenuBarController = new MainMenuController();
 
         //Configure sidebar table
         this.sidebarTableController = new SideBarTableController();
         this.reportController = new ReportViewController();
         this.sidebarTableController.addActionListener(this);
         
-        this.toolbarController = new ToolbarController();
-        this.mainFrame.add(this.toolbarController.getToolbarView(), BorderLayout.NORTH);
-        
-        mainMenuBarController = new MainMenuController();
+        checkAndUpdateDatabaseLocation();
     }
 
     
@@ -93,24 +109,12 @@ public class ApplicationManager implements ActionListener
             switch(command.getType())
             {
                 case Report:
-                {
-                    ReportCommand reportCommand = (ReportCommand)command;
-                    Option categoryOption = reportCommand.getOption().getParentOption();
-
-                    if(categoryOption == null)
-                    {
-                        categoryOption = reportCommand.getOption();
-                    }
-
                     getReportController().actionPerformed(e);
-                }
                     break;
                 case Toolbar:
-                {
-                    ToolbarCommand toolbarCommand = (ToolbarCommand) command;
-                    handleAction(toolbarCommand);
-                }
-                case Nenubar: 
+                    handleAction(command);
+                    break;
+                case Menubar: 
                     handleAction(command);
                     break;
             }
@@ -145,18 +149,20 @@ public class ApplicationManager implements ActionListener
                 case Donate:
                     handleDonateAction();
                     break;
+                case Home:
+                    sidebarTableController.selectOption(Command.SubCommandType.Dashboard, null);
+                    break;
+                case AdminPassword:
+                    handleAdminSettings();
+                    break;
+                    
             }
         }
     }
 
-    private void handleUserAddAction() {
-        JFrame addMemberFrame = new JFrame();
-        addMemberFrame.setLayout(new BorderLayout());
-        
-        InformationPanel panel = new InformationPanel();
-        addMemberFrame.add(panel, BorderLayout.CENTER);
-        
-        addMemberFrame.setVisible(true);
+    private void handleUserAddAction() 
+    {
+        new MemberFrame(null, InformationPanel.PanelType.Registeration).setVisible(true);
     }
 
     private void handleUserDeleteAction() {
@@ -168,14 +174,73 @@ public class ApplicationManager implements ActionListener
     }
 
     private void handleUserEditAction() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        
     }
 
     private void handleSettingsAction() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.settingViewController.showSettingsView();
     }
 
     private void handleDonateAction() {
+        new MemberFrame(null, InformationPanel.PanelType.Donate).setVisible(true);
+    }
+
+    private void checkAndUpdateDatabaseLocation()
+    {
+        try {
+            File databaseFile = new File(PreferenceManager.getDatabaseDir());
+            if (databaseFile.isDirectory() || !databaseFile.exists()) 
+            {
+                throw new Exception();
+            }
+        } catch (Exception exception) 
+        {
+            Point centerPoint = new Point((int) (Toolkit.getDefaultToolkit().getScreenSize().getWidth() / 2.0), (int) (Toolkit.getDefaultToolkit().getScreenSize().getHeight() / 2.0));
+            Toast.showToast("Invalid Database directory path", centerPoint, false);
+            this.settingViewController.showSettingsView();
+        }
+    }
+    
+    public void memberDidRegister(Member member)
+    {
+        PreferenceManager.updateNextRegID();
+    }
+    
+    public void donationDidPerform(Donor donor)
+    {
+        PreferenceManager.updateNextDonationID();
+    }
+
+    void entityDidAdded(BaseEntity entity) 
+    {
+        if(entity != null)
+        {
+            if(entity.getClass().equals(Donor.class))
+            {
+                donationDidPerform((Donor) entity);
+            }
+            else if(entity.getClass().equals(Member.class))
+            {
+                memberDidRegister((Member) entity);
+            }
+        }
+    }
+    
+    public void databasePathDidChange(String oldPath, String newPath)
+    {
+        DatabaseManager.initializeDatabaseManager();
+        this.reportController.refresh();
+    }
+
+    void showSettingsPanel() {
+        this.settingViewController.showSettingsView();
+    }
+
+    public void imagePathDidChange(String oldPath, String newPath) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    private void handleAdminSettings() {
+        
     }
 }

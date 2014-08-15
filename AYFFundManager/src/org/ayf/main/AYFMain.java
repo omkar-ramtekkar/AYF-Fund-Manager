@@ -6,7 +6,6 @@ import java.util.logging.Logger;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import org.ayf.managers.ApplicationManager;
-import org.ayf.managers.DatabaseManager;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -23,7 +22,6 @@ public class AYFMain {
     public static void main(String[] args) {
         try 
         {
-            DatabaseManager.getRegisteredMembers();
             UIManager.setLookAndFeel("com.seaglasslookandfeel.SeaGlassLookAndFeel");
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(AYFMain.class.getName()).log(Level.SEVERE, null, ex);

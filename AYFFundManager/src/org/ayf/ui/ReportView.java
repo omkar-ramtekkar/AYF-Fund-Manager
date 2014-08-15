@@ -6,7 +6,9 @@
 
 package org.ayf.ui;
 
+import java.util.Vector;
 import javax.swing.JComponent;
+import org.ayf.reports.views.BaseReportView;
 
 /**
  *
@@ -24,7 +26,7 @@ public class ReportView extends javax.swing.JPanel {
             rootPanel = new BackgroundPanel(BackgroundPanel.BackgroundStyle.Default);
             setLayout(new java.awt.BorderLayout());
 
-            rootPanel.setLayout(new java.awt.GridLayout(2, 2));
+            rootPanel.setLayout(new java.awt.BorderLayout());
             jScrollPane1.setViewportView(rootPanel);
 
             add(jScrollPane1, java.awt.BorderLayout.CENTER);
@@ -45,6 +47,21 @@ public class ReportView extends javax.swing.JPanel {
     {
         rootPanel.removeAll();
         rootPanel.repaint();
+    }
+    
+    public Vector<BaseReportView> getReportViews()
+    {
+        Vector<BaseReportView> reportViews = new Vector<BaseReportView>();
+        
+        for(int i=0; i<rootPanel.getComponentCount(); ++i)
+        {
+            if(rootPanel.getComponent(i).getClass().equals(BaseReportView.class))
+            {
+                reportViews.add(((BaseReportView)rootPanel.getComponent(i)));
+            }
+        }
+        
+        return reportViews;
     }
     
     /**

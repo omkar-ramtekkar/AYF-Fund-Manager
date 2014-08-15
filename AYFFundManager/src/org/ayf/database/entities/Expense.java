@@ -7,34 +7,54 @@
 package org.ayf.database.entities;
 
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.Vector;
 import org.ayf.reports.ReportData;
+import org.ayf.util.DateTime;
+import org.ayf.util.NumberUtil;
+import org.ayf.util.PreferenceManager;
 
 /**
  *
  * @author om
  */
-public class Expense {
-    long id;
-    Type expenseType;
+public class Expense extends BaseEntity{
+    String expenseType;
     Date date;
     double amount;
     String description;
     Member reponsibleMember; 
-    
-    public enum ColumnNames
-    {
-        ExpenseID, ExpenseType, Date, Amount, Description, ResponsibleMemberID, ResponsibleMemberName, ResponsibleMemberPosition
-    }
-    
-    public enum DetailsLevel
-    {
-        Complete
-    }
-    
 
-    public Expense(long id, Type expenseType, Date date, double amount, String description, Member reponsibleMember) {
-        this.id = id;
+    @Override
+    
+    public EditorType getColumnEditorTypeForColumnName(ColumnName columnNames) {
+        switch(columnNames)
+        {
+            case ExpenseType:
+                return EditorType.ComboBox;
+            case Date:
+            case ExpenseDate:
+                return EditorType.Date;
+            case Amount:
+            case Description:
+            case ResponsibleMember:
+            case ResponsibleMemberName:
+            case ResponsibleMemberPosition:
+            case UniqueID:
+            case ID:
+                return EditorType.Label;
+                
+        }
+        
+        return null;
+    }
+
+    public Expense() {
+    }
+
+    
+    public Expense(int id, String expenseType, Date date, double amount, String description, Member reponsibleMember) {
+        setID(id);
         this.expenseType = expenseType;
         this.date = date;
         this.amount = amount;
@@ -42,13 +62,18 @@ public class Expense {
         this.reponsibleMember = reponsibleMember;
     }
     
-    
-
-    public long getId() {
-        return id;
+    static public String getNextUniqueID()
+    {
+        String id = PreferenceManager.getIntance().getString(PreferenceManager.NEXT_EXPENSE_ID, "1");
+        return "AYF/expense/" + 
+                NumberUtil.getFormattedNumber(DateTime.getMonth(DateTime.getToday()) + 1) + 
+                "/" + 
+                DateTime.getYear(DateTime.getToday()) +
+                "/"+ NumberUtil.getFormattedNumber(Integer.parseInt(id));
     }
-
-    public Type getExpenseType() {
+    
+    
+    public String getExpenseType() {
         return expenseType;
     }
 
@@ -67,23 +92,45 @@ public class Expense {
     public Member getReponsibleMember() {
         return reponsibleMember;
     }
+
+    public void setExpenseType(String expenseType) {
+        this.expenseType = expenseType;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
+
+    public void setAmount(double amount) {
+        this.amount = amount;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setReponsibleMember(Member reponsibleMember) {
+        this.reponsibleMember = reponsibleMember;
+    }
     
     
-    public static String getNameForColumnID(Expense.ColumnNames name)
+    
+    public static String getNameForColumnID(Expense.ColumnName name)
     {
         switch(name)
         {
-            case ExpenseID:
-                return "ID";
+            case UniqueID:
+                return "Expense ID";
             case ExpenseType:
                 return "Category";
             case Date:
-                return "Date";
+            case ExpenseDate:
+                return "Expense Date";
             case Amount:
                 return "Amount";
             case Description:
                 return "Description of Expense";
-            case ResponsibleMemberID:
+            case ResponsibleMember:
                 return "Responsible Member ID";
             case ResponsibleMemberName:
                 return "Responsible Member Name";
@@ -94,69 +141,135 @@ public class Expense {
         return null;
     }
     
-    public Object getValueForField(Expense.ColumnNames fieldName)
+    @Override
+    public Object getValueForField(ColumnName fieldName)
     {
         switch(fieldName)
         {
-            case ExpenseID:
-                return getId();
             case ExpenseType:
                 return getExpenseType();
             case Date:
+            case ExpenseDate:
                 return getDate();
             case Amount:
                 return getAmount();
             case Description:
                 return getDescription();
-            case ResponsibleMemberID:
+            case ResponsibleMember:
                 if(getReponsibleMember() != null)
                 {
-                    return getReponsibleMember().getMemberID();
+                    return getReponsibleMember().getID();
                 }
+                return Integer.MAX_VALUE;
             case ResponsibleMemberName:
                 if(getReponsibleMember() != null)
                 {
                     return getReponsibleMember().getFirstName() + " " + getReponsibleMember().getMiddleName() + " " + getReponsibleMember().getLastName();
                 }
+                break;
             case ResponsibleMemberPosition:
                 if(getReponsibleMember() != null)
                 {
                     return getReponsibleMember().getPosition();
                 }
+                break;
+            default:
+                return super.getValueForField(fieldName);
         }
         
         return null;
     }
     
-    public static Vector getColumnsForDetailsLevel(Expense.DetailsLevel level)
+    public void setValueForField(ColumnName fieldName, Object value)
     {
-        Vector columnNames = new Vector(10);
-        columnNames.add(getNameForColumnID(ColumnNames.ExpenseID));
-        columnNames.add(getNameForColumnID(ColumnNames.ExpenseType));
-        columnNames.add(getNameForColumnID(ColumnNames.Amount));
-        columnNames.add(getNameForColumnID(ColumnNames.Date));
-        columnNames.add(getNameForColumnID(ColumnNames.ResponsibleMemberID));
-        columnNames.add(getNameForColumnID(ColumnNames.ResponsibleMemberName));
-        columnNames.add(getNameForColumnID(ColumnNames.ResponsibleMemberPosition));
-        columnNames.add(getNameForColumnID(ColumnNames.Description));
+        if(value == null) return;
+        
+        switch(fieldName)
+        {
+            case ExpenseType:
+                setExpenseType((String) value);
+                break;
+            case Date:
+            case ExpenseDate:
+                if(value instanceof Date)
+                {
+                    setDate((Date) value);
+                }
+                else if(value instanceof Timestamp)
+                {
+                    setDate((new Date(((Timestamp)value).getTime())));
+                }
+                else
+                {
+                    setDate(DateTime.toSQLDate((String)value));
+                }
+                break;
+            case Amount:
+                setAmount((Double.valueOf(value.toString())));
+                break;
+            case Description:
+                setDescription(value.toString());
+            case ResponsibleMember:
+                break;
+            default:
+                super.setValueForField(fieldName, value);
+        }
+    }
+    
+    public Vector<ColumnName> getColumnIDsForDetailLevel(DetailsLevel level)
+    {
+        Vector<ColumnName> columnNames = new Vector<ColumnName>(10);
+        columnNames.add((ColumnName.UniqueID));
+        columnNames.add((ColumnName.ExpenseType));
+        columnNames.add((ColumnName.Amount));
+        columnNames.add((ColumnName.ExpenseDate));
+        columnNames.add((ColumnName.ResponsibleMember));
+        columnNames.add((ColumnName.Description));
+        
+        if(level != DetailsLevel.Database)
+        {
+            columnNames.add((ColumnName.ResponsibleMemberName));
+            columnNames.add((ColumnName.ResponsibleMemberPosition));
+        }
         
         columnNames.trimToSize();
         
         return columnNames;
     }
     
-    public Vector getExpenseDetailsForLevel(Expense.DetailsLevel detailLevel)
+    public Vector getColumnsForDetailsLevel(DetailsLevel level)
+    {
+        Vector columnNames = new Vector(10);
+        columnNames.add(getNameForColumnID(ColumnName.UniqueID));
+        columnNames.add(getNameForColumnID(ColumnName.ExpenseType));
+        columnNames.add(getNameForColumnID(ColumnName.Amount));
+        columnNames.add(getNameForColumnID(ColumnName.ExpenseDate));
+        columnNames.add(getNameForColumnID(ColumnName.ResponsibleMember));        
+        columnNames.add(getNameForColumnID(ColumnName.Description));
+        
+        if(level != DetailsLevel.Database)
+        {
+            columnNames.add(getNameForColumnID(ColumnName.ResponsibleMemberName));
+            columnNames.add(getNameForColumnID(ColumnName.ResponsibleMemberPosition));
+        }
+        
+        columnNames.trimToSize();
+        
+        return columnNames;
+    }
+    
+    public Vector<Object> toDataArray(DetailsLevel level)
     {
         Vector expenseDetails = new Vector(10);
         
-        expenseDetails.add(getValueForField(ColumnNames.ExpenseID));
-        expenseDetails.add(getValueForField(ColumnNames.ExpenseType));
-        expenseDetails.add(getValueForField(ColumnNames.Amount));
-        expenseDetails.add(getValueForField(ColumnNames.Date));
-        expenseDetails.add(getValueForField(ColumnNames.ResponsibleMemberID));
-        expenseDetails.add(getValueForField(ColumnNames.ResponsibleMemberName));
-        expenseDetails.add(getValueForField(ColumnNames.ResponsibleMemberPosition));
-        expenseDetails.add(getValueForField(ColumnNames.Description));
+        expenseDetails.add(getValueForField(ColumnName.UniqueID));
+        expenseDetails.add(getValueForField(ColumnName.ExpenseType));
+        expenseDetails.add(getValueForField(ColumnName.Amount));
+        expenseDetails.add(getValueForField(ColumnName.ExpenseDate));
+        expenseDetails.add(getValueForField(ColumnName.ResponsibleMember));
+        expenseDetails.add(getValueForField(ColumnName.ResponsibleMemberName));
+        expenseDetails.add(getValueForField(ColumnName.ResponsibleMemberPosition));
+        expenseDetails.add(getValueForField(ColumnName.Description));
         
         expenseDetails.trimToSize();
         
@@ -164,10 +277,11 @@ public class Expense {
     }
     
     
-    public ReportData getDataForDetails(Expense.DetailsLevel detailsLevel)
+    @Override
+    public ReportData getReportDataForDetails(DetailsLevel detailsLevel)
     {
-        Vector columnNames = Expense.getColumnsForDetailsLevel(detailsLevel);
-        Vector rowData = getExpenseDetailsForLevel(detailsLevel);
+        Vector columnNames = getColumnsForDetailsLevel(detailsLevel);
+        Vector rowData = toDataArray(detailsLevel);
         
         return new ReportData(rowData, columnNames);
     }

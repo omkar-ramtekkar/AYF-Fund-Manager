@@ -17,7 +17,7 @@ public class Command {
         None,
         Report,
         Toolbar,
-        Nenubar
+        Menubar
     }
     
     public enum SubCommandType
@@ -41,7 +41,11 @@ public class Command {
         StatementsCashFlows,
         NotificationsMemberSubscription,
         
+        //Report Command for all kind of search reports
+        GenericSearch,
+        
         //Toolbar
+        Home,
         UserAdd,
         UserDelete,
         UserEdit,
@@ -50,7 +54,15 @@ public class Command {
         Donate,
         Save,
         Download,
-        Settings
+        Settings,
+        AdminPassword,
+        AdminUserName,
+        PrintReport,
+        ExportAsText,
+        ExportAsExcel,
+        ExportAsCSV,
+        ExportAsPDF,
+        ChangeDatabase
     }
 
     public Command(CommandType type, SubCommandType subType) {
@@ -83,9 +95,9 @@ public class Command {
             case Dashboard:
                 return "Dashboard";
             case Details:
-                return "Details";
+                return "Database";
             case Statements:
-                return "statements";
+                return "Statements";
             case Notifications:
                 return "Notifications";
             case Miscellaneous:
@@ -97,19 +109,22 @@ public class Command {
             case DashboardStatement:
                 return "Statement As Of Today";
             case DetailsAllMembers:
-                return "All Members";
+                return "Members";
             case DetailsAllDonors:
-                return "All Donations";
+                return "Donations";
             case DetailsAllExpenses:
-                return "All Expenses";
+                return "Expenses";
             case DetailsAllCashFlows:
-                return "All Cash Flows";
+                return "Cash Flows";
             case StatementsByMember:
                 return "Statement of Member";
             case StatementsCashFlows: //Pending cash receipts
                 return "Statement of Cash Flows";
             case NotificationsMemberSubscription:
                 return "Subscription Reminder";
+            case ExportAsExcel:
+                return "Export As Excel";
+                
                 
                 
             ////////////////// Toolbar ///////////////////

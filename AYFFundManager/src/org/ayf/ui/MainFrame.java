@@ -11,7 +11,6 @@ import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.Toolkit;
 import javax.swing.JComponent;
-import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 
 /**

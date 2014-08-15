@@ -23,9 +23,12 @@ import javax.swing.JOptionPane;
 import org.ayf.database.entities.Type;
 import static javax.swing.JOptionPane.ERROR_MESSAGE;
 import net.ucanaccess.jdbc.UcanaccessDriver;
+import org.ayf.database.entities.BaseEntity;
 import org.ayf.database.entities.CashFlow;
 import org.ayf.database.entities.Expense;
+import org.ayf.reports.EntityReportData;
 import org.ayf.reports.ReportData;
+import org.ayf.util.PreferenceManager;
 
 
 /**
@@ -37,41 +40,54 @@ public class DatabaseManager {
     public static final String DONATION_TYPE_TABLE_NAME     = "DonationType";
     public static final String EXPENSE_TYPE_TABLE_NAME      = "ExpenseType";
     public static final String PROFESSION_TYPE_TABLE_NAME   = "ProfessionType";
-    public static final String CASHFLOW_STATUS_TYPE_TABLE_NAME    = "CashFlowStatusType";
+    public static final String POSITION_TYPE_TABLE_NAME     = "PositionType";
+    public static final String PAYMENT_MODE_TYPE_TABLE_NAME = "PaymentModeTypes";
+    public static final String STATUS_TYPE_TABLE_NAME       = "StatusType";
+
+    public static final String CASHFLOW_STATUS_TYPE_TABLE_NAME    = "StatusType";
     public static final String MEMBER_TYPE_TABLE_NAME       = "MemberType";
     public static final String DONATIONS_TABLE_NAME         = "Donations";
     public static final String EXPENSES_TABLE_NAME          = "Expenses";
     public static final String MEMBER_TABLE_NAME            = "Members";
     public static final String CASHFLOWS_TABLE_NAME         = "CashFlows";
-    
+        
     private static ArrayList<Type> PROFESSION_TYPES;
     private static ArrayList<Type> DONATION_TYPES;
     private static ArrayList<Type> MEMBER_TYPES;
     private static ArrayList<Type> EXPENSE_TYPES;
     private static ArrayList<Type> CASHFLOW_TYPES;
+    public static  ArrayList<Type> POSITION_TYPES;
+    public static  ArrayList<Type> PAYMENT_MODE_TYPES;
+    public static  ArrayList<Type> STATUS_TYPES;
     
-    private static void intializeDatabaseManager()
+    public static void initializeDatabaseManager()
     {
-        try {
-            // Load MS accces driver class
-            Class.forName("net.ucanaccess.jdbc.UcanaccessDriver");
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, ex);
-            JOptionPane.showMessageDialog(null, ex.getLocalizedMessage(), "Failed to load database Driver", ERROR_MESSAGE);
-            System.exit(0);
+        try
+        {
+            getProfessionTypes();
+            getExpenseTypes();
+            getDonationTypes();
+            getMemberTypes();
+            getCashFlowStatusTypes();
         }
-        
-        getProfessionTypes();
-        getExpenseTypes();
-        getDonationTypes();
-        getMemberTypes();
-        getCashFlowStatusTypes();
+        catch(Exception ex)
+        {
+        }
         
     }
     
-    static 
+    
+    static public void loadDatabaseClass()
     {
-        DatabaseManager.intializeDatabaseManager();
+        //PreferenceManager.setDatabaseDir("");
+        
+        try {
+            // Load MS accces driver class
+            Class.forName("net.ucanaccess.jdbc.UcanaccessDriver");
+        } catch (Exception ex) {
+            Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(null, ex.getLocalizedMessage(), "Failed to load database Driver", ERROR_MESSAGE);
+        }
     }
     
     private static void dump(ResultSet rs,String exName)
@@ -94,30 +110,29 @@ public class DatabaseManager {
     
     private static Connection createConnection()
     {
-        String url = null;
-        if(System.getProperty("os.name").toLowerCase().contains("win"))
-        {
-            url = UcanaccessDriver.URL_PREFIX + "D:/database.accdb" + ";newDatabaseVersion=V2007";
-        }
-        else
-        {
-            url = UcanaccessDriver.URL_PREFIX + "/Volumes/MACINTOSH 2/Projects/AadimYouthFoundation/AYF-Fund-Manager/AYFFundManager/database.accdb"+ ";newDatabaseVersion=V2007";
-        }            
+        String url = UcanaccessDriver.URL_PREFIX + PreferenceManager.getDatabaseDir() + ";newDatabaseVersion=V2007";
+//        if(System.getProperty("os.name").toLowerCase().contains("win"))
+//        {
+//            url = UcanaccessDriver.URL_PREFIX + "D:/database.accdb" + ";newDatabaseVersion=V2007";
+//        }
+//        else
+//        {
+//            url = UcanaccessDriver.URL_PREFIX + "/Volumes/MACINTOSH 2/Projects/AadimYouthFoundation/AYF-Fund-Manager/AYFFundManager/database.accdb"+ ";newDatabaseVersion=V2007";
+//        }            
         
         // specify url, username, pasword - make sure these are valid 
+        
         Connection conn = null;
         try {
             conn = DriverManager.getConnection(url, "", "");
         } catch (SQLException ex) {
             Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, ex);
-            JOptionPane.showMessageDialog(null, ex.getLocalizedMessage(), "Database connection error", ERROR_MESSAGE);
-            System.exit(0);
+            //JOptionPane.showMessageDialog(null, ex.getLocalizedMessage(), "Database connection error", ERROR_MESSAGE);
         }
         catch(NullPointerException ex)
         {
             Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, ex);
-            JOptionPane.showMessageDialog(null, ex.getLocalizedMessage(), "Database connection error", ERROR_MESSAGE);
-            System.exit(0);
+            //JOptionPane.showMessageDialog(null, ex.getLocalizedMessage(), "Database connection error", ERROR_MESSAGE);
         }
 
         System.out.println("Connection Succesfull");
@@ -195,6 +210,42 @@ public class DatabaseManager {
         return getTypeFromValue(profession, EXPENSE_TYPES);
     }
     
+    /**
+     *
+     * @return
+     */
+    public static ArrayList<Type> getExpenseTypes()
+    {
+        if(EXPENSE_TYPES == null)
+        {
+            EXPENSE_TYPES = getTypesFromTable(EXPENSE_TYPE_TABLE_NAME);
+        }
+        
+        return EXPENSE_TYPES;
+    }
+    
+    public static ArrayList<Type> getStatusTypes() {
+        
+        if(STATUS_TYPES == null)
+        {
+            STATUS_TYPES = getTypesFromTable(STATUS_TYPE_TABLE_NAME);
+        }
+        
+        return STATUS_TYPES;
+    }
+    
+    public static ArrayList<String> typesToStrings(ArrayList<Type> types)
+    {
+        ArrayList<String> strings = new ArrayList<String>(types.size());
+        
+        for (Type type : types)
+        {
+            strings.add(type.getStringValue());
+        }
+        
+        return strings;
+    }
+    
     private static Type getTypeFromID(int id, ArrayList<Type> types)
     {
         Type returnType = null;
@@ -241,20 +292,6 @@ public class DatabaseManager {
      *
      * @return
      */
-    public static ArrayList<Type> getExpenseTypes()
-    {
-        if(EXPENSE_TYPES == null)
-        {
-            EXPENSE_TYPES = getTypesFromTable(EXPENSE_TYPE_TABLE_NAME);
-        }
-        
-        return EXPENSE_TYPES;
-    }
-    
-    /**
-     *
-     * @return
-     */
     public static ArrayList<Type> getMemberTypes()
     {
         if(MEMBER_TYPES == null)
@@ -279,6 +316,25 @@ public class DatabaseManager {
         return PROFESSION_TYPES;  
     }
     
+    public static ArrayList<Type> getPositionTypes()
+    {
+        if(POSITION_TYPES == null)
+        {
+            POSITION_TYPES = getTypesFromTable(POSITION_TYPE_TABLE_NAME);
+        }
+        
+        return POSITION_TYPES;
+    }
+    
+    public static ArrayList<Type> getPaymentModeTypes()
+    {
+        if(PAYMENT_MODE_TYPES == null)
+        {
+            PAYMENT_MODE_TYPES = getTypesFromTable(PAYMENT_MODE_TYPE_TABLE_NAME);
+        }
+        
+        return PAYMENT_MODE_TYPES;
+    }
     
     public static ArrayList<Type> getCashFlowStatusTypes()
     {
@@ -289,7 +345,6 @@ public class DatabaseManager {
         
         return CASHFLOW_TYPES;  
     }
-    
     
     public static ArrayList<Type> getTypesFromTable(String tableName)
     {
@@ -328,215 +383,484 @@ public class DatabaseManager {
         return types;
     }
     
-    public static ArrayList<Member> getRegisteredMembers()
+    public static ArrayList<BaseEntity> getAllEntities(Class<?> entityClass)
     {
-        Logger.getLogger(DatabaseManager.class.getName()).log(Level.INFO, "getRegisteredMembers");
+        ArrayList<BaseEntity> entities = new ArrayList<BaseEntity>();
         
-        ArrayList<Member> members = new ArrayList();
-        Connection connection = null;
-        try {
-            connection = createConnection();
+        if(entityClass != null)
+        {
+            Connection conn = null;
+            conn = createConnection();
             
-            PreparedStatement ps = connection.prepareStatement("SELECT * FROM " + MEMBER_TABLE_NAME);
-            
-            ResultSet rs = ps.executeQuery();
-            
-            Logger.getLogger(DatabaseManager.class.getName()).log(Level.INFO, "getRegisteredMembers : Column Count - {0}", rs.getMetaData().getColumnCount());
-            
-            while(rs.next())
-            {
-                int     memberID        = rs.getInt("ID");
-                String  firstName       = rs.getString("FirstName");
-                String  middleName      = rs.getString("MiddleName");
-                String  lastName        = rs.getString("LastName");
-                String  permanentAddress= rs.getString("PermanentAddress");
-                String  temporaryAddress= rs.getString("TemporaryAddress");
-                String  contactNumber   = rs.getString("ContactNumber");
-                String  emailAddress    = rs.getString("EmailAddress");
-                Date    registerationDate = rs.getDate("RegisterationDate");
-                String  position        = rs.getString("Position");
-                String  profession      = rs.getString("Profession");
-                Date    dateOfBirth     = rs.getDate("DateOfBirth");
-                String genderString     = rs.getString("Gender");
-                String  maritalStatus   = rs.getString("MaritalStatus");
-                String  cast            = rs.getString("Cast");
-                String  subCast         = rs.getString("SubCast");
-                String  district        = rs.getString("District");
-                String  bloodGroup      = rs.getString("BloodGroup");
-                String  education       = rs.getString("Education");
-                String currentStatus    = rs.getString("Status");
+            if(conn == null) return entities;
                 
-                Member.Gender gender     = genderString != null ? (genderString.equals("Male") ? Member.Gender.Male : Member.Gender.Female) : Member.Gender.Male;
-                String imagePath        = rs.getString("Image");
-
-                members.add(new Member(memberID, firstName, middleName, lastName, dateOfBirth, maritalStatus, cast, subCast, district, bloodGroup, gender, permanentAddress, temporaryAddress, contactNumber, emailAddress, education, getProfessionTypeForName(profession), registerationDate, position, imagePath, currentStatus));
+            StringBuilder sqlQuery = new StringBuilder("SELECT * FROM ");
+            String tableName = null;
+                
+            if(entityClass.equals(Member.class))
+            {
+                tableName = MEMBER_TABLE_NAME;
+            }
+            else if(entityClass.equals(Donor.class))
+            {
+                tableName = DONATIONS_TABLE_NAME;
+            }
+            else if(entityClass.equals(Expense.class))
+            {
+                tableName = EXPENSES_TABLE_NAME;
+            }
+            else if(entityClass.equals(CashFlow.class))
+            {
+                tableName = CASHFLOWS_TABLE_NAME;
             }
             
-            ps.close();
-            rs.close();            
-        } catch (SQLException ex) {
-            Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, ex);
-            JOptionPane.showMessageDialog(null, ex.getLocalizedMessage(), "Unable to fetch data from table", ERROR_MESSAGE);
-        }
-        finally
-        {
-            if(connection != null) closeConnection(connection);
-        }
-        return members;
-    }
-    
-    public static Member getMemberWithID(int id)
-    {
-        Logger.getLogger(DatabaseManager.class.getName()).log(Level.INFO, "getMemberWithID{0}", id);
-        
-        Member member = null;
-        
-        Connection connection = null;
-        try {
-            connection = createConnection();
-            
-            PreparedStatement ps = connection.prepareStatement("SELECT * FROM "+ MEMBER_TABLE_NAME +" WHERE ID=?");
-            ps.setInt(1, id);
-            
-            ResultSet rs = ps.executeQuery();
-            
-            Logger.getLogger(DatabaseManager.class.getName()).log(Level.INFO, "getRegisteredMembers : Column Count - {0}", rs.getMetaData().getColumnCount());
-            
-            while(rs.next())
+            if(tableName != null)
             {
-                int     memberID        = rs.getInt("ID");
-                String  firstName       = rs.getString("FirstName");
-                String  middleName      = rs.getString("MiddleName");
-                String  lastName        = rs.getString("LastName");
-                String  permanentAddress= rs.getString("PermanentAddress");
-                String  temporaryAddress= rs.getString("TemporaryAddress");
-                String  contactNumber   = rs.getString("ContactNumber");
-                String  emailAddress    = rs.getString("EmailAddress");
-                Date    registerationDate = rs.getDate("RegisterationDate");
-                String  position        = rs.getString("Position");
-                String  profession      = rs.getString("Profession");
-                Date    dateOfBirth     = rs.getDate("DateOfBirth");
-                String genderString     = rs.getString("Gender");
-                Member.Gender gender    = genderString != null ? (genderString.equals("Male") ? Member.Gender.Male : Member.Gender.Female) : Member.Gender.Male;
-                String imagePath        = rs.getString("Image");
+                sqlQuery.append(tableName);
+                sqlQuery.trimToSize();
+                
+                ResultSet rs = null;
+                Statement statement = null;
+                try 
+                {
+                    statement = conn.createStatement();
+                    rs = statement.executeQuery(sqlQuery.toString());
+                    BaseEntity dummyEntity = (BaseEntity) entityClass.newInstance();
+                    Vector<BaseEntity.ColumnName> columns = dummyEntity.getColumnIDsForDetailLevel(BaseEntity.DetailsLevel.Database);
 
-                String  maritalStatus   = rs.getString("MaritalStatus");
-                String  cast            = rs.getString("Cast");
-                String  subCast         = rs.getString("SubCast");
-                String  district        = rs.getString("District");
-                String  bloodGroup      = rs.getString("BloodGroup");
-                String  education       = rs.getString("Education");
-                String currentStatus    = rs.getString("Status");
-                
-                if(member != null)
-                {
-                    Logger.getLogger(DatabaseManager.class.getName()).log(Level.INFO, "getMemberWithID : Multiple members found with same memberID={0}", id);
-                    break;
-                }
-                
-                
-                member = new Member(memberID, firstName, middleName, lastName, dateOfBirth, maritalStatus, cast, subCast, district, bloodGroup, gender, permanentAddress, temporaryAddress, contactNumber, emailAddress, education, getProfessionTypeForName(profession), registerationDate, position, imagePath, currentStatus);
-            }
-            
-            ps.close();
-            rs.close();
-            
-        } catch (NullPointerException ex) {
-            Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, ex);
-            JOptionPane.showMessageDialog(null, ex.getLocalizedMessage(), "Unable to fetch data from table", ERROR_MESSAGE);
-        } catch (SQLException ex) {
-            Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, ex);
-            JOptionPane.showMessageDialog(null, ex.getLocalizedMessage(), "Unable to fetch data from table", ERROR_MESSAGE);
-        }
-        finally
-        {
-            if(connection != null) closeConnection(connection);
-        }
-        
-        return member;
-    }
-    
-    
-    public static ArrayList<Donor> getDonors()
-    {
-        Logger.getLogger(DatabaseManager.class.getName()).log(Level.INFO, "getDonors");
-        
-        ArrayList<Donor> donors = new ArrayList();
-        Connection connection = null;
-        try {
-            connection = createConnection();
-            
-            PreparedStatement ps = connection.prepareStatement("SELECT * FROM " + DONATIONS_TABLE_NAME);
-            
-            ResultSet rs = ps.executeQuery();
-            
-            Logger.getLogger(DatabaseManager.class.getName()).log(Level.INFO, "getDonors : Column Count - {0}", rs.getMetaData().getColumnCount());
-            
-            while(rs.next())
-            {
-                int     memberID        = rs.getInt("MemberID");
-                String  firstName       = rs.getString("FirstName");
-                String  middleName      = rs.getString("MiddleName");
-                String  lastName        = rs.getString("LastName");
-                String  permanentAddress= rs.getString("PermanentAddress");
-                String  temporaryAddress= rs.getString("TemporaryAddress");
-                String  contactNumber   = rs.getString("ContactNumber");
-                String  emailAddress    = rs.getString("EmailAddress");                
-                String  profession      = rs.getString("Profession");
-                Date    dateOfBirth     = rs.getDate("DateOfBirth");
-                String genderString     = rs.getString("Gender");
-                Member.Gender gender    = genderString != null ? (genderString.equals("Male") ? Member.Gender.Male : Member.Gender.Female) : Member.Gender.Male;
-                float   donationAmount  = rs.getFloat("Amount");
-                long    receiptNumber   = rs.getLong("ReceiptNumber");
-                Date    donationDate    = rs.getDate("DonationDate");
-                String donationType     = rs.getString("DonationType");
-                String paymentMode      = rs.getString("PaymentMode");
-                
-                //Member properties
-                String imagePath        = null;
-                Date registerationDate  = null;
-                String position         = null;
-                String  maritalStatus   = null;
-                String  cast            = null;
-                String  subCast         = null;
-                String  district        = null;
-                String  bloodGroup      = null;
-                String  education       = null;
-                String currentStatus    = null;
-                if(memberID != Integer.MAX_VALUE)
-                {
-                    Member member = getMemberWithID(memberID);
-                    if(member != null)
+                    while(rs.next())
                     {
-                        registerationDate = member.getRegisterationDate();
-                        imagePath = member.getImagePath();
-                        position = member.getPosition();
-                        maritalStatus = member.getMaritalStatus();
-                        cast = member.getCast();
-                        subCast = member.getSubCast();
-                        district = member.getDistrict();
-                        bloodGroup = member.getBloodGroup();
-                        education = member.getEducation();
-                        currentStatus = member.getCurrentStatus();
+                        BaseEntity entity = (BaseEntity) entityClass.newInstance();
+                        
+                        for (BaseEntity.ColumnName columnName : columns) 
+                        {
+                            try
+                            {
+                                Object value = rs.getObject(columnName.toString());
+                                entity.setValueForField(columnName, value);
+                            }catch(Exception ex){ ex.printStackTrace(); }
+                        }
+                        
+                        int id = rs.getInt(BaseEntity.ColumnName.ID.toString());
+                        
+                        entity.setValueForField(BaseEntity.ColumnName.ID, id);
+                        entities.add(entity);
+                    }
+                    
+                    if(rs != null) rs.close();
+                    if(statement != null) statement.close();
+                    
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+                finally
+                {
+                    closeConnection(conn);
+                }
+            }
+            
+        }
+        
+        return entities;
+    }
+    
+    public static ArrayList<BaseEntity> getEntitiesWithCondition(Vector<BaseEntity.ColumnName> conditionColumns, Vector<Object> conditionValues, Class<?> entityClass)
+    {
+        ArrayList<BaseEntity> entities = new ArrayList<BaseEntity>();
+        
+        if(entityClass != null)
+        {
+            Connection conn = null;
+            conn = createConnection();
+            
+            StringBuilder sqlQuery = new StringBuilder("SELECT * FROM ");
+            String tableName = null;
+                
+            if(entityClass.equals(Member.class))
+            {
+                tableName = MEMBER_TABLE_NAME;
+            }
+            else if(entityClass.equals(Donor.class))
+            {
+                tableName = DONATIONS_TABLE_NAME;
+            }
+            else if(entityClass.equals(Expense.class))
+            {
+                tableName = EXPENSES_TABLE_NAME;
+            }
+            else if(entityClass.equals(CashFlow.class))
+            {
+                tableName = CASHFLOWS_TABLE_NAME;
+            }
+            
+            if(tableName != null)
+            {
+                sqlQuery.append(tableName);
+                sqlQuery.append(" WHERE ");
+                
+                StringBuilder conditionString = new StringBuilder();
+                
+                for(int i=0; i<conditionValues.size(); ++i)
+                {
+                    if(conditionColumns.lastElement() == conditionColumns.get(i))
+                    {
+                        conditionString.append(conditionColumns.get(i)).append("=?");
+                    }
+                    else
+                    {
+                        conditionString.append(conditionColumns.get(i)).append("=?").append(" AND ");
                     }
                 }
                 
-                donors.add(new Donor(donationAmount, receiptNumber, donationDate, getDonationTypeForName(donationType), null/*TODO: getPaymentMode()*/ , memberID, firstName, middleName, lastName, dateOfBirth, maritalStatus, cast, subCast, district, bloodGroup, gender, permanentAddress, temporaryAddress, contactNumber, emailAddress, education, getProfessionTypeForName(profession), registerationDate, position, imagePath, currentStatus));
+                sqlQuery.append(conditionString);
+                
+                sqlQuery.trimToSize();
+                
+                
+                try 
+                {
+                    
+                    PreparedStatement ps = conn.prepareStatement(sqlQuery.toString());;
+                    
+                    for (int i = 1; i <= conditionColumns.size(); ++i)
+                    {
+                        Object value = conditionValues.get(i-1);
+
+                        if(value instanceof String)
+                        {
+                            ps.setString(i, (String) value);
+                        }
+                        else if(value instanceof Double)
+                        {
+                            ps.setDouble(i, ((Double) value));
+                        }
+                        else if(value instanceof Integer)
+                        {
+                            ps.setInt(i, (Integer) value);
+                        }
+                        else if(value instanceof Float)
+                        {
+                            ps.setFloat(i, (Float) value);
+                        }
+                        else if(value instanceof Long)
+                        {
+                            ps.setFloat(i, (Long) value);
+                        }
+                        else if(value instanceof Date || conditionColumns.get(i).toString().contains("Date"))
+                        {
+                            ps.setDate(i, (Date) value);
+                        }
+                        else
+                        {
+                            if(value != null)
+                            {
+                                ps.setString(i, value.toString());
+                            }
+                            else
+                            {
+                                ps.setString(i, "");
+                            }
+                        }
+                    }
+                    
+                    ResultSet rs = ps.executeQuery();
+                
+                    BaseEntity dummyEntity = (BaseEntity) entityClass.newInstance();
+                    Vector<BaseEntity.ColumnName> columns = dummyEntity.getColumnIDsForDetailLevel(BaseEntity.DetailsLevel.Database);
+
+                    while(rs.next())
+                    {
+                        BaseEntity entity = (BaseEntity) entityClass.newInstance();
+                        
+                        for (BaseEntity.ColumnName columnName : columns) 
+                        {
+                            try
+                            {
+                                Object value = rs.getObject(columnName.toString());
+                                entity.setValueForField(columnName, value);
+                            }catch(Exception ex){ ex.printStackTrace(); }
+                        }
+                        
+                        int id = rs.getInt(BaseEntity.ColumnName.ID.toString());
+                        
+                        entity.setValueForField(BaseEntity.ColumnName.ID, id);
+                        entities.add(entity);
+                    }
+                    
+                    if(rs != null) rs.close();
+                    if(ps != null) ps.close();
+                    
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+                finally
+                {
+                    closeConnection(conn);
+                }
             }
             
-            ps.close();
-            rs.close();
-            
-        } catch (SQLException ex) {
-            Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, ex);
-            JOptionPane.showMessageDialog(null, ex.getLocalizedMessage(), "Unable to fetch data from table", ERROR_MESSAGE);
         }
-        finally
-        {
-            if(connection != null) closeConnection(connection);
-        }
-        return donors;
+        
+        return entities;
     }
+    
+    
+    public static boolean updateEntities(Vector<BaseEntity> entities, Class<?> entityClass)
+    {
+        boolean bUpdated = true; 
+        Connection conn = null;
+        if(entities != null && entities.size() > 0)
+        {
+            try 
+            {
+                conn = createConnection();
+                
+                StringBuffer sqlQuery = new StringBuffer("UPDATE ");
+                String tableName = null;
+                
+                if(entityClass.equals(Member.class))
+                {
+                    tableName = MEMBER_TABLE_NAME;
+                }
+                else if(entityClass.equals(Donor.class))
+                {
+                    tableName = DONATIONS_TABLE_NAME;
+                }
+                else if(entityClass.equals(Expense.class))
+                {
+                    tableName = EXPENSES_TABLE_NAME;
+                }
+                else if(entityClass.equals(CashFlow.class))
+                {
+                    tableName = CASHFLOWS_TABLE_NAME;
+                }
+                else
+                {
+                    return false;
+                }
+                
+                sqlQuery.append(tableName);
+                sqlQuery.append(" SET ");
+                
+                Vector<BaseEntity.ColumnName> columns = entities.get(0).getColumnIDsForDetailLevel(BaseEntity.DetailsLevel.Database);
+                
+                for (BaseEntity.ColumnName columnName : columns) {
+                    if(columns.lastElement() == columnName)
+                    {
+                        sqlQuery.append(columnName.toString() + "=?");
+                    }
+                    else
+                    {
+                        sqlQuery.append(columnName.toString() + "=?,");
+                    }
+                }
+                
+                sqlQuery.append(" WHERE ").append(BaseEntity.ColumnName.ID.toString()).append("=?");
+                
+                sqlQuery.trimToSize();
+                
+                Logger.getLogger(DatabaseManager.class.getName()).log(Level.INFO, sqlQuery.toString(), "");
+                
+                PreparedStatement ps = conn.prepareStatement(sqlQuery.toString());
+                
+                for (BaseEntity entity : entities)
+                {
+                    int i=1;
+                    for (BaseEntity.ColumnName columnName : columns) 
+                    {
+                        Object value = entity.getValueForField(columnName);
+                        
+                        if(value instanceof String)
+                        {
+                            ps.setString(i, (String) value);
+                        }
+                        else if(value instanceof Double)
+                        {
+                            ps.setDouble(i, ((Double) value));
+                        }
+                        else if(value instanceof Integer)
+                        {
+                            ps.setInt(i, (Integer) value);
+                        }
+                        else if(value instanceof Float)
+                        {
+                            ps.setFloat(i, (Float) value);
+                        }
+                        else if(value instanceof Long)
+                        {
+                            ps.setFloat(i, (Long) value);
+                        }
+                        else if(value instanceof Date || columnName.toString().contains("Date"))
+                        {
+                            ps.setDate(i, (Date) value);
+                        }
+                        else
+                        {
+                            if(value != null)
+                            {
+                                ps.setString(i, value.toString());
+                            }
+                            else
+                            {
+                                ps.setString(i, "");
+                            }
+                        }
+                        
+                        ++i;
+                    }
+                    
+                    ps.setInt(i, entity.getID());
+                    
+                    bUpdated &= ps.executeUpdate() > 0;
+                }
+                
+                conn.commit();
+                ps.close();
+                               
+            } catch (SQLException ex) {
+                Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, ex);
+                JOptionPane.showMessageDialog(null, ex.getLocalizedMessage(), "Unable to register member ", ERROR_MESSAGE);
+            }
+            finally
+            {
+                closeConnection(conn);
+            }
+        }
+        
+        return bUpdated;
+    }
+    
+    public static boolean insertEntities(Vector<BaseEntity> entities, Class<?> entityClass)
+    {
+        boolean bInserted = true; 
+        
+        Connection conn = null;
+        if(entities != null && entities.size() > 0)
+        {
+            try 
+            {
+                conn = createConnection();
+                
+                StringBuffer sqlQuery = new StringBuffer("INSERT INTO ");
+                String tableName = null;
+                
+                if(entityClass.equals(Member.class))
+                {
+                    tableName = MEMBER_TABLE_NAME;
+                }
+                else if(entityClass.equals(Donor.class))
+                {
+                    tableName = DONATIONS_TABLE_NAME;
+                }
+                else if(entityClass.equals(Expense.class))
+                {
+                    tableName = EXPENSES_TABLE_NAME;
+                }
+                else if(entityClass.equals(CashFlow.class))
+                {
+                    tableName = CASHFLOWS_TABLE_NAME;
+                }
+                else
+                {
+                    return false;
+                }
+                
+                sqlQuery.append(tableName);
+                
+                StringBuilder valuesString = new StringBuilder(100);
+                StringBuffer  valuePlacement = new StringBuffer(entities.size());
+                
+                Vector<BaseEntity.ColumnName> columns = entities.get(0).getColumnIDsForDetailLevel(BaseEntity.DetailsLevel.Database);
+                
+                for (BaseEntity.ColumnName columnName : columns) {
+                    if(columns.lastElement() == columnName)
+                    {
+                        valuesString.append(columnName.toString());
+                        valuePlacement.append("?");
+                    }
+                    else
+                    {
+                        valuesString.append(columnName.toString() + ",");
+                        valuePlacement.append("?,");
+                    }
+                }
+                
+                sqlQuery.append(" (").append(valuesString.toString()).append(")");
+                sqlQuery.append("VALUES (").append(valuePlacement.toString()).append(")");
+                
+                sqlQuery.trimToSize();
+                
+                Logger.getLogger(DatabaseManager.class.getName()).log(Level.INFO, sqlQuery.toString(), "");
+                
+                PreparedStatement ps = conn.prepareStatement(sqlQuery.toString());
+                
+                for (BaseEntity entity : entities)
+                {
+                    int i=1;
+                    for (BaseEntity.ColumnName columnName : columns) 
+                    {
+                        Object value = entity.getValueForField(columnName);
+                        
+                        if(value instanceof String)
+                        {
+                            ps.setString(i, (String) value);
+                        }
+                        else if(value instanceof Double)
+                        {
+                            ps.setDouble(i, ((Double) value));
+                        }
+                        else if(value instanceof Integer)
+                        {
+                            ps.setInt(i, (Integer) value);
+                        }
+                        else if(value instanceof Float)
+                        {
+                            ps.setFloat(i, (Float) value);
+                        }
+                        else if(value instanceof Long)
+                        {
+                            ps.setFloat(i, (Long) value);
+                        }
+                        else if(value instanceof Date)
+                        {
+                            ps.setDate(i, (Date) value);
+                        }
+                        else
+                        {
+                            if(value != null)
+                            {
+                                ps.setString(i, value.toString());
+                            }
+                            else
+                            {
+                                ps.setString(i, "");
+                            }
+                        }
+                        
+                        ++i;
+                    }
+                    
+                    bInserted &= ps.executeUpdate() > 0;
+                    
+                    ApplicationManager.getSharedManager().entityDidAdded(entity);
+                }
+                
+                conn.commit();
+                ps.close();
+                               
+            } catch (SQLException ex) {
+                Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, ex);
+                JOptionPane.showMessageDialog(null, ex.getLocalizedMessage(), "Unable to register member ", ERROR_MESSAGE);
+            }
+            finally
+            {
+                closeConnection(conn);
+            }
+        }
+        
+        return bInserted;
+    }
+    
     
     public static boolean registerMember(Member member)
     {
@@ -548,7 +872,7 @@ public class DatabaseManager {
             {
                 conn = createConnection();
                 
-                String sql = "INSERT INTO "+ MEMBER_TABLE_NAME + " (FirstName, MiddleName, LastName, PermanentAddress, TemporaryAddress, ContactNumber, EmailAddress, RegisterationDate, Position, Profession, DateOfBirth, Gender, Image, MaritalStatus, Cast, SubCast, District, BloodGroup, Education) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                String sql = "INSERT INTO "+ MEMBER_TABLE_NAME + " (FirstName, MiddleName, LastName, PermanentAddress, TemporaryAddress, ContactNumber, EmailAddress, RegisterationDate, Position, Profession, DateOfBirth, Gender, Image, MaritalStatus, Cast, SubCast, District, BloodGroup, Education, Status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
                 PreparedStatement ps = conn.prepareStatement(sql);
 
                 ps.setString(1, member.getFirstName());
@@ -560,16 +884,17 @@ public class DatabaseManager {
                 ps.setString(7, member.getEmailAddress());
                 ps.setDate(8, member.getRegisterationDate());
                 ps.setString(9, member.getPosition());
-                ps.setString(10, member.getProfession() != null ? member.getProfession().getStringValue() : null);
+                ps.setString(10, member.getProfession() != null ? member.getProfession() : null);
                 ps.setDate(11, member.getDateOfBirth());
                 ps.setString(12, member.getGender() == Member.Gender.Male ? "Male" : "Female" );
                 ps.setString(13, member.getImagePath());
-                ps.setString(14, member.getMaritalStatus());
+                ps.setString(14, member.getMaritalStatus().toString());
                 ps.setString(15, member.getCast());
                 ps.setString(16, member.getSubCast());
                 ps.setString(17, member.getDistrict());
                 ps.setString(18, member.getBloodGroup());
                 ps.setString(19, member.getEducation());
+                ps.setString(20, Member.ActiveStatus.Active.toString());
                 
                 bRegistered = ps.executeUpdate() > 0;
                 conn.commit();
@@ -593,42 +918,11 @@ public class DatabaseManager {
         Connection conn = null;
         if(donor != null)
         {
-            try 
-            {
-                conn = createConnection();
-                PreparedStatement ps = conn.prepareStatement("INSERT INTO "+DONATIONS_TABLE_NAME+" (FirstName, MiddleName, LastName, PermanentAddress, TemporaryAddress, ContactNumber, EmailAddress, Profession, DateOfBirth, Gender, Amount, DonationDate, DonationType, PaymentMode) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            Vector<BaseEntity> entity = new Vector<BaseEntity>(1);
+            entity.add(donor);
+            bDonateSuccess = insertEntities(entity, donor.getClass());
 
-                ps.setString(1, donor.getFirstName());
-                ps.setString(2, donor.getMiddleName());
-                ps.setString(3, donor.getLastName());
-                ps.setString(4, donor.getPermanentAddress());
-                ps.setString(5, donor.getTemporaryAddress());
-                ps.setString(6, donor.getContactNumber());
-                ps.setString(7, donor.getEmailAddress());
-                ps.setString(8, donor.getProfession() != null ? donor.getProfession().getStringValue() : null);
-                ps.setDate(9, donor.getDateOfBirth());
-                ps.setString(10, donor.getGender() == Member.Gender.Male ? "Male" : "Female" );
-                
-                
-                //Donor attributes
-                ps.setFloat(11, donor.getDonationAmount());
-                ps.setDate(12, donor.getDonationDate());
-                ps.setString(13, donor.getDonationType() != null ? donor.getDonationType().getStringValue() : null);
-                ps.setString(14, donor.getPaymentMode()!= null ? donor.getPaymentMode().getStringValue() : null);
-                
-                bDonateSuccess = ps.executeUpdate() > 0;
-                
-                ps.close();
-                
-                
-            } catch (SQLException ex) {
-                Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, ex);
-                JOptionPane.showMessageDialog(null, ex.getLocalizedMessage(), "Unable to save donation", ERROR_MESSAGE);
-            }
-            finally
-            {
-                if(conn != null) closeConnection(conn);
-            }
+            if(conn != null) closeConnection(conn);
         }
         
         return bDonateSuccess;
@@ -636,7 +930,6 @@ public class DatabaseManager {
     
     public static ReportData getDonationBySubscription()
     {
-        boolean bRegistered = false; 
         Connection conn = null;
         
         Vector rows = new Vector();
@@ -678,93 +971,78 @@ public class DatabaseManager {
         
         return new ReportData(rows, columns);
     }
-
     
-    public static ArrayList<Expense> getExpenses() {
-        Logger.getLogger(DatabaseManager.class.getName()).log(Level.INFO, "getExpenses");
+    public static ReportData getMemberStatement(String memberRegNumber)
+    {
+        Vector<BaseEntity.ColumnName> column = new Vector<BaseEntity.ColumnName>();
+        column.add(BaseEntity.ColumnName.MemberUniqueID);
         
-        ArrayList<Expense> expenses = new ArrayList();
-        Connection connection = null;
-        try 
-        {
-            connection = createConnection();
-            
-            PreparedStatement ps = connection.prepareStatement("SELECT * FROM " + EXPENSES_TABLE_NAME);
-            
-            ResultSet rs = ps.executeQuery();
-            
-            Logger.getLogger(DatabaseManager.class.getName()).log(Level.INFO, "getExpenses : Column Count - {0}", rs.getMetaData().getColumnCount());
-            
-            while(rs.next())
-            {
-                int     expenseID       = rs.getInt("ID");
-                double  amount          = rs.getDouble("Amount");
-                Date    date            = rs.getDate("ExpenseDate");
-                String  expenseType     = rs.getString("Type");
-                String  description     = rs.getString("Description");
-                int     memberID        = rs.getInt("ResponsibleMemberID");
-                Member  member          = null;
-                
-                if(memberID != Integer.MAX_VALUE)
-                {
-                    member = getMemberWithID(memberID);
-                }
-                
-                expenses.add(new Expense(expenseID, getExpenseTypeForName(expenseType), date, amount, description, member));
-            }
-            
-            ps.close();
-            rs.close();
-            
-        } catch (SQLException ex) {
-            Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, ex);
-            JOptionPane.showMessageDialog(null, ex.getLocalizedMessage(), "Unable to fetch data from table", ERROR_MESSAGE);
-        }
-        finally
-        {
-            if(connection != null) closeConnection(connection);
-        }
-        return expenses;
+        Vector<Object> value = new Vector<Object>();
+        value.add(memberRegNumber);
+        
+        ArrayList<BaseEntity> entities =  getEntitiesWithCondition(column, value, Donor.class);
+        
+        return new ReportData(new Vector<BaseEntity>(entities), BaseEntity.DetailsLevel.MemberStatement, Donor.class);
     }
     
     
-     public static ArrayList<CashFlow> getCashFlows() 
-     {
-        Logger.getLogger(DatabaseManager.class.getName()).log(Level.INFO, "getCashFlows");
+    public static ReportData getMemberStatement(int memberRowID)
+    {
+        Vector<BaseEntity.ColumnName> column = new Vector<BaseEntity.ColumnName>();
+        column.add(BaseEntity.ColumnName.ID);
         
-        ArrayList<CashFlow> cashFlows = new ArrayList();
-        Connection connection = null;
-        try 
+        Vector<Object> value = new Vector<Object>();
+        value.add(memberRowID);
+        
+        ArrayList<BaseEntity> entities =  getEntitiesWithCondition(column, value, Donor.class);
+        
+        return new ReportData(new Vector<BaseEntity>(entities), BaseEntity.DetailsLevel.MemberStatement, Donor.class);
+     }
+
+    public static BaseEntity getEntityWithUniqueID(String uniqueID, Class<?> entityClass)
+    {
+        if(uniqueID == null || uniqueID.length() == 0) return null;
+        
+        Vector<BaseEntity.ColumnName> column = new Vector<BaseEntity.ColumnName>();
+        column.add(BaseEntity.ColumnName.UniqueID);
+        
+        Vector<Object> value = new Vector<Object>();
+        value.add(uniqueID);
+        
+        ArrayList<BaseEntity> entities =  getEntitiesWithCondition(column, value, entityClass);
+        
+        if(entities != null && entities.isEmpty() == false)
         {
-            connection = createConnection();
-            
-            PreparedStatement ps = connection.prepareStatement("SELECT * FROM " + CASHFLOWS_TABLE_NAME);
-            
-            ResultSet rs = ps.executeQuery();
-            
-            Logger.getLogger(DatabaseManager.class.getName()).log(Level.INFO, "getCashFlows : Column Count - {0}", rs.getMetaData().getColumnCount());
-            
-            while(rs.next())
-            {
-                int     expenseID       = rs.getInt("ID");
-                Date    date            = rs.getDate("TransactionDate");
-                String  status          = rs.getString("Status");
-                String  description     = rs.getString("Description");
-                
-                cashFlows.add(new CashFlow(expenseID, date, getCashFlowTypeForName(status), description));
-            }
-            
-            ps.close();
-            rs.close();
-            
-        } catch (SQLException ex) {
-            Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, ex);
-            JOptionPane.showMessageDialog(null, ex.getLocalizedMessage(), "Unable to fetch data from table", ERROR_MESSAGE);
+            return entities.get(0);
         }
-        finally
+        else
         {
-            if(connection != null) closeConnection(connection);
+            return null;
         }
-        return cashFlows;
-     }   
+     }
+    
+    public static Member getMemberWithID(int memberID) 
+    {
+        Vector<BaseEntity.ColumnName> column = new Vector<BaseEntity.ColumnName>();
+        column.add(BaseEntity.ColumnName.ID);
+        
+        Vector<Object> value = new Vector<Object>();
+        value.add(memberID);
+        
+        ArrayList<BaseEntity> entities =  getEntitiesWithCondition(column, value, Donor.class);
+        
+        if(entities != null && entities.isEmpty() == false)
+        {
+            return (Member)entities.get(0);
+        }
+        else
+        {
+            return null;
+        }
+    }
+    
+    public static EntityReportData getMemberReportData()
+    {
+        return null;
+    }
 }

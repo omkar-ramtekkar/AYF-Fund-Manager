@@ -40,7 +40,7 @@ public class AllCashFlowsReportView extends BaseReportView {
         searchTextField = new javax.swing.JTextField();
         refreshButton = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
-        allCashFlowsTable = new javax.swing.JTable();
+        allCashFlowsTable = new ReportTable();
 
         refreshButton.setText("Refresh");
         refreshButton.addActionListener(new java.awt.event.ActionListener() {
@@ -71,7 +71,7 @@ public class AllCashFlowsReportView extends BaseReportView {
                         .add(searchTextField)
                         .add(18, 18, 18)
                         .add(refreshButton))
-                    .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 388, Short.MAX_VALUE))
+                    .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 399, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -82,13 +82,12 @@ public class AllCashFlowsReportView extends BaseReportView {
                     .add(searchTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(refreshButton))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 252, Short.MAX_VALUE)
+                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 294, Short.MAX_VALUE)
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
 
     private void refreshButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshButtonActionPerformed
-        // TODO add your handling code here:
         if(report != null)
         {
             report.updateReport();
@@ -107,7 +106,7 @@ public class AllCashFlowsReportView extends BaseReportView {
     public void updateView(ReportData data) {
         if(data != null)
         {
-            this.allCashFlowsTable.setModel(new GenericDefaultTableModel(data.getData(), data.getColumns()));
+            this.allCashFlowsTable.setModel(new GenericDefaultTableModel(data));
             adjustReportTableColumns();
         }
     }
