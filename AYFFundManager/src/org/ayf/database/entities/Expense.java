@@ -111,6 +111,8 @@ public class Expense extends BaseEntity{
     {
         switch(name)
         {
+            case ID:
+                return "ID";
             case UniqueID:
                 return "Expense ID";
             case ExpenseType:

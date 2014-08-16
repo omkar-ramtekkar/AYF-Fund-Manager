@@ -8,11 +8,9 @@ package org.ayf.database.entities;
 
 import java.sql.Date;
 import java.sql.Timestamp;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
-import org.ayf.managers.DatabaseManager;
 import org.ayf.reports.ReportData;
 import org.ayf.util.DateTime;
 import org.ayf.util.NumberUtil;
@@ -433,9 +431,11 @@ public class Member extends BaseEntity
         switch(name)
         {
             case ID:
-                return "Member ID";
+                return "ID";
             case UniqueID:
                 return "Registeration Number";
+            case MemberUniqueID:
+                return "Member Registeration ID";
             case FirstName:
                 return "First Name";
             case MiddleName:

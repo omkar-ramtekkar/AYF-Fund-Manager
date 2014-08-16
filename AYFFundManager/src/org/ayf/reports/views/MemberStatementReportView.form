@@ -377,6 +377,8 @@
                   <Component id="paySubscriptionButton" linkSize="1" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="duesButton" linkSize="1" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="deactivateButton" linkSize="1" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="32767" attributes="0"/>
               </Group>
           </Group>
@@ -389,6 +391,7 @@
                       <Component id="donateButton" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="paySubscriptionButton" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="duesButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="deactivateButton" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
               </Group>
@@ -418,6 +421,14 @@
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="duesButtonActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JButton" name="deactivateButton">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Deactivate"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="deactivateButtonActionPerformed"/>
           </Events>
         </Component>
       </SubComponents>

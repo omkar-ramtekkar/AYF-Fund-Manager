@@ -597,7 +597,7 @@ public class DatabaseManager {
     
     public static boolean updateEntities(Vector<BaseEntity> entities, Class<?> entityClass)
     {
-        boolean bUpdated = true; 
+        boolean bUpdated = entities.size() > 0; 
         Connection conn = null;
         if(entities != null && entities.size() > 0)
         {

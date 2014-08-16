@@ -147,6 +147,20 @@ public class Donor extends Member
     }
     
     
+    public static String getNameForColumnID(ColumnName name)
+    {
+        switch(name)
+        {
+            case UniqueID:
+                return "Donation ID";
+            case MemberUniqueID:
+                return "Member ID";
+            default:
+                return Member.getNameForColumnID(name);
+        }
+    }
+    
+    
     public Vector getColumnsForDetailsLevel(DetailsLevel level)
     {
         Vector columnNames = new Vector();

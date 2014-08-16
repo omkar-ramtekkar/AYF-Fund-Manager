@@ -7,8 +7,10 @@
 package org.ayf.reports.views;
 
 import com.sun.tools.corba.se.idl.InvalidArgument;
+import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import org.ayf.database.entities.BaseEntity;
 import org.ayf.database.entities.Donor;
@@ -24,7 +26,6 @@ import org.ayf.reports.ReportData;
 import org.ayf.ui.InformationPanel;
 import org.ayf.ui.MemberFrame;
 import org.ayf.util.DateTime;
-import org.ayf.util.ScreenUtil;
 import org.ayf.util.Toast;
 import org.jdesktop.swingx.prompt.PromptSupport;
 
@@ -37,6 +38,10 @@ public class MemberStatementReportView extends BaseReportView implements ReportD
     /**
      * Creates new form MemberStatement
      */
+    
+    private Member currentMember = null;
+            
+            
     public MemberStatementReportView(Report report) {
         super(report);
         initComponents();
@@ -79,6 +84,7 @@ public class MemberStatementReportView extends BaseReportView implements ReportD
         donateButton = new javax.swing.JButton();
         paySubscriptionButton = new javax.swing.JButton();
         duesButton = new javax.swing.JButton();
+        deactivateButton = new javax.swing.JButton();
 
         addComponentListener(new java.awt.event.ComponentAdapter() {
             public void componentShown(java.awt.event.ComponentEvent evt) {
@@ -292,6 +298,13 @@ public class MemberStatementReportView extends BaseReportView implements ReportD
             }
         });
 
+        deactivateButton.setText("Deactivate");
+        deactivateButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                deactivateButtonActionPerformed(evt);
+            }
+        });
+
         org.jdesktop.layout.GroupLayout actionPanelLayout = new org.jdesktop.layout.GroupLayout(actionPanel);
         actionPanel.setLayout(actionPanelLayout);
         actionPanelLayout.setHorizontalGroup(
@@ -303,10 +316,12 @@ public class MemberStatementReportView extends BaseReportView implements ReportD
                 .add(paySubscriptionButton)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(duesButton)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(deactivateButton)
                 .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        actionPanelLayout.linkSize(new java.awt.Component[] {donateButton, duesButton, paySubscriptionButton}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
+        actionPanelLayout.linkSize(new java.awt.Component[] {deactivateButton, donateButton, duesButton, paySubscriptionButton}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
 
         actionPanelLayout.setVerticalGroup(
             actionPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -315,7 +330,8 @@ public class MemberStatementReportView extends BaseReportView implements ReportD
                 .add(actionPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(donateButton)
                     .add(paySubscriptionButton)
-                    .add(duesButton))
+                    .add(duesButton)
+                    .add(deactivateButton))
                 .add(6, 6, 6))
         );
 
@@ -393,10 +409,9 @@ public class MemberStatementReportView extends BaseReportView implements ReportD
 
                 if(memberRegNumber != null)
                 {
-                    Member member = (Member) DatabaseManager.getEntityWithUniqueID(memberRegNumber, Member.class);
-                    if(member != null)
+                    if(this.currentMember != null)
                     {
-                        MemberFrame memberFullInformation = new MemberFrame(member, InformationPanel.PanelType.View);
+                        MemberFrame memberFullInformation = new MemberFrame(this.currentMember, InformationPanel.PanelType.View);
                         memberFullInformation.setVisible(true);
                     }
                 }
@@ -416,10 +431,16 @@ public class MemberStatementReportView extends BaseReportView implements ReportD
             if(regNumber == null || regNumber.length() == 0)
                 throw new Exception("Member registeration number is invalid. Select valid member.");
                 
-            BaseEntity entity = DatabaseManager.getEntityWithUniqueID(regNumber, Member.class);
+            BaseEntity entity = this.currentMember;
             if(entity == null)
                 throw new Exception("Member not found with registeration number - " + regNumber + ".");
 
+            if(this.currentMember.getCurrentStatus() != BaseEntity.ActiveStatus.Active)
+            {
+                JOptionPane.showMessageDialog(this, "Member is not active. Activate member before donation.", "Donation Error", JOptionPane.ERROR_MESSAGE);
+                throw new Exception("Activate member before donation.");
+            }
+            
             DonationDialog donationDialog = new DonationDialog(ApplicationManager.getSharedManager().getMainFrame(), true, this);
             donationDialog.setVisible(true);
             
@@ -455,10 +476,16 @@ public class MemberStatementReportView extends BaseReportView implements ReportD
             if(regNumber == null || regNumber.length() == 0)
                 throw new Exception("Member registeration number is invalid. Select valid member.");
                 
-            BaseEntity entity = DatabaseManager.getEntityWithUniqueID(regNumber, Member.class);
+            BaseEntity entity = this.currentMember;
             if(entity == null)
                 throw new Exception("Member not found with registeration number - " + regNumber + ".");
 
+            if(this.currentMember.getCurrentStatus() != BaseEntity.ActiveStatus.Active)
+            {
+                JOptionPane.showMessageDialog(this, "Member is not active. Activate member before paying subscription.", "Subscription Error", JOptionPane.ERROR_MESSAGE);
+                throw new Exception("Activate member before paying subscription.");
+            }
+            
             DonationDialog donationDialog = new DonationDialog(ApplicationManager.getSharedManager().getMainFrame(), true, this);
             donationDialog.setSubscriptionPayment();
             donationDialog.setTitle("Subscription Payment Form");
@@ -496,6 +523,70 @@ public class MemberStatementReportView extends BaseReportView implements ReportD
         // TODO add your handling code here:
     }//GEN-LAST:event_searchTextFieldActionPerformed
 
+    private void deactivateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deactivateButtonActionPerformed
+        try
+        {
+            if(this.currentMember == null)
+                throw new Exception("Member registeration number is invalid. Select valid member.");
+            
+            String message = "Are you sure, you want to Deactivate member?";
+            
+            if(this.currentMember.getCurrentStatus() != BaseEntity.ActiveStatus.Active)
+            {
+                message = "Are you sure, you want to Activate member?";
+            }
+            
+            int userChoice = JOptionPane.showConfirmDialog(this, message, "Confirmation Dialog", JOptionPane.YES_NO_OPTION);
+            
+            if(userChoice == JOptionPane.YES_OPTION)
+            {
+                BaseEntity.ActiveStatus currentActuveStatus = this.currentMember.getCurrentStatus();
+                
+                if(this.currentMember.getCurrentStatus() == BaseEntity.ActiveStatus.Active)
+                {
+                    this.currentMember.setCurrentStatus(BaseEntity.ActiveStatus.Inactive);
+                }
+                else
+                {
+                    this.currentMember.setCurrentStatus(BaseEntity.ActiveStatus.Active);
+                }
+                
+                Vector<BaseEntity> entity = new Vector<BaseEntity>(1);
+                entity.add(this.currentMember);
+                
+                boolean entityUpdated = DatabaseManager.updateEntities(entity, Member.class);
+                
+                if(!entityUpdated)
+                {
+                    this.currentMember.setCurrentStatus(currentActuveStatus);
+                    if(currentActuveStatus == BaseEntity.ActiveStatus.Active)
+                    {
+                        throw new Exception("Failed to deactive member. Try again.");
+                    }
+                    else
+                    {
+                        throw new Exception("Failed to activate member. Try again.");
+                    }
+                }
+                
+                if(currentMember.getCurrentStatus() == BaseEntity.ActiveStatus.Active)
+                {
+                    Toast.showToastOnComponentCenter(this, "Member activated  successfully", true);
+                }
+                else
+                {
+                    Toast.showToastOnComponentCenter(this, "Member deactivated  successfully", true);
+                }
+                
+                updateViewInternal(this.currentMember);
+            }
+                
+        }catch(Exception ex)
+        {
+            Toast.showToastOnComponentCenter(this, ex.getMessage(), false);
+        }
+    }//GEN-LAST:event_deactivateButtonActionPerformed
+
     @Override
     public void updateView(ReportData data) 
     {
@@ -522,8 +613,11 @@ public class MemberStatementReportView extends BaseReportView implements ReportD
     
     void updateViewInternal(Member member)
     {
+        this.currentMember = member;
+        
         if(member != null)
         {
+            
             String fn = member.getFirstName();
             String mn = member.getMiddleName();
             String ln = member.getLastName();
@@ -534,6 +628,7 @@ public class MemberStatementReportView extends BaseReportView implements ReportD
             this.dateOfBirthLabel.setText(DateTime.getFormattedDateSQL(member.getDateOfBirth()));
             this.districtLabel.setText(member.getDistrict());
             this.memberImageLabel.setIcon(ResourceManager.getIcon("no_photo_men", this.memberImageLabel.getPreferredSize()));
+            this.deactivateButton.setText(member.getCurrentStatus() == BaseEntity.ActiveStatus.Active ? "Deactivate" : "Activate");
         }
         else
         {
@@ -578,6 +673,7 @@ public class MemberStatementReportView extends BaseReportView implements ReportD
     private javax.swing.JPanel actionPanel;
     private javax.swing.JLabel contactNumberLabel;
     private javax.swing.JLabel dateOfBirthLabel;
+    private javax.swing.JButton deactivateButton;
     private javax.swing.JLabel districtLabel;
     private javax.swing.JButton donateButton;
     private javax.swing.JButton duesButton;

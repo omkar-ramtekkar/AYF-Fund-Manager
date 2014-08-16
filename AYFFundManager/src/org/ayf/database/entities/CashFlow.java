@@ -87,6 +87,8 @@ public class CashFlow extends BaseEntity{
     {
         switch(name)
         {
+            case ID:
+                return "ID";
             case UniqueID:
                 return "Transaction ID";
             case Date:
