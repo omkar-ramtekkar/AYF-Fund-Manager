@@ -14,6 +14,7 @@ import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import javax.swing.table.TableCellEditor;
 import org.ayf.database.entities.BaseEntity;
+import org.ayf.database.entities.CashFlow;
 import org.ayf.database.entities.Member;
 import org.ayf.models.GenericDefaultTableModel;
 import org.ayf.util.Toast;
@@ -51,25 +52,30 @@ public class ReportTable extends JTable{
                 Member.ColumnName columnName = model.getTableData().getColumnIDs().get(column);
                 BaseEntity.EditorType cellEditorType = model.getTableData().getDummyEntity().getColumnEditorTypeForColumnName(columnName);
                 
-                if(cellEditorType == Member.EditorType.Date)
+                if(cellEditorType == BaseEntity.EditorType.Date)
                 {
                     return super.getCellEditor(row, column);
                 }
-                else if(cellEditorType == Member.EditorType.ComboBox)
+                else if(cellEditorType == BaseEntity.EditorType.ComboBox)
                 {                        
                     BaseEntity entity = model.getTableData().getDummyEntity();
                     if(entity != null)
                     {
-                        return new DefaultCellEditor(new JComboBox((Vector) entity.getAllValuesForColumnName(columnName)));
-                    }
+                        if(entity instanceof Member)
+                            return new DefaultCellEditor(new JComboBox(Member.getAllValuesForColumnName(columnName)));
+                        else if(entity instanceof CashFlow)
+                            return new DefaultCellEditor(new JComboBox(CashFlow.getAllValuesForColumnName(columnName)));
+                        else
+                            return new DefaultCellEditor(new JComboBox(BaseEntity.getAllValuesForColumnName(columnName)));
+                    }   
                     
                     return null;
                 }
-                else if(cellEditorType == Member.EditorType.Label)
+                else if(cellEditorType == BaseEntity.EditorType.Label)
                 {
                     return super.getCellEditor(row, column);
                 }
-                else if(cellEditorType == Member.EditorType.Number)
+                else if(cellEditorType == BaseEntity.EditorType.Number)
                 {
                     return super.getCellEditor(row, column);
                 }

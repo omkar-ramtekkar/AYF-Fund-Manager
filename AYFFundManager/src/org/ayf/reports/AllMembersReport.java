@@ -31,6 +31,6 @@ public class AllMembersReport extends GenericSearchReport{
         
         Vector<BaseEntity> rows = new Vector<BaseEntity>(members);
         
-        return new ReportData(rows, BaseEntity.DetailsLevel.Basic, Member.class);
+        return new ReportData(rows, BaseEntity.DetailsLevel.Database, Member.class);
     }
 }

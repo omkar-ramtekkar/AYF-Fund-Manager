@@ -9,6 +9,7 @@ package org.ayf.database.entities;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.Vector;
+import org.ayf.managers.DatabaseManager;
 import org.ayf.reports.ReportData;
 import org.ayf.util.DateTime;
 import org.ayf.util.NumberUtil;
@@ -67,6 +68,20 @@ public class CashFlow extends BaseEntity{
         this.description = description;
     }
     
+    
+    public static Vector<String> getAllValuesForColumnName(ColumnName columnName)
+    {
+        switch(columnName)
+        {
+            case Status:
+            {
+                Vector<String> values = new Vector<String>(DatabaseManager.typesToStrings(DatabaseManager.getCashFlowStatusTypes()));
+                return values;
+            }
+            default:
+                return BaseEntity.getAllValuesForColumnName(columnName);
+        }
+    }
     
     public static String getNameForColumnID(CashFlow.ColumnName name)
     {
@@ -138,6 +153,7 @@ public class CashFlow extends BaseEntity{
     public Vector<ColumnName> getColumnIDsForDetailLevel(CashFlow.DetailsLevel level)
     {
         Vector columnNames = new Vector(4);
+        columnNames.add((CashFlow.ColumnName.ID));
         columnNames.add((CashFlow.ColumnName.UniqueID));
         columnNames.add((CashFlow.ColumnName.TransactionDate));
         columnNames.add((CashFlow.ColumnName.Status));
@@ -151,6 +167,7 @@ public class CashFlow extends BaseEntity{
     public Vector<Object> getColumnsForDetailsLevel(CashFlow.DetailsLevel level)
     {
         Vector columnNames = new Vector(4);
+        columnNames.add(getNameForColumnID(CashFlow.ColumnName.ID));
         columnNames.add(getNameForColumnID(CashFlow.ColumnName.UniqueID));
         columnNames.add(getNameForColumnID(CashFlow.ColumnName.TransactionDate));
         columnNames.add(getNameForColumnID(CashFlow.ColumnName.Status));
@@ -164,7 +181,7 @@ public class CashFlow extends BaseEntity{
     public Vector<Object> toDataArray(DetailsLevel level)
     {
         Vector transactionDetails = new Vector(10);
-        
+        transactionDetails.add(getValueForField(CashFlow.ColumnName.ID));
         transactionDetails.add(getValueForField(CashFlow.ColumnName.UniqueID));
         transactionDetails.add(getValueForField(CashFlow.ColumnName.TransactionDate));
         transactionDetails.add(getValueForField(CashFlow.ColumnName.Status));

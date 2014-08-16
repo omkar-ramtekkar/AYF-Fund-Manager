@@ -32,7 +32,7 @@ public class AllCashFlowsReport extends Report{
         
         Vector<BaseEntity> rows = new Vector<BaseEntity>(cashFlows);
         
-        return new ReportData(rows, BaseEntity.DetailsLevel.Complete, CashFlow.class);
+        return new ReportData(rows, BaseEntity.DetailsLevel.Database, CashFlow.class);
     }
     
 }

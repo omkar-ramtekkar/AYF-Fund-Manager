@@ -33,7 +33,7 @@ public class AllDonationsReport extends Report{
         
         Vector<BaseEntity> rows = new Vector<BaseEntity>(donors);
         
-        return new ReportData(rows, BaseEntity.DetailsLevel.OnlyIDAndName, Donor.class);
+        return new ReportData(rows, BaseEntity.DetailsLevel.Database, Donor.class);
     }
     
 }

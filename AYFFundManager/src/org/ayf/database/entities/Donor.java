@@ -159,6 +159,11 @@ public class Donor extends Member
                 columnNames.add(getNameForColumnID(ColumnName.FirstName));
                 columnNames.add(getNameForColumnID(ColumnName.MiddleName));
                 columnNames.add(getNameForColumnID(ColumnName.LastName));
+                columnNames.add(getNameForColumnID(ColumnName.ReceiptNumber));
+                columnNames.add(getNameForColumnID(ColumnName.DonationDate));
+                columnNames.add(getNameForColumnID(ColumnName.Amount));
+                columnNames.add(getNameForColumnID(ColumnName.DonationType));
+                columnNames.add(getNameForColumnID(ColumnName.PaymentMode));
                 columnNames.add(getNameForColumnID(ColumnName.PermanentAddress));
                 columnNames.add(getNameForColumnID(ColumnName.TemporaryAddress));
                 columnNames.add(getNameForColumnID(ColumnName.ContactNumber));
@@ -166,11 +171,6 @@ public class Donor extends Member
                 columnNames.add(getNameForColumnID(ColumnName.Profession));
                 columnNames.add(getNameForColumnID(ColumnName.DateOfBirth));
                 columnNames.add(getNameForColumnID(ColumnName.Gender));
-                columnNames.add(getNameForColumnID(ColumnName.ReceiptNumber));
-                columnNames.add(getNameForColumnID(ColumnName.DonationDate));
-                columnNames.add(getNameForColumnID(ColumnName.Amount));
-                columnNames.add(getNameForColumnID(ColumnName.DonationType));
-                columnNames.add(getNameForColumnID(ColumnName.PaymentMode));
                 break;
             default:
             {

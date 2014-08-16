@@ -33,6 +33,6 @@ public class AllExpensesReport extends Report{
         
         Vector<BaseEntity> rows = new Vector<BaseEntity>(expenses);
         
-        return new ReportData(rows, BaseEntity.DetailsLevel.Complete, Expense.class);
+        return new ReportData(rows, BaseEntity.DetailsLevel.Database, Expense.class);
     }
 }

@@ -8,9 +8,11 @@ package org.ayf.database.entities;
 
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
+import org.ayf.managers.DatabaseManager;
 import org.ayf.reports.ReportData;
 import org.ayf.util.DateTime;
 import org.ayf.util.NumberUtil;
@@ -208,6 +210,7 @@ public class Member extends BaseEntity
             Vector columnNames = new Vector(20);
             columnNames.add((ColumnName.ID));
             columnNames.add((ColumnName.UniqueID));
+            columnNames.add((ColumnName.Status));
             columnNames.add((ColumnName.FirstName));
             columnNames.add((ColumnName.MiddleName));
             columnNames.add((ColumnName.LastName));
@@ -216,6 +219,7 @@ public class Member extends BaseEntity
             columnNames.add((ColumnName.MaritalStatus));
             columnNames.add((ColumnName.ContactNumber));
             columnNames.add((ColumnName.EmailAddress));
+            columnNames.add((ColumnName.BloodGroup));
             columnNames.add((ColumnName.Education));
             columnNames.add((ColumnName.Profession));
             columnNames.add((ColumnName.District));
@@ -224,8 +228,6 @@ public class Member extends BaseEntity
             columnNames.add((ColumnName.Cast));
             columnNames.add((ColumnName.SubCast)); 
             columnNames.add((ColumnName.ImagePath)); 
-            columnNames.add((ColumnName.BloodGroup));
-            columnNames.add((ColumnName.Status));
             
             detailLevelVsColumnsMap.put(DetailsLevel.Database, columnNames);
         }
@@ -409,6 +411,23 @@ public class Member extends BaseEntity
         this.registerationDate = registerationDate;
     }
     
+    public static Vector<String> getAllValuesForColumnName(ColumnName columnName)
+    {
+        switch(columnName)
+        {
+            case Status:
+            {
+                Vector<String> values = new Vector<String>();
+                values.add(ActiveStatus.Active.toString());
+                values.add(ActiveStatus.Inactive.toString());
+                values.add(ActiveStatus.Unknown.toString());
+                return values;
+            }
+            default:
+                return BaseEntity.getAllValuesForColumnName(columnName);
+        }
+    }
+    
     public static String getNameForColumnID(ColumnName name)
     {
         switch(name)
@@ -467,6 +486,8 @@ public class Member extends BaseEntity
                 return "Donation Type";
             case PaymentMode:
                 return "Payment Mode";
+            case Status:
+                return "Active Status";
         }
         
         return null;
@@ -516,6 +537,8 @@ public class Member extends BaseEntity
                 return getPosition();
             case ImagePath:
                 return getImagePath();
+            case Status:
+                return getCurrentStatus();
             default:
                 return super.getValueForField(fieldName);
         }
@@ -552,6 +575,7 @@ public class Member extends BaseEntity
             case Gender:
             case Profession:
             case Position:
+            case Status:
                 return EditorType.ComboBox;
         }
         
@@ -644,7 +668,7 @@ public class Member extends BaseEntity
 
     @Override
     public void setValueForField(ColumnName fieldName, Object value) {
-        if(value == null) return;
+        if(value == null) value = "";
         
         switch(fieldName)
         {
@@ -727,6 +751,11 @@ public class Member extends BaseEntity
             case ImagePath:
                 setImagePath((String) value);
                 break;
+            case Status:
+                try
+                {
+                    setCurrentStatus(ActiveStatus.valueOf(value.toString()));
+                }catch(Exception ex) { setCurrentStatus(ActiveStatus.Unknown);}
             default:
                 super.setValueForField(fieldName, value);
         }

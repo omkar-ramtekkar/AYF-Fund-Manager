@@ -22,8 +22,7 @@ public class Expense extends BaseEntity{
     String expenseType;
     Date date;
     double amount;
-    String description;
-    Member reponsibleMember; 
+    String reponsibleMemberRegID; 
 
     @Override
     
@@ -53,14 +52,15 @@ public class Expense extends BaseEntity{
     }
 
     
-    public Expense(int id, String expenseType, Date date, double amount, String description, Member reponsibleMember) {
-        setID(id);
+    
+    public Expense(int id, String uniqueID, String description, String expenseType, Date date, double amount, String reponsibleMemberRegID) {
+        super(id, uniqueID, description);
         this.expenseType = expenseType;
         this.date = date;
         this.amount = amount;
-        this.description = description;
-        this.reponsibleMember = reponsibleMember;
+        this.reponsibleMemberRegID = reponsibleMemberRegID;
     }
+    
     
     static public String getNextUniqueID()
     {
@@ -85,12 +85,8 @@ public class Expense extends BaseEntity{
         return amount;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public Member getReponsibleMember() {
-        return reponsibleMember;
+    public String getReponsibleMemberRegID() {
+        return reponsibleMemberRegID;
     }
 
     public void setExpenseType(String expenseType) {
@@ -105,12 +101,8 @@ public class Expense extends BaseEntity{
         this.amount = amount;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public void setReponsibleMember(Member reponsibleMember) {
-        this.reponsibleMember = reponsibleMember;
+    public void setReponsibleMember(String reponsibleMemberRegID) {
+        this.reponsibleMemberRegID = reponsibleMemberRegID;
     }
     
     
@@ -153,36 +145,20 @@ public class Expense extends BaseEntity{
                 return getDate();
             case Amount:
                 return getAmount();
-            case Description:
-                return getDescription();
             case ResponsibleMember:
-                if(getReponsibleMember() != null)
-                {
-                    return getReponsibleMember().getID();
-                }
-                return Integer.MAX_VALUE;
+                return getReponsibleMemberRegID();
             case ResponsibleMemberName:
-                if(getReponsibleMember() != null)
-                {
-                    return getReponsibleMember().getFirstName() + " " + getReponsibleMember().getMiddleName() + " " + getReponsibleMember().getLastName();
-                }
-                break;
+                return null;
             case ResponsibleMemberPosition:
-                if(getReponsibleMember() != null)
-                {
-                    return getReponsibleMember().getPosition();
-                }
-                break;
+                return null;
             default:
                 return super.getValueForField(fieldName);
         }
-        
-        return null;
     }
     
     public void setValueForField(ColumnName fieldName, Object value)
     {
-        if(value == null) return;
+        if(value == null) value = "";
         
         switch(fieldName)
         {
@@ -207,9 +183,8 @@ public class Expense extends BaseEntity{
             case Amount:
                 setAmount((Double.valueOf(value.toString())));
                 break;
-            case Description:
-                setDescription(value.toString());
             case ResponsibleMember:
+                setReponsibleMember(value.toString());
                 break;
             default:
                 super.setValueForField(fieldName, value);
@@ -219,18 +194,13 @@ public class Expense extends BaseEntity{
     public Vector<ColumnName> getColumnIDsForDetailLevel(DetailsLevel level)
     {
         Vector<ColumnName> columnNames = new Vector<ColumnName>(10);
+        columnNames.add((ColumnName.ID));
         columnNames.add((ColumnName.UniqueID));
         columnNames.add((ColumnName.ExpenseType));
         columnNames.add((ColumnName.Amount));
         columnNames.add((ColumnName.ExpenseDate));
         columnNames.add((ColumnName.ResponsibleMember));
         columnNames.add((ColumnName.Description));
-        
-        if(level != DetailsLevel.Database)
-        {
-            columnNames.add((ColumnName.ResponsibleMemberName));
-            columnNames.add((ColumnName.ResponsibleMemberPosition));
-        }
         
         columnNames.trimToSize();
         
@@ -240,6 +210,7 @@ public class Expense extends BaseEntity{
     public Vector getColumnsForDetailsLevel(DetailsLevel level)
     {
         Vector columnNames = new Vector(10);
+        columnNames.add(getNameForColumnID(ColumnName.ID));
         columnNames.add(getNameForColumnID(ColumnName.UniqueID));
         columnNames.add(getNameForColumnID(ColumnName.ExpenseType));
         columnNames.add(getNameForColumnID(ColumnName.Amount));
@@ -247,11 +218,6 @@ public class Expense extends BaseEntity{
         columnNames.add(getNameForColumnID(ColumnName.ResponsibleMember));        
         columnNames.add(getNameForColumnID(ColumnName.Description));
         
-        if(level != DetailsLevel.Database)
-        {
-            columnNames.add(getNameForColumnID(ColumnName.ResponsibleMemberName));
-            columnNames.add(getNameForColumnID(ColumnName.ResponsibleMemberPosition));
-        }
         
         columnNames.trimToSize();
         
@@ -261,14 +227,12 @@ public class Expense extends BaseEntity{
     public Vector<Object> toDataArray(DetailsLevel level)
     {
         Vector expenseDetails = new Vector(10);
-        
+        expenseDetails.add(getValueForField(ColumnName.ID));
         expenseDetails.add(getValueForField(ColumnName.UniqueID));
         expenseDetails.add(getValueForField(ColumnName.ExpenseType));
         expenseDetails.add(getValueForField(ColumnName.Amount));
         expenseDetails.add(getValueForField(ColumnName.ExpenseDate));
         expenseDetails.add(getValueForField(ColumnName.ResponsibleMember));
-        expenseDetails.add(getValueForField(ColumnName.ResponsibleMemberName));
-        expenseDetails.add(getValueForField(ColumnName.ResponsibleMemberPosition));
         expenseDetails.add(getValueForField(ColumnName.Description));
         
         expenseDetails.trimToSize();

@@ -695,7 +695,8 @@ public class InformationPanel extends BackgroundPanel {
                         null, 
                         position, 
                         imagePath, 
-                        BaseEntity.ActiveStatus.Unknown);
+                        BaseEntity.ActiveStatus.Active
+                );
                 
                 donor.setUniqueID(Donor.getNextUniqueID());
                 return donor;
@@ -723,7 +724,8 @@ public class InformationPanel extends BackgroundPanel {
                         DateTime.toSQLDate(registerationDate), 
                         position, 
                         imagePath, 
-                        Member.ActiveStatus.Unknown);
+                        Member.ActiveStatus.Active
+                );
                 
                 member.setUniqueID(Member.getNextUniqueID());
                 return member;

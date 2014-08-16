@@ -42,7 +42,6 @@ public class DatabaseManager {
     public static final String PROFESSION_TYPE_TABLE_NAME   = "ProfessionType";
     public static final String POSITION_TYPE_TABLE_NAME     = "PositionType";
     public static final String PAYMENT_MODE_TYPE_TABLE_NAME = "PaymentModeTypes";
-    public static final String STATUS_TYPE_TABLE_NAME       = "StatusType";
 
     public static final String CASHFLOW_STATUS_TYPE_TABLE_NAME    = "StatusType";
     public static final String MEMBER_TYPE_TABLE_NAME       = "MemberType";
@@ -223,16 +222,7 @@ public class DatabaseManager {
         
         return EXPENSE_TYPES;
     }
-    
-    public static ArrayList<Type> getStatusTypes() {
-        
-        if(STATUS_TYPES == null)
-        {
-            STATUS_TYPES = getTypesFromTable(STATUS_TYPE_TABLE_NAME);
-        }
-        
-        return STATUS_TYPES;
-    }
+   
     
     public static ArrayList<String> typesToStrings(ArrayList<Type> types)
     {

@@ -436,14 +436,14 @@ public class MemberStatementReportView extends BaseReportView implements ReportD
                 if(!DatabaseManager.performDonate(newDonation))
                     throw new Exception("Donation failed. Unable to make database entry for the danation.");
 
-                Toast.showToast("Donation Successful", ScreenUtil.getCenterPointOnScreen(this), true);
+                Toast.showToastOnComponentCenter(this, "Donation Successful", true);
 
                 getReport().updateReport();
             }
         }
         catch(Exception ex)
         {
-            Toast.showToast(ex.getMessage(), ScreenUtil.getCenterPointOnScreen(this), false);
+            Toast.showToastOnComponentCenter(this, ex.getMessage(), false);
         }
     }//GEN-LAST:event_donateButtonActionPerformed
 
@@ -477,14 +477,14 @@ public class MemberStatementReportView extends BaseReportView implements ReportD
                 if(!DatabaseManager.performDonate(newDonation))
                     throw new Exception("Donation failed. Unable to make database entry for the danation.");
 
-                Toast.showToast("Donation Successful", ScreenUtil.getCenterPointOnScreen(this), true);
+                Toast.showToastOnComponentCenter(this, "Donation Successful", true);
 
                 getReport().updateReport();
             }
         }
         catch(Exception ex)
         {
-            Toast.showToast(ex.getMessage(), ScreenUtil.getCenterPointOnScreen(this), false);
+            Toast.showToastOnComponentCenter(this, ex.getMessage(), false);
         }
     }//GEN-LAST:event_paySubscriptionButtonActionPerformed
 
@@ -504,7 +504,7 @@ public class MemberStatementReportView extends BaseReportView implements ReportD
             getReportTable().setModel(new GenericDefaultTableModel(data));
             adjustReportTableColumns();
             
-            Toast.showToast(data.getData().size() + " Records Found", ScreenUtil.getCenterPointOnScreen(getReportTable()), true);
+            Toast.showToastOnComponentCenter(getReportTable(), data.getData().size() + " Records Found", true);
             
             if(report != null)
             {

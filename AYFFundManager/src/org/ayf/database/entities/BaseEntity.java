@@ -16,7 +16,7 @@ import org.ayf.ui.InformationPanel;
  *
  * @author om
  */
-public abstract class BaseEntity {
+public abstract class BaseEntity extends Object{
 
     public enum Gender { Male, Female }
     
@@ -52,6 +52,20 @@ public abstract class BaseEntity {
     {
         Unknown, Active, Inactive
     }
+
+    public BaseEntity() {
+    }
+    
+    
+
+    public BaseEntity(int id, String uniqueID, String description) 
+    {
+        setID(id);
+        setUniqueID(uniqueID);
+        setDescription(description);
+    }
+    
+    
     
     public static Vector<String> getAllValuesForColumnName(ColumnName columnName)
     {
@@ -103,8 +117,7 @@ public abstract class BaseEntity {
             }
             case Status:
             {
-                Vector<String> values = new Vector<String>(DatabaseManager.typesToStrings(DatabaseManager.getStatusTypes()));
-                return values;
+                return null;
             }
         }
         
@@ -125,6 +138,8 @@ public abstract class BaseEntity {
                 return getID();
             case UniqueID:
                 return getUniqueID();
+            case Description:
+                return getDescription();
         }
         
         return null;
@@ -139,6 +154,9 @@ public abstract class BaseEntity {
                 break;
             case UniqueID:
                 setUniqueID(value.toString());
+                break;
+            case Description:
+                setDescription(value.toString());
                 break;
         }
     }
@@ -160,7 +178,16 @@ public abstract class BaseEntity {
     public void setUniqueID(String uniqueID) {
         this.uniqueID = uniqueID;
     }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
     
     private int id = Integer.MAX_VALUE;
     private String uniqueID = null;
+    private String description = null;
 }
