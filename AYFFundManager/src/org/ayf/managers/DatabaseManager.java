@@ -6,6 +6,7 @@
 
 package org.ayf.managers;
 
+import java.io.File;
 import org.ayf.database.entities.Donor;
 import org.ayf.database.entities.Member;
 import java.sql.Connection;
@@ -28,6 +29,7 @@ import org.ayf.database.entities.CashFlow;
 import org.ayf.database.entities.Expense;
 import org.ayf.reports.EntityReportData;
 import org.ayf.reports.ReportData;
+import org.ayf.tpl.java2s.FilenameUtils;
 import org.ayf.util.PreferenceManager;
 
 
@@ -851,68 +853,48 @@ public class DatabaseManager {
         return bInserted;
     }
     
-    
     public static boolean registerMember(Member member)
     {
+        Logger.getLogger(DatabaseManager.class.getName()).log(Level.INFO, null, "registerMember :" + member.toString());
+        
         boolean bRegistered = false; 
-        Connection conn = null;
         if(member != null)
         {
-            try 
+            String imagePath = member.getImagePath();
+            
+            if(imagePath != null)
             {
-                conn = createConnection();
+                StringBuilder newImageName = new StringBuilder(member.getUniqueID().replaceAll("/", "_"));
+                newImageName.append(".").append(FilenameUtils.getExtension(imagePath));
                 
-                String sql = "INSERT INTO "+ MEMBER_TABLE_NAME + " (FirstName, MiddleName, LastName, PermanentAddress, TemporaryAddress, ContactNumber, EmailAddress, RegisterationDate, Position, Profession, DateOfBirth, Gender, Image, MaritalStatus, Cast, SubCast, District, BloodGroup, Education, Status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-                PreparedStatement ps = conn.prepareStatement(sql);
-
-                ps.setString(1, member.getFirstName());
-                ps.setString(2, member.getMiddleName());
-                ps.setString(3, member.getLastName());
-                ps.setString(4, member.getPermanentAddress());
-                ps.setString(5, member.getTemporaryAddress());
-                ps.setString(6, member.getContactNumber());
-                ps.setString(7, member.getEmailAddress());
-                ps.setDate(8, member.getRegisterationDate());
-                ps.setString(9, member.getPosition());
-                ps.setString(10, member.getProfession() != null ? member.getProfession() : null);
-                ps.setDate(11, member.getDateOfBirth());
-                ps.setString(12, member.getGender() == Member.Gender.Male ? "Male" : "Female" );
-                ps.setString(13, member.getImagePath());
-                ps.setString(14, member.getMaritalStatus().toString());
-                ps.setString(15, member.getCast());
-                ps.setString(16, member.getSubCast());
-                ps.setString(17, member.getDistrict());
-                ps.setString(18, member.getBloodGroup());
-                ps.setString(19, member.getEducation());
-                ps.setString(20, Member.ActiveStatus.Active.toString());
+                Logger.getLogger(DatabaseManager.class.getName()).log(Level.INFO, null, "registerMember: imagePath="+member.getImagePath());
+                Logger.getLogger(DatabaseManager.class.getName()).log(Level.INFO, null, "registerMember: newImageName="+newImageName);
                 
-                bRegistered = ps.executeUpdate() > 0;
-                conn.commit();
-                               
-            } catch (SQLException ex) {
-                Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, ex);
-                JOptionPane.showMessageDialog(null, ex.getLocalizedMessage(), "Unable to register member ", ERROR_MESSAGE);
+                if(ResourceManager.copyImageFileToImageDir(imagePath, newImageName.toString()))
+                {
+                    Logger.getLogger(DatabaseManager.class.getName()).log(Level.INFO, null, "registerMember: Image copied successfully");
+                    member.setImagePath(newImageName.toString());
+                }
             }
-            finally
-            {
-                closeConnection(conn);
-            }
+            
+            Vector<BaseEntity> entity = new Vector<BaseEntity>(1);
+            entity.add(member);
+            bRegistered = insertEntities(entity, Member.class);
         }
         
         return bRegistered;
     }
     
+    
     public static boolean performDonate(Donor donor)
     {
         boolean bDonateSuccess = false; 
-        Connection conn = null;
+        
         if(donor != null)
         {
             Vector<BaseEntity> entity = new Vector<BaseEntity>(1);
             entity.add(donor);
-            bDonateSuccess = insertEntities(entity, donor.getClass());
-
-            if(conn != null) closeConnection(conn);
+            bDonateSuccess = insertEntities(entity, Donor.class);
         }
         
         return bDonateSuccess;

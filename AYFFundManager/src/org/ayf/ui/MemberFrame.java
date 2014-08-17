@@ -292,9 +292,7 @@ public class MemberFrame extends javax.swing.JFrame {
             Member member = getMember();
             if(member != null)
             {
-                Vector<BaseEntity> entity = new Vector<BaseEntity>();
-                entity.add(member);
-                boolean bRegistered = DatabaseManager.insertEntities(entity, member.getClass());
+                boolean bRegistered = DatabaseManager.registerMember(member);
                 if(bRegistered)
                 {
                     Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();

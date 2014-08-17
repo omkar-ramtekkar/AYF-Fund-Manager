@@ -33,7 +33,6 @@ public class InformationPanel extends BackgroundPanel {
      */
     
     Vector<Vector<JPanel>> allPanels;
-
     
     public static final String[] BloodGroups = {"A+", "B+", "AB+", "O+", "A-", "B-", "AB-", "O-"};
     
@@ -148,7 +147,7 @@ public class InformationPanel extends BackgroundPanel {
     
     void disableControls()
     {
-        this.imageLabel.setEnabled(false);
+        this.memberImageLabel.setEnabled(false);
             
         //basic information panel
         this.firstNameTxt.setEditable(false);
@@ -198,7 +197,7 @@ public class InformationPanel extends BackgroundPanel {
     
     void enableControls()
     {
-        this.imageLabel.setEnabled(true);
+        this.memberImageLabel.setEnabled(true);
             
         //basic information panel
         this.firstNameTxt.setEditable(true);
@@ -250,7 +249,7 @@ public class InformationPanel extends BackgroundPanel {
         
         if(this.member != null)
         {
-            updateImageIcon(member.getImagePath());
+            updateImageIconFromImageName(member.getImagePath());
             
             //basic information panel
             this.firstNameTxt.setText(member.getFirstName());
@@ -432,7 +431,7 @@ public class InformationPanel extends BackgroundPanel {
         }
         else
         {
-            updateImageIcon(null);
+            updateImageIconToNull();
             
             setBloodGroups(new Vector<String>(Arrays.asList(BloodGroups)));
             setRegisterationMonthComboBox(new Vector<String>(Arrays.asList(DateTime.Months)));
@@ -571,7 +570,7 @@ public class InformationPanel extends BackgroundPanel {
     {
         boolean isValidMember = true;
         //header panel
-        String imagePath = this.imageLabel.getToolTipText();
+        String imagePath = this.memberImageLabel.getToolTipText();
 
         //basic information panel
         String firstName = this.firstNameTxt.getText();
@@ -788,7 +787,7 @@ public class InformationPanel extends BackgroundPanel {
         marritalStatusSingle = new javax.swing.JRadioButton();
         marritalStatusMarried = new javax.swing.JRadioButton();
         headerPanel = new javax.swing.JPanel();
-        imageLabel = new javax.swing.JLabel();
+        memberImageLabel = new javax.swing.JLabel();
         registerationNumber = new javax.swing.JLabel();
         donationAmountPanel = new javax.swing.JPanel();
         donationTextField = new javax.swing.JTextField();
@@ -1185,20 +1184,20 @@ public class InformationPanel extends BackgroundPanel {
 
         headerPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
 
-        imageLabel.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(204, 255, 204), 2, true));
-        imageLabel.setMaximumSize(new java.awt.Dimension(90, 90));
-        imageLabel.setMinimumSize(new java.awt.Dimension(90, 90));
-        imageLabel.setName(""); // NOI18N
-        imageLabel.setPreferredSize(new java.awt.Dimension(90, 90));
-        imageLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+        memberImageLabel.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(204, 255, 204), 2, true));
+        memberImageLabel.setMaximumSize(new java.awt.Dimension(90, 90));
+        memberImageLabel.setMinimumSize(new java.awt.Dimension(90, 90));
+        memberImageLabel.setName(""); // NOI18N
+        memberImageLabel.setPreferredSize(new java.awt.Dimension(90, 90));
+        memberImageLabel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                imageLabelMouseClicked(evt);
+                memberImageLabelMouseClicked(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                imageLabelMouseExited(evt);
+                memberImageLabelMouseExited(evt);
             }
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                imageLabelMouseEntered(evt);
+                memberImageLabelMouseEntered(evt);
             }
         });
 
@@ -1255,7 +1254,7 @@ public class InformationPanel extends BackgroundPanel {
             headerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(headerPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(imageLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(memberImageLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(77, 77, 77)
                 .addGroup(headerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(headerPanelLayout.createSequentialGroup()
@@ -1269,7 +1268,7 @@ public class InformationPanel extends BackgroundPanel {
             .addGroup(headerPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(headerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(imageLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(memberImageLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(headerPanelLayout.createSequentialGroup()
                         .addComponent(registerationNumber, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
@@ -1630,73 +1629,50 @@ public class InformationPanel extends BackgroundPanel {
         this.marritalStatusSingle.setSelected(false);
     }//GEN-LAST:event_marritalStatusMarriedActionPerformed
 
-    private void imageLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_imageLabelMouseClicked
-        
-        if(this.panelType != PanelType.View)
-        {
-            JFileChooser fileChooser = new JFileChooser();
-            fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-            fileChooser.setMultiSelectionEnabled(false);
-            
-            int userOption = fileChooser.showOpenDialog(this);
-            
-            if(userOption == JFileChooser.APPROVE_OPTION)
-            {
-                File file = fileChooser.getSelectedFile();
-                updateImageIcon(file.getAbsolutePath());
-            }
-        }
-    }//GEN-LAST:event_imageLabelMouseClicked
-
-    void updateImageIcon(String imagePath)
+    void updateImage_FromFileChooser(String imagePath)
     {
-        String iconPath = imagePath;
-        if(imagePath == null)
+        ImageIcon icon = ResourceManager.getExternalIcon(imagePath, this.memberImageLabel.getPreferredSize());
+        if(icon != null)
         {
-            iconPath = this.imageLabel.getToolTipText();
-        }
-        
-        if(iconPath != null)
-        {
-            ImageIcon icon = ResourceManager.getExternalIcon(iconPath, this.imageLabel.getPreferredSize());
-            if(icon != null)
-            {
-                this.imageLabel.setIcon(icon);
-                this.imageLabel.setToolTipText(iconPath);
-            }
+            this.memberImageLabel.setIcon(icon);
+            this.memberImageLabel.setToolTipText(imagePath);
         }
         else
         {
-            if(this.genderFemaleButton.isSelected())
-            {
-                this.imageLabel.setIcon(ResourceManager.getIcon("no_photo_women", this.imageLabel.getPreferredSize()));
-            }
-            else if(this.genderMaleButton.isSelected())
-            {
-                this.imageLabel.setIcon(ResourceManager.getIcon("no_photo_men", this.imageLabel.getPreferredSize()));
-            }
-            else
-            {
-                this.imageLabel.setIcon(ResourceManager.getIcon("no_photo", this.imageLabel.getPreferredSize()));
-            }
+            updateImageIconToNull();
         }
     }
     
-    private void imageLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_imageLabelMouseEntered
+    void updateImageIconFromImageName(String imageName)
+    {
+        ImageIcon icon = ResourceManager.getImageFromImageFolder(imageName, this.memberImageLabel.getPreferredSize());
         
-        if(this.panelType != PanelType.View)
+        if(icon != null)
         {
-            this.imageLabel.setIcon(ResourceManager.getIcon("change_photo", this.imageLabel.getPreferredSize()));
+            this.memberImageLabel.setIcon(icon);
         }
-    }//GEN-LAST:event_imageLabelMouseEntered
-
-    private void imageLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_imageLabelMouseExited
-        if(getPanelType() != PanelType.View)
+        else
         {
-            updateImageIcon(null);
+            updateImageIconToNull();
         }
-    }//GEN-LAST:event_imageLabelMouseExited
-
+    }
+    
+    void updateImageIconToNull()
+    {
+        if(this.genderFemaleButton.isSelected())
+        {
+            this.memberImageLabel.setIcon(ResourceManager.getIcon("no_photo_women", this.memberImageLabel.getPreferredSize()));
+        }
+        else if(this.genderMaleButton.isSelected())
+        {
+            this.memberImageLabel.setIcon(ResourceManager.getIcon("no_photo_men", this.memberImageLabel.getPreferredSize()));
+        }
+        else
+        {
+            this.memberImageLabel.setIcon(ResourceManager.getIcon("no_photo", this.memberImageLabel.getPreferredSize()));
+        }
+    }
+    
     private void updateScrollViewWithEvent(java.awt.event.FocusEvent evt) {
         java.awt.Component focusedComponent = evt.getComponent();
         this.scrollRectToVisible(focusedComponent.getParent().getBounds());
@@ -1826,6 +1802,50 @@ public class InformationPanel extends BackgroundPanel {
         
     }//GEN-LAST:event_registerationNumberMouseClicked
 
+    private void memberImageLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_memberImageLabelMouseEntered
+
+        if(this.panelType != PanelType.View)
+        {
+            this.memberImageLabel.setIcon(ResourceManager.getIcon("change_photo", this.memberImageLabel.getPreferredSize()));
+        }
+    }//GEN-LAST:event_memberImageLabelMouseEntered
+
+    private void memberImageLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_memberImageLabelMouseExited
+        if(getPanelType() != PanelType.View)
+        {
+            if(this.memberImageLabel.getToolTipText() != null)
+            {
+                updateImage_FromFileChooser(this.memberImageLabel.getToolTipText());
+            }
+            else if(this.member != null)
+            {
+                updateImageIconFromImageName(this.member.getImagePath());
+            }
+            else
+            {
+                updateImageIconToNull();
+            }
+        }
+    }//GEN-LAST:event_memberImageLabelMouseExited
+
+    private void memberImageLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_memberImageLabelMouseClicked
+
+        if(this.panelType != PanelType.View)
+        {
+            JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+            fileChooser.setMultiSelectionEnabled(false);
+
+            int userOption = fileChooser.showOpenDialog(this);
+
+            if(userOption == JFileChooser.APPROVE_OPTION)
+            {
+                File file = fileChooser.getSelectedFile();
+                updateImage_FromFileChooser(file.getAbsolutePath());
+            }
+        }
+    }//GEN-LAST:event_memberImageLabelMouseClicked
+
 
     private Vector<String> professionTypes;
     private Vector<String> positionTypes;
@@ -1851,7 +1871,6 @@ public class InformationPanel extends BackgroundPanel {
     private javax.swing.JRadioButton genderFemaleButton;
     private javax.swing.JRadioButton genderMaleButton;
     private javax.swing.JPanel headerPanel;
-    private javax.swing.JLabel imageLabel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -1881,6 +1900,7 @@ public class InformationPanel extends BackgroundPanel {
     private javax.swing.JTextField lastNameTxt;
     private javax.swing.JRadioButton marritalStatusMarried;
     private javax.swing.JRadioButton marritalStatusSingle;
+    private javax.swing.JLabel memberImageLabel;
     private javax.swing.JTextField middleNameTxt;
     private javax.swing.JTextField mobileNumberTxt;
     private javax.swing.JPanel otherInformationPanel;

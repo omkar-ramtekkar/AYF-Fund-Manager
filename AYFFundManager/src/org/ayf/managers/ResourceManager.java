@@ -16,8 +16,11 @@ import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import org.apache.commons.io.FileUtils;
+import org.ayf.tpl.java2s.FilenameUtils;
+import org.ayf.util.PreferenceManager;
+import org.ayf.util.Toast;
 
 /**
  *
@@ -135,7 +138,72 @@ public class ResourceManager
         return backgroundImage;
     }
 
-    public static Icon getAppIcon() {
+    public static ImageIcon getAppIcon() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    public static ImageIcon getImageFromImageFolder(String imageName, Dimension size)
+    {
+        try
+        {
+            String imageDir = PreferenceManager.getImageDir();
+            File testFile = new File(imageDir);
+            if(testFile.exists() == false)
+                throw new Exception("Image directory doesn't exist. Update image dir path from Settings.");
+            
+            String imagePath = FilenameUtils.concat(imageDir, imageName);
+            testFile = new File(imagePath);
+            
+            if(testFile.exists() == false)
+                throw new Exception("Image doesn't exist in image directory. Check image name - " + imageName);
+            
+            if(size == null)
+                throw new Exception("null image size provided.");
+                
+            if(size.height < 1 || size.width < 1)
+                throw new Exception("Invalid image size provided. Can't create image of size - " + size.toString() );
+            
+            return getExternalIcon(imagePath, size);
+        }
+        catch(Exception ex)
+        {
+            Logger.getLogger(ResourceManager.class.getName()).log(Level.SEVERE, null, ex);
+            Toast.showToastOnScreenCenter(ex.getMessage(), false);
+            return null;
+        }
+    }
+    
+    public static boolean copyFileToDir(String imageFilePath, String dirPath)
+    {
+        try {
+            FileUtils.copyFileToDirectory(new File(imageFilePath), new File(dirPath));
+            return true;
+        } catch (IOException ex) {
+            Logger.getLogger(ResourceManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return false;
+    }
+    
+    public static boolean copyFileToFile(String imageFilePath, String newFileName)
+    {
+        try {
+            FileUtils.copyFile(new File(imageFilePath), new File(newFileName));
+            return true;
+        } catch (IOException ex) {
+            Logger.getLogger(ResourceManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return false;
+    }
+    
+    public static boolean copyImageFileToImageDir(String imageFilePath)
+    {
+        return copyFileToDir(imageFilePath, PreferenceManager.getImageDir());
+    }
+
+    static boolean copyImageFileToImageDir(String imagePath, String newFileName) 
+    {
+        return copyFileToFile(imagePath, FilenameUtils.concat(PreferenceManager.getImageDir(), newFileName));
     }
 }

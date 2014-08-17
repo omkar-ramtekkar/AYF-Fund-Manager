@@ -6,6 +6,9 @@
 
 package org.ayf.util;
 
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.prefs.Preferences;
 
 /**
@@ -99,7 +102,12 @@ public class PreferenceManager {
     {
         getIntance().setString(NEXT_DONATION_ID, id);
     }
-    
+   
+    public static String getAppDir() 
+    {
+        String path = PreferenceManager.class.getProtectionDomain().getCodeSource().getLocation().getPath(); 
+        return path;
+    }
     
     public static void updateNextRegID()
     {

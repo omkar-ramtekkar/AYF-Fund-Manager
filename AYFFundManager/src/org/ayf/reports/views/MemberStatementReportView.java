@@ -617,7 +617,6 @@ public class MemberStatementReportView extends BaseReportView implements ReportD
         
         if(member != null)
         {
-            
             String fn = member.getFirstName();
             String mn = member.getMiddleName();
             String ln = member.getLastName();
@@ -629,6 +628,7 @@ public class MemberStatementReportView extends BaseReportView implements ReportD
             this.districtLabel.setText(member.getDistrict());
             this.memberImageLabel.setIcon(ResourceManager.getIcon("no_photo_men", this.memberImageLabel.getPreferredSize()));
             this.deactivateButton.setText(member.getCurrentStatus() == BaseEntity.ActiveStatus.Active ? "Deactivate" : "Activate");
+            this.memberImageLabel.setIcon(ResourceManager.getImageFromImageFolder(this.currentMember.getImagePath(), this.memberImageLabel.getPreferredSize()));
         }
         else
         {

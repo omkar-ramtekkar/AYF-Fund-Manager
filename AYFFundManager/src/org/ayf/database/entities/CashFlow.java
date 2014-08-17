@@ -155,7 +155,6 @@ public class CashFlow extends BaseEntity{
     public Vector<ColumnName> getColumnIDsForDetailLevel(CashFlow.DetailsLevel level)
     {
         Vector columnNames = new Vector(4);
-        columnNames.add((CashFlow.ColumnName.ID));
         columnNames.add((CashFlow.ColumnName.UniqueID));
         columnNames.add((CashFlow.ColumnName.TransactionDate));
         columnNames.add((CashFlow.ColumnName.Status));
@@ -169,7 +168,6 @@ public class CashFlow extends BaseEntity{
     public Vector<Object> getColumnsForDetailsLevel(CashFlow.DetailsLevel level)
     {
         Vector columnNames = new Vector(4);
-        columnNames.add(getNameForColumnID(CashFlow.ColumnName.ID));
         columnNames.add(getNameForColumnID(CashFlow.ColumnName.UniqueID));
         columnNames.add(getNameForColumnID(CashFlow.ColumnName.TransactionDate));
         columnNames.add(getNameForColumnID(CashFlow.ColumnName.Status));
@@ -183,7 +181,6 @@ public class CashFlow extends BaseEntity{
     public Vector<Object> toDataArray(DetailsLevel level)
     {
         Vector transactionDetails = new Vector(10);
-        transactionDetails.add(getValueForField(CashFlow.ColumnName.ID));
         transactionDetails.add(getValueForField(CashFlow.ColumnName.UniqueID));
         transactionDetails.add(getValueForField(CashFlow.ColumnName.TransactionDate));
         transactionDetails.add(getValueForField(CashFlow.ColumnName.Status));

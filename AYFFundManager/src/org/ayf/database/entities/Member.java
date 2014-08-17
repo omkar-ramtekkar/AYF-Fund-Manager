@@ -144,7 +144,6 @@ public class Member extends BaseEntity
         {
             Vector columnNames = new Vector(20);
         
-            columnNames.add((ColumnName.ID));
             columnNames.add((ColumnName.UniqueID));
             columnNames.add((ColumnName.FirstName));
             columnNames.add((ColumnName.MiddleName));
@@ -169,7 +168,6 @@ public class Member extends BaseEntity
         {
             Vector columnNames = new Vector(20);
         
-            columnNames.add((ColumnName.ID));
             columnNames.add((ColumnName.UniqueID));
             columnNames.add((ColumnName.FirstName));
             columnNames.add((ColumnName.MiddleName));
@@ -186,7 +184,6 @@ public class Member extends BaseEntity
         
         {
             Vector columnNames = new Vector(20);
-            columnNames.add((ColumnName.ID));
             columnNames.add((ColumnName.UniqueID));
             columnNames.add((ColumnName.FirstName));
             columnNames.add((ColumnName.MiddleName));
@@ -206,7 +203,6 @@ public class Member extends BaseEntity
         
         {
             Vector columnNames = new Vector(20);
-            columnNames.add((ColumnName.ID));
             columnNames.add((ColumnName.UniqueID));
             columnNames.add((ColumnName.Status));
             columnNames.add((ColumnName.FirstName));
