@@ -12,6 +12,7 @@ import org.ayf.command.Command;
 import org.ayf.command.ReportCommand;
 import org.ayf.database.entities.BaseEntity;
 import org.ayf.managers.DatabaseManager;
+import org.ayf.reports.views.BaseReportView;
 import org.ayf.reports.views.GenericSearchReportView;
 
 /**
@@ -30,6 +31,16 @@ public class GenericSearchReport extends Report{
         setEnitityType(type);
         setDetailLevel(level);
         setView(new GenericSearchReportView(this));
+    }
+    
+    public GenericSearchReport(Class<?> type, BaseEntity.DetailsLevel level, BaseReportView view, ReportCommand.SubCommandType command)
+    {
+        super(command);
+        
+        setEnitityType(type);
+        setDetailLevel(level);
+        setView(view);
+        view.setReport(this);
     }
 
     public GenericSearchReport(Command.SubCommandType reportType) {

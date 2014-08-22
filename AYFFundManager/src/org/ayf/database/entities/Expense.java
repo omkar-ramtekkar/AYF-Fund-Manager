@@ -6,9 +6,12 @@
 
 package org.ayf.database.entities;
 
+import com.sun.tools.corba.se.idl.InvalidArgument;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.ayf.reports.ReportData;
 import org.ayf.util.DateTime;
 import org.ayf.util.NumberUtil;
@@ -64,12 +67,16 @@ public class Expense extends BaseEntity{
     
     static public String getNextUniqueID()
     {
-        String id = PreferenceManager.getIntance().getString(PreferenceManager.NEXT_EXPENSE_ID, "1");
-        return "AYF/expense/" + 
-                NumberUtil.getFormattedNumber(DateTime.getMonth(DateTime.getToday()) + 1) + 
-                "/" + 
-                DateTime.getYear(DateTime.getToday()) +
-                "/"+ NumberUtil.getFormattedNumber(Integer.parseInt(id));
+        try {
+            String id = PreferenceManager.getIntance().getString(PreferenceManager.NEXT_EXPENSE_ID, "1");
+            return "AYF/expense/" +
+                    NumberUtil.getFormattedNumber(DateTime.getMonth(DateTime.getToday()) + 1) +
+                    "/" +
+                    DateTime.getYear(DateTime.getToday()) +
+                    "/"+ NumberUtil.getFormattedNumber(Integer.parseInt(id));
+        } catch (InvalidArgument ex) {
+            return "";
+        }
     }
     
     
@@ -107,7 +114,8 @@ public class Expense extends BaseEntity{
     
     
     
-    public static String getNameForColumnID(Expense.ColumnName name)
+    @Override
+    public String getNameForColumnID(Expense.ColumnName name)
     {
         switch(name)
         {

@@ -22,7 +22,6 @@ import javax.swing.JPanel;
 import javax.swing.JRootPane;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
-import org.ayf.database.entities.BaseEntity;
 import org.ayf.database.entities.Member;
 import org.ayf.managers.DatabaseManager;
 import org.ayf.ui.BackgroundPanel.BackgroundStyle;
@@ -47,7 +46,8 @@ public class MemberFrame extends javax.swing.JFrame {
         initComponents();
         
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        panel = new InformationPanel(member, context);
+        panel = new InformationPanel(context);
+        panel.setMember(member);
         
         panels = panel.getAllPanels();
         

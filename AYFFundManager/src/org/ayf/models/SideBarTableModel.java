@@ -133,6 +133,7 @@ public final class SideBarTableModel extends AbstractTableModel implements Mouse
         detailsOption.addSubOption(new Option(ReportCommand.SubCommandType.DetailsAllDonors, detailsOption));
         detailsOption.addSubOption(new Option(ReportCommand.SubCommandType.DetailsAllExpenses, detailsOption));
         detailsOption.addSubOption(new Option(ReportCommand.SubCommandType.DetailsAllCashFlows, detailsOption));
+        detailsOption.addSubOption(new Option(ReportCommand.SubCommandType.DetailsAllSubscriptionAmountDetails, detailsOption));
         detailsOption.addSubOption(new Option(ReportCommand.SubCommandType.None, detailsOption));
         
         

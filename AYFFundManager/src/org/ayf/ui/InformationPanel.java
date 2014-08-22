@@ -6,9 +6,12 @@
 
 package org.ayf.ui;
 
+import com.sun.tools.corba.se.idl.InvalidArgument;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
@@ -49,14 +52,15 @@ public class InformationPanel extends BackgroundPanel {
     private Member member;
     
     
-    public InformationPanel(Member member, PanelType context) {
+    public InformationPanel(PanelType context) {
         
         super(BackgroundStyle.GradientBlueGray);
         
         initComponents();
         
         setPanelType(context);
-        setMember(member);
+        
+        updatePanel();
         
         allPanels = new Vector<Vector<JPanel>>();
         
@@ -277,21 +281,40 @@ public class InformationPanel extends BackgroundPanel {
                 this.registerationNumber.setText("----");
             }
             
-            this.dobDate.setText(Integer.toString(DateTime.getDay(member.getDateOfBirth())));
+            try {
+                this.dobDate.setText(Integer.toString(DateTime.getDay(member.getDateOfBirth())));
+            } catch (InvalidArgument ex) {
+                Toast.showToast(this.dobDate, "Invalid date of birth", false);
+                this.dobDate.setText("");
+            }
+            
             Vector<String> dobMonth = new Vector<String>();
             if(getPanelType() == PanelType.View)
             {
-                dobMonth.add(DateTime.Months[DateTime.getMonth(member.getDateOfBirth())]);
+                try {
+                    dobMonth.add(DateTime.Months[DateTime.getMonth(member.getDateOfBirth())]);
+                } catch (InvalidArgument ex) {
+                    
+                }
                 setDateOfBirthMonthComboBox(dobMonth);
             }
             else
             {
                 dobMonth.addAll(Arrays.asList(DateTime.Months));
                 setDateOfBirthMonthComboBox(dobMonth);            
-                this.dateOfBirthMonths.setSelectedIndex(DateTime.getMonth(member.getDateOfBirth()));
+                try {
+                    this.dateOfBirthMonths.setSelectedIndex(DateTime.getMonth(member.getDateOfBirth()));
+                } catch (InvalidArgument ex) {
+                    Logger.getLogger(InformationPanel.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
             
-            this.dobYear.setText(Integer.toString(DateTime.getYear(member.getDateOfBirth())));
+            try {
+                this.dobYear.setText(Integer.toString(DateTime.getYear(member.getDateOfBirth())));
+            } catch (InvalidArgument ex) {
+                this.dobYear.setText("");
+                Toast.showToast(this.dobYear, "Invalid Date of Birth", false);
+            }
             
             java.sql.Date regOrDonationDate = null;
             if(this.panelType == PanelType.Donate)
@@ -303,21 +326,38 @@ public class InformationPanel extends BackgroundPanel {
                 regOrDonationDate = (java.sql.Date)this.member.getValueForField(BaseEntity.ColumnName.RegisterationDate);
             }
             
-            this.registerationDay.setText(Integer.toString(DateTime.getDay(regOrDonationDate)));
+            try {
+                this.registerationDay.setText(Integer.toString(DateTime.getDay(regOrDonationDate)));
+            } catch (InvalidArgument ex) {
+                this.registerationDay.setText("");
+                Toast.showToast(this.dobYear, "Invalid Date", false);
+            }
             Vector<String> registerationMonth = new Vector<String>(1);
             if(getPanelType() == PanelType.View)
             {
-                registerationMonth.add(DateTime.Months[DateTime.getMonth(regOrDonationDate)]);
+                try {
+                    registerationMonth.add(DateTime.Months[DateTime.getMonth(regOrDonationDate)]);
+                } catch (InvalidArgument ex) {
+                    
+                }
                 setRegisterationMonthComboBox(registerationMonth);
             }
             else
             {
                 registerationMonth.addAll(Arrays.asList(DateTime.Months));
                 setRegisterationMonthComboBox(registerationMonth);
-                this.registerationMonth.setSelectedIndex(DateTime.getMonth(regOrDonationDate));
+                try {
+                    this.registerationMonth.setSelectedIndex(DateTime.getMonth(regOrDonationDate));
+                } catch (InvalidArgument ex) {
+                    
+                }
             }
             
-            this.registerationYear.setText(Integer.toString(DateTime.getYear(regOrDonationDate)));
+            try {
+                this.registerationYear.setText(Integer.toString(DateTime.getYear(regOrDonationDate)));
+            } catch (InvalidArgument ex) {
+                Toast.showToast(this.registerationYear, "Invalid Registeration Date", false);
+            }
             
             if(this.member.getClass().equals(Donor.class))
             {
@@ -440,13 +480,15 @@ public class InformationPanel extends BackgroundPanel {
             setProfessionTypes(new Vector<String>(DatabaseManager.typesToStrings(DatabaseManager.getProfessionTypes())));
             setPaymentModeComboBox(BaseEntity.getAllValuesForColumnName(BaseEntity.ColumnName.PaymentMode));
             setDonationTypeComboBox(BaseEntity.getAllValuesForColumnName(BaseEntity.ColumnName.DonationType));
-            if(getPanelType() == PanelType.Donate)
-            {
-                this.registerationNumber.setText(Donor.getNextUniqueID());
-            }
-            else
-            {
-                this.registerationNumber.setText(Member.getNextUniqueID());
+            try {
+                if (getPanelType() == PanelType.Donate) {
+                    this.registerationNumber.setText(Donor.getNextUniqueID());
+                } else {
+                    this.registerationNumber.setText(Member.getNextUniqueID());
+                }
+            } catch (InvalidArgument invalidArgument) {
+                Toast.showToast(this.registerationNumber, "Failed to generate unique id", false);
+                this.registerationNumber.setText("");
             }
         }
     }
@@ -534,6 +576,8 @@ public class InformationPanel extends BackgroundPanel {
     
     boolean isValidPanelData(JPanel panel, boolean showToast)
     {
+        if(getPanelType() == PanelType.View) return true;
+        
         if(panel == this.basicInformationPanels)
         {
             return isValidBasicDetails(showToast);
@@ -726,7 +770,11 @@ public class InformationPanel extends BackgroundPanel {
                         Member.ActiveStatus.Active
                 );
                 
-                member.setUniqueID(Member.getNextUniqueID());
+                try {
+                    member.setUniqueID(Member.getNextUniqueID());
+                } catch (InvalidArgument ex) {
+                    member.setUniqueID("");
+                }
                 return member;
             }
         }

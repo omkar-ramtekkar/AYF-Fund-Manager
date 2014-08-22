@@ -6,7 +6,9 @@
 
 package org.ayf.util;
 
+import com.sun.tools.corba.se.idl.InvalidArgument;
 import java.awt.Color;
+import java.awt.IllegalComponentStateException;
 import java.awt.Label;
 import java.awt.Point;
 import java.util.Vector;
@@ -164,8 +166,13 @@ public class Toast {
     
     public static void showToast(JComponent component, String message, boolean isPositive, long forDuration)
     {
-        Point point = component.getLocationOnScreen();
-        showToast(message, point, isPositive, forDuration);
+        try {
+            Point point = component.getLocationOnScreen();
+            showToast(message, point, isPositive, forDuration);
+        } catch (Exception e) 
+        {
+            showToast(message, ScreenUtil.getScreenCenterPoint(), isPositive, forDuration);
+        }
     }
     
     public static void showToast(String message, Point locationOnScreen, boolean isPositive)
@@ -185,6 +192,10 @@ public class Toast {
     
     public static void showToastOnComponentCenter(JComponent component, String message, boolean isPositive)
     {
-        showToast(message, getProperLocationOfToast(message, ScreenUtil.getCenterPointOnScreen(component)), isPositive);
+        try {
+            showToast(message, getProperLocationOfToast(message, ScreenUtil.getCenterPointOnScreen(component)), isPositive);
+        } catch (InvalidArgument ex) {
+        } catch (IllegalComponentStateException ex) {
+        }
     }
 }

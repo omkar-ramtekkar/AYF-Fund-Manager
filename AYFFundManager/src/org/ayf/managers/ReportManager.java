@@ -14,6 +14,7 @@ import org.ayf.reports.AllCashFlowsReport;
 import org.ayf.reports.AllDonationsReport;
 import org.ayf.reports.AllExpensesReport;
 import org.ayf.reports.AllMembersReport;
+import org.ayf.reports.AllsubscriptionAmountReport;
 import org.ayf.reports.DonationReport;
 import org.ayf.reports.MemberStatementReport;
 import org.ayf.reports.Report;
@@ -52,6 +53,8 @@ public class ReportManager
         detailsReports.add(new AllDonationsReport());
         detailsReports.add(new AllExpensesReport());
         detailsReports.add(new AllCashFlowsReport());
+        detailsReports.add(new AllCashFlowsReport());
+        detailsReports.add(new AllsubscriptionAmountReport());
         
         reports.put(ReportCommand.SubCommandType.Details, detailsReports);
     }

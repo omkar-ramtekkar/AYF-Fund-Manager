@@ -6,6 +6,7 @@
 
 package org.ayf.util;
 
+import com.sun.tools.corba.se.idl.InvalidArgument;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -31,6 +32,8 @@ public class DateTime {
     
     public static String getFormattedDateSQL(java.sql.Date date)
     {
+        if(date == null) return "";
+        
         return dateFormat.format(date);
     }
     
@@ -45,44 +48,52 @@ public class DateTime {
         return timeFormat.format(getToday());
     }
     
-    public static int getDay(java.sql.Date date)
+    public static int getDay(java.sql.Date date) throws InvalidArgument
     {
+        if(date == null) throw new InvalidArgument("Provided date is null/invalid");
+        
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
         
         return cal.get(Calendar.DAY_OF_MONTH);
     }
     
-    public static int getDay(java.util.Date date)
+    public static int getDay(java.util.Date date) throws InvalidArgument
     {
         return getDay(toSQLDate(date));
     }
     
-    public static int getMonth(java.sql.Date date)
+    public static int getMonth(java.sql.Date date) throws InvalidArgument
     {
+        if(date == null) throw new InvalidArgument("Provided date is null/invalid");
+        
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
         
         return cal.get(Calendar.MONTH);
     }
     
-    public static int getMonth(java.util.Date date)
+    public static int getMonth(java.util.Date date) throws InvalidArgument
     {
+        if(date == null) throw new InvalidArgument("Provided date is null/invalid");
+        
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
         
         return cal.get(Calendar.MONTH);
     }
     
-    public static int getYear(java.sql.Date date)
+    public static int getYear(java.sql.Date date) throws InvalidArgument
     {
+        if(date == null) throw new InvalidArgument("Provided date is null/invalid");
+        
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
         
         return cal.get(Calendar.YEAR);
     }
     
-    public static int getYear(java.util.Date date)
+    public static int getYear(java.util.Date date) throws InvalidArgument
     {
         return getYear(toSQLDate(date));
     }
@@ -158,7 +169,7 @@ public class DateTime {
         return today;
     }
     
-    public java.util.Date getBeforeDate(java.util.Date date1, java.util.Date date2)
+    static public java.util.Date getBeforeDate(java.util.Date date1, java.util.Date date2)
     {
         if(date1 != null && date2 != null)
         {
@@ -171,7 +182,7 @@ public class DateTime {
         return null;
     }
     
-    public java.util.Date getAfterDate(java.util.Date date1, java.util.Date date2)
+    static public java.util.Date getAfterDate(java.util.Date date1, java.util.Date date2)
     {
         if(date1 != null && date2 != null)
         {
@@ -192,5 +203,56 @@ public class DateTime {
     static public java.sql.Date getAfterDate(java.sql.Date date1, java.sql.Date date2)
     {
         return toSQLDate(getAfterDate(toSQLDate(date1), toSQLDate(date2)));
+    }
+    
+    static public boolean isDateBetween(java.sql.Date date1, java.sql.Date date2, java.sql.Date checkDate)
+    {
+        if(date1 == null || date2 == null) return false;
+        
+        if(checkDate == null) return false;
+        
+        if(DateTime.getBeforeDate(date1, checkDate).equals(date1) &&
+                    DateTime.getAfterDate(date2, checkDate).equals(date2))
+        {
+            return true;
+        }
+        
+        return false;
+    }
+    
+    static public boolean isDateBetween(java.util.Date date1, java.sql.Date date2, java.util.Date checkDate)
+    {
+        if(date1 == null || date2 == null) return false;
+        
+        if(checkDate == null) return false;
+        
+        if(DateTime.getBeforeDate(date1, checkDate).equals(date1) &&
+                    DateTime.getAfterDate(date2, checkDate).equals(date2))
+        {
+            return true;
+        }
+        
+        return false;
+    }
+    
+    
+    static public java.sql.Date dateByAdding(java.sql.Date initialDate, int days, int months, int years)
+    {
+        return toSQLDate(dateByAdding(new java.util.Date(initialDate.getTime()), days, months, years));
+    }
+    
+    static public java.util.Date dateByAdding(java.util.Date initialDate, int days, int months, int years)
+    {
+        if(initialDate == null) return null;
+        
+        Calendar c = Calendar.getInstance(); // starts with today's date and time
+        
+        c.setTime(initialDate);
+        
+        c.add(Calendar.DATE, days);
+        c.add(Calendar.MONTH, months);
+        c.add(Calendar.YEAR, years);
+        
+        return c.getTime();
     }
 }

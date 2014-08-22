@@ -37,6 +37,7 @@ public class Command {
         DetailsAllDonors,
         DetailsAllExpenses,
         DetailsAllCashFlows,
+        DetailsAllSubscriptionAmountDetails,
         StatementsByMember,
         StatementsCashFlows,
         NotificationsMemberSubscription,
@@ -116,6 +117,8 @@ public class Command {
                 return "Expenses";
             case DetailsAllCashFlows:
                 return "Cash Flows";
+            case DetailsAllSubscriptionAmountDetails:
+                return "Subscription Details";
             case StatementsByMember:
                 return "Statement of Member";
             case StatementsCashFlows: //Pending cash receipts

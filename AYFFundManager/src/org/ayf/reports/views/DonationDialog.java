@@ -6,6 +6,7 @@
 
 package org.ayf.reports.views;
 
+import com.sun.tools.corba.se.idl.InvalidArgument;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -51,17 +52,23 @@ public class DonationDialog extends javax.swing.JDialog {
         this.donationTypeCombo.setModel(new DefaultComboBoxModel(donationTypes));
         this.paymentModeCombo.setModel(new DefaultComboBoxModel(paymentModes));
         
-        java.sql.Date today = new Date(new java.util.Date().getTime());
-        this.dobDate.setText(Integer.toString(DateTime.getDay(today)));
-        Vector<String> months = new Vector<String>();
-            
-        months.addAll(Arrays.asList(DateTime.Months));
         
-        this.monthCombo.setModel(new DefaultComboBoxModel(months));
-        
-        this.monthCombo.setSelectedIndex(DateTime.getMonth(today));
             
-        this.yearTxt.setText(Integer.toString(DateTime.getYear(today)));
+        try {
+            java.sql.Date today = new Date(new java.util.Date().getTime());
+            this.dobDate.setText(Integer.toString(DateTime.getDay(today)));
+            Vector<String> months = new Vector<String>();
+
+            months.addAll(Arrays.asList(DateTime.Months));
+
+            this.monthCombo.setModel(new DefaultComboBoxModel(months));
+
+            this.monthCombo.setSelectedIndex(DateTime.getMonth(today));
+        
+            this.yearTxt.setText(Integer.toString(DateTime.getYear(today)));
+        } catch (InvalidArgument ex) {
+            
+        }
         
         this.processor = processor;
         

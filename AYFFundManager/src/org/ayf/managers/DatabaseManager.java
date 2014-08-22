@@ -6,7 +6,6 @@
 
 package org.ayf.managers;
 
-import java.io.File;
 import org.ayf.database.entities.Donor;
 import org.ayf.database.entities.Member;
 import java.sql.Connection;
@@ -27,6 +26,7 @@ import net.ucanaccess.jdbc.UcanaccessDriver;
 import org.ayf.database.entities.BaseEntity;
 import org.ayf.database.entities.CashFlow;
 import org.ayf.database.entities.Expense;
+import org.ayf.database.entities.SubscriptionAmountDetails;
 import org.ayf.reports.EntityReportData;
 import org.ayf.reports.ReportData;
 import org.ayf.tpl.java2s.FilenameUtils;
@@ -51,6 +51,7 @@ public class DatabaseManager {
     public static final String EXPENSES_TABLE_NAME          = "Expenses";
     public static final String MEMBER_TABLE_NAME            = "Members";
     public static final String CASHFLOWS_TABLE_NAME         = "CashFlows";
+    public static final String SUBSCRIPTION_AMOUNT_DETAILS_TABLE_NAME = "SubscriptionAmount";
         
     private static ArrayList<Type> PROFESSION_TYPES;
     private static ArrayList<Type> DONATION_TYPES;
@@ -405,6 +406,10 @@ public class DatabaseManager {
             {
                 tableName = CASHFLOWS_TABLE_NAME;
             }
+            else if(entityClass.equals(SubscriptionAmountDetails.class))
+            {
+                tableName = SUBSCRIPTION_AMOUNT_DETAILS_TABLE_NAME;
+            }
             
             if(tableName != null)
             {
@@ -483,6 +488,10 @@ public class DatabaseManager {
             else if(entityClass.equals(CashFlow.class))
             {
                 tableName = CASHFLOWS_TABLE_NAME;
+            }
+            else if(entityClass.equals(SubscriptionAmountDetails.class))
+            {
+                tableName = SUBSCRIPTION_AMOUNT_DETAILS_TABLE_NAME;
             }
             
             if(tableName != null)
@@ -626,6 +635,10 @@ public class DatabaseManager {
                 {
                     tableName = CASHFLOWS_TABLE_NAME;
                 }
+                else if(entityClass.equals(SubscriptionAmountDetails.class))
+                {
+                    tableName = SUBSCRIPTION_AMOUNT_DETAILS_TABLE_NAME;
+                }
                 else
                 {
                     return false;
@@ -752,6 +765,10 @@ public class DatabaseManager {
                 {
                     tableName = CASHFLOWS_TABLE_NAME;
                 }
+                else if(entityClass.equals(SubscriptionAmountDetails.class))
+                {
+                    tableName = SUBSCRIPTION_AMOUNT_DETAILS_TABLE_NAME;
+                }
                 else
                 {
                     return false;
@@ -825,7 +842,7 @@ public class DatabaseManager {
                             }
                             else
                             {
-                                ps.setString(i, "");
+                                ps.setString(i, null);
                             }
                         }
                         
@@ -843,6 +860,7 @@ public class DatabaseManager {
             } catch (SQLException ex) {
                 Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, ex);
                 JOptionPane.showMessageDialog(null, ex.getLocalizedMessage(), "Unable to register member ", ERROR_MESSAGE);
+                bInserted = false;
             }
             finally
             {

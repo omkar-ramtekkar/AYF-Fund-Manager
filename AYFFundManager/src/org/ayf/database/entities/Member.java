@@ -6,6 +6,7 @@
 
 package org.ayf.database.entities;
 
+import com.sun.tools.corba.se.idl.InvalidArgument;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.HashMap;
@@ -47,7 +48,7 @@ public class Member extends BaseEntity
     String  imagePath;
     ActiveStatus currentStatus;
     
-    static Map<DetailsLevel, Vector<ColumnName> > detailLevelVsColumnsMap = null;
+    static Map<DetailsLevel, Vector<ColumnName>> detailLevelVsColumnsMap = null;
     
     static 
     {
@@ -96,7 +97,7 @@ public class Member extends BaseEntity
         this.currentStatus = currentStatus;
     }
     
-    static public String getNextUniqueID()
+    static public String getNextUniqueID() throws InvalidArgument
     {
         String id = PreferenceManager.getIntance().getString(PreferenceManager.NEXT_REG_ID, "1");
         return "AYF/" + 
@@ -204,6 +205,7 @@ public class Member extends BaseEntity
         {
             Vector columnNames = new Vector(20);
             columnNames.add((ColumnName.UniqueID));
+            columnNames.add((ColumnName.RegisterationDate));
             columnNames.add((ColumnName.Status));
             columnNames.add((ColumnName.FirstName));
             columnNames.add((ColumnName.MiddleName));
@@ -217,7 +219,6 @@ public class Member extends BaseEntity
             columnNames.add((ColumnName.Education));
             columnNames.add((ColumnName.Profession));
             columnNames.add((ColumnName.District));
-            columnNames.add((ColumnName.RegisterationDate));
             columnNames.add((ColumnName.Position));
             columnNames.add((ColumnName.Cast));
             columnNames.add((ColumnName.SubCast)); 
@@ -422,7 +423,7 @@ public class Member extends BaseEntity
         }
     }
     
-    public static String getNameForColumnID(ColumnName name)
+    public String getNameForColumnID(ColumnName name)
     {
         switch(name)
         {
@@ -484,6 +485,10 @@ public class Member extends BaseEntity
                 return "Payment Mode";
             case Status:
                 return "Active Status";
+            case FromDate:
+                return "From Date";
+            case ToDate:
+                return "To Date";
         }
         
         return null;
@@ -587,36 +592,12 @@ public class Member extends BaseEntity
     @Override
     public Vector<Object> getColumnsForDetailsLevel(DetailsLevel level)
     {
-        Vector<ColumnName> columnIDs = detailLevelVsColumnsMap.get(level);
-        
-        if(columnIDs == null)
-        {
-            columnIDs = detailLevelVsColumnsMap.get(DetailsLevel.OnlyIDAndName);
-        }
-        
-        if(columnIDs != null)
-        {
-            Vector<Object> columnNames = new Vector<Object>(columnIDs.size());
-            for (ColumnName columnID : columnIDs) {
-                columnNames.add(getNameForColumnID(columnID));
-            }
-            
-            return columnNames;
-        }
-        
-        return null;
+        return super.getColumnsForDetailsLevel(level, detailLevelVsColumnsMap);
     }
     
     public Vector<Object> toDataArray(DetailsLevel level)
     {
-        Vector<ColumnName> columnIDs = detailLevelVsColumnsMap.get(level);
-        Vector memberDetails = new Vector(columnIDs.size());
-        
-        for (ColumnName columnID : columnIDs) {
-            memberDetails.add(getValueForField(columnID));
-        }
-        
-        return memberDetails;
+        return super.toDataArray(level, detailLevelVsColumnsMap);
     }
     
     @Override
@@ -692,7 +673,11 @@ public class Member extends BaseEntity
                 }
                 break;
             case MaritalStatus:
-                setMaritalStatus(MaritalStatus.valueOf(value.toString()));
+                try {
+                    setMaritalStatus(MaritalStatus.valueOf(value.toString()));
+                } catch (Exception e) {
+                    setMaritalStatus(MaritalStatus.Unknown);
+                }
                 break;
             case Cast:
                 setCast((String) value);
@@ -707,7 +692,11 @@ public class Member extends BaseEntity
                 setBloodGroup((String) value);
                 break;
             case Gender:
-                setGender(Gender.valueOf(value.toString()));
+                try {
+                    setGender(Gender.valueOf(value.toString()));
+                } catch (Exception e) {
+                    setGender(Gender.Unknown);
+                }
                 break;
             case PermanentAddress:
                 setPermanentAddress((String) value);

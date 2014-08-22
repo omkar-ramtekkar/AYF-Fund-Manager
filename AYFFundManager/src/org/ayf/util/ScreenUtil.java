@@ -6,7 +6,9 @@
 
 package org.ayf.util;
 
+import com.sun.tools.corba.se.idl.InvalidArgument;
 import java.awt.GraphicsEnvironment;
+import java.awt.IllegalComponentStateException;
 import java.awt.Point;
 import javax.swing.JComponent;
 
@@ -16,9 +18,9 @@ import javax.swing.JComponent;
  */
 public class ScreenUtil {
     
-    static public Point getCenterPointOnScreen(JComponent component)
+    static public Point getCenterPointOnScreen(JComponent component) throws InvalidArgument, IllegalComponentStateException
     {
-        if(component == null) return null;
+        if(component == null) throw new InvalidArgument("Provided component is null");
         
         Point point = component.getLocationOnScreen();
         point.x += component.getVisibleRect().getWidth()/ 2.0;

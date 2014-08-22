@@ -449,7 +449,7 @@ public class MemberStatementReportView extends BaseReportView implements ReportD
                 Donor newDonation = new Donor((Member) entity);
                 newDonation.setDonationAmount(donationDialog.getDonationAmount());
                 newDonation.setDonationType(donationDialog.getDonationType().toString());
-                newDonation.setDonationDate((new java.sql.Date(DateTime.getToday().getTime())));
+                newDonation.setDonationDate(donationDialog.getDonationDate());
                 newDonation.setUniqueID(Donor.getNextUniqueID());
                 newDonation.setPaymentMode(donationDialog.getPaymentMode().toString());
                 newDonation.setReceiptNumber(donationDialog.getReceiptNumber());
@@ -496,7 +496,7 @@ public class MemberStatementReportView extends BaseReportView implements ReportD
                 Donor newDonation = new Donor((Member) entity);
                 newDonation.setDonationAmount(donationDialog.getDonationAmount());
                 newDonation.setDonationType(donationDialog.getDonationType().toString());
-                newDonation.setDonationDate((new java.sql.Date(DateTime.getToday().getTime())));
+                newDonation.setDonationDate(donationDialog.getDonationDate());
                 newDonation.setUniqueID(Donor.getNextUniqueID());
                 newDonation.setPaymentMode(donationDialog.getPaymentMode().toString());
                 newDonation.setReceiptNumber(donationDialog.getReceiptNumber());

@@ -7,7 +7,9 @@
 package org.ayf.database.entities;
 
 import java.util.Arrays;
+import java.util.Map;
 import java.util.Vector;
+import static org.ayf.database.entities.Member.detailLevelVsColumnsMap;
 import org.ayf.managers.DatabaseManager;
 import org.ayf.reports.ReportData;
 import org.ayf.ui.InformationPanel;
@@ -16,9 +18,9 @@ import org.ayf.ui.InformationPanel;
  *
  * @author om
  */
-public abstract class BaseEntity extends Object{
-
-    public enum Gender { Male, Female }
+public abstract class BaseEntity implements Comparable<BaseEntity>
+{
+    public enum Gender { Unknown, Male, Female }
     
     public enum EditorType
     {
@@ -39,13 +41,13 @@ public abstract class BaseEntity extends Object{
         Cast, SubCast, District, BloodGroup, Gender, Age, PermanentAddress, TemporaryAddress,
         ContactNumber, EmailAddress, Education, Profession, RegisterationDate, Position,
         ImagePath, ReceiptNumber, DonationDate, DonationType, PaymentMode, Status, ExpenseType, Date, ExpenseDate, Amount, Description, ResponsibleMember, ResponsibleMemberName, ResponsibleMemberPosition,
-        MemberID, TransactionDate, UniqueID, MemberUniqueID
+        MemberID, TransactionDate, UniqueID, MemberUniqueID, FromDate, ToDate
         
     }
     
     public enum MaritalStatus
     {
-        Single, Married
+        Unknown, Single, Married
     }
     
     public enum ActiveStatus
@@ -63,6 +65,46 @@ public abstract class BaseEntity extends Object{
         setID(id);
         setUniqueID(uniqueID);
         setDescription(description);
+    }
+    
+    public Vector<ColumnName> getColumnIDsForDetailLevel(DetailsLevel level, Map<DetailsLevel, Vector<ColumnName>> detailLevelVsColumnsMap) 
+    {
+        return detailLevelVsColumnsMap.get(level);
+    }
+    
+    public Vector<Object> getColumnsForDetailsLevel(DetailsLevel level, Map<DetailsLevel, Vector<ColumnName>> detailLevelVsColumnsMap)
+    {
+        Vector<ColumnName> columnIDs = detailLevelVsColumnsMap.get(level);
+        
+        if(columnIDs == null)
+        {
+            columnIDs = detailLevelVsColumnsMap.get(DetailsLevel.OnlyIDAndName);
+        }
+        
+        if(columnIDs != null)
+        {
+            Vector<Object> columnNames = new Vector<Object>(columnIDs.size());
+            
+            for (ColumnName columnID : columnIDs) {
+                columnNames.add(getNameForColumnID(columnID));
+            }
+            
+            return columnNames;
+        }
+        
+        return null;
+    }
+    
+    public Vector<Object> toDataArray(DetailsLevel level, Map<DetailsLevel, Vector<ColumnName>> detailLevelVsColumnsMap)
+    {
+        Vector<ColumnName> columnIDs = detailLevelVsColumnsMap.get(level);
+        Vector details = new Vector(columnIDs.size());
+        
+        for (ColumnName columnID : columnIDs) {
+            details.add(getValueForField(columnID));
+        }
+        
+        return details;
     }
     
     
@@ -130,6 +172,9 @@ public abstract class BaseEntity extends Object{
     public abstract Vector<Object> toDataArray(DetailsLevel level);
     public abstract ReportData getReportDataForDetails(DetailsLevel detailsLevel);
     
+    public abstract String getNameForColumnID(ColumnName name);
+    
+    
     public Object getValueForField(ColumnName fieldName)
     {
         switch(fieldName)
@@ -147,6 +192,8 @@ public abstract class BaseEntity extends Object{
 
     public void setValueForField(ColumnName fieldName, Object value)
     {
+        if(value == null) value = "";
+        
         switch(fieldName)
         {
             case ID:
@@ -185,6 +232,11 @@ public abstract class BaseEntity extends Object{
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    @Override
+    public int compareTo(BaseEntity o) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     private int id = Integer.MAX_VALUE;

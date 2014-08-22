@@ -6,9 +6,14 @@
 
 package org.ayf.database.entities;
 
+import com.sun.tools.corba.se.idl.InvalidArgument;
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.ayf.reports.ReportData;
 import org.ayf.util.DateTime;
 import org.ayf.util.NumberUtil;
@@ -28,6 +33,155 @@ public class Donor extends Member
     private String      memberUniqueID;
     
     public static final String SUBSCRIPTION_TYPE = "Subscription";
+    
+    static Map<DetailsLevel, Vector<ColumnName> > detailLevelVsColumnsMap = null;
+    
+    static 
+    {
+        detailLevelVsColumnsMap = new HashMap<DetailsLevel, Vector<ColumnName>>(4);
+        init();
+    }
+    
+    static void init()
+    {
+        {
+            Vector columnNames = new Vector(20);
+        
+            columnNames.add(ColumnName.UniqueID);
+            columnNames.add(ColumnName.FirstName);
+            columnNames.add(ColumnName.MiddleName);
+            columnNames.add(ColumnName.LastName);
+            columnNames.add(ColumnName.Gender);
+            columnNames.add(ColumnName.DateOfBirth);
+            
+            detailLevelVsColumnsMap.put(DetailsLevel.OnlyIDAndName, columnNames);
+        }
+        {
+            Vector columnNames = new Vector(20);
+        
+            columnNames.add(ColumnName.UniqueID);
+            columnNames.add(ColumnName.FirstName);
+            columnNames.add(ColumnName.MiddleName);
+            columnNames.add(ColumnName.LastName);
+            columnNames.add(ColumnName.Gender);
+            columnNames.add(ColumnName.DateOfBirth);
+            columnNames.add(ColumnName.MaritalStatus);
+            columnNames.add(ColumnName.ContactNumber);
+            columnNames.add(ColumnName.EmailAddress);
+            columnNames.add(ColumnName.Education);
+            columnNames.add(ColumnName.Profession);
+            
+            detailLevelVsColumnsMap.put(DetailsLevel.Basic, columnNames);
+        }
+        
+        {
+            Vector columnNames = new Vector(20);
+        
+            columnNames.add((ColumnName.UniqueID));
+            columnNames.add((ColumnName.FirstName));
+            columnNames.add((ColumnName.MiddleName));
+            columnNames.add((ColumnName.LastName));
+            columnNames.add((ColumnName.Gender));
+            columnNames.add((ColumnName.DateOfBirth));
+            
+            columnNames.add((ColumnName.Age));
+            columnNames.add((ColumnName.MaritalStatus));
+            columnNames.add((ColumnName.ContactNumber));
+            columnNames.add((ColumnName.EmailAddress));
+            columnNames.add((ColumnName.Education));
+            columnNames.add((ColumnName.Profession));
+            columnNames.add((ColumnName.PermanentAddress));
+            columnNames.add((ColumnName.TemporaryAddress));
+            
+            detailLevelVsColumnsMap.put(DetailsLevel.AllPersonal, columnNames);
+        }
+        
+        {
+            Vector columnNames = new Vector(20);
+        
+            columnNames.add((ColumnName.UniqueID));
+            columnNames.add((ColumnName.FirstName));
+            columnNames.add((ColumnName.MiddleName));
+            columnNames.add((ColumnName.LastName));
+            columnNames.add((ColumnName.Gender));
+            columnNames.add((ColumnName.DateOfBirth));
+            columnNames.add((ColumnName.ContactNumber));
+            columnNames.add((ColumnName.EmailAddress));
+            columnNames.add((ColumnName.Education));
+            columnNames.add((ColumnName.Profession));
+            
+            detailLevelVsColumnsMap.put(DetailsLevel.AllProfessional, columnNames);
+        }
+        
+        {
+            Vector columnNames = new Vector(20);
+            columnNames.add((ColumnName.UniqueID));
+            columnNames.add((ColumnName.FirstName));
+            columnNames.add((ColumnName.MiddleName));
+            columnNames.add((ColumnName.LastName));
+            columnNames.add((ColumnName.Gender));
+            columnNames.add((ColumnName.DateOfBirth));
+            columnNames.add((ColumnName.Education));
+            columnNames.add((ColumnName.ContactNumber));
+            columnNames.add((ColumnName.EmailAddress));
+            columnNames.add((ColumnName.Position));
+            
+            detailLevelVsColumnsMap.put(DetailsLevel.AllSocial, columnNames);
+        }
+        
+        {
+            Vector columnNames = new Vector(20);
+            columnNames.add(ColumnName.UniqueID);
+            columnNames.add(ColumnName.MemberUniqueID);
+            columnNames.add(ColumnName.FirstName);
+            columnNames.add(ColumnName.MiddleName);
+            columnNames.add(ColumnName.LastName);
+            columnNames.add(ColumnName.DateOfBirth);
+            columnNames.add(ColumnName.Gender); 
+            columnNames.add(ColumnName.ReceiptNumber);
+            columnNames.add(ColumnName.DonationDate);
+            columnNames.add(ColumnName.Amount);
+            columnNames.add(ColumnName.DonationType);
+            columnNames.add(ColumnName.PaymentMode);
+            columnNames.add(ColumnName.PermanentAddress);
+            columnNames.add(ColumnName.TemporaryAddress);
+            columnNames.add(ColumnName.ContactNumber);
+            columnNames.add(ColumnName.EmailAddress);
+            columnNames.add(ColumnName.Profession);
+            
+            
+            detailLevelVsColumnsMap.put(DetailsLevel.Database, columnNames);
+        }
+        
+        {
+            Vector columnNames = new Vector(20);
+            columnNames.add((ColumnName.UniqueID));
+            columnNames.add((ColumnName.FirstName));
+            columnNames.add((ColumnName.MiddleName));
+            columnNames.add((ColumnName.LastName));
+            columnNames.add((ColumnName.ReceiptNumber));
+            columnNames.add((ColumnName.DonationDate));
+            columnNames.add((ColumnName.Amount));
+            columnNames.add((ColumnName.DonationType));
+            columnNames.add((ColumnName.PaymentMode));
+            columnNames.add((ColumnName.ContactNumber));
+            columnNames.add((ColumnName.EmailAddress));
+            
+            detailLevelVsColumnsMap.put(DetailsLevel.Search, columnNames);
+        }
+        {
+            Vector columnNames = new Vector(20);
+            columnNames.add((ColumnName.ReceiptNumber));
+            columnNames.add((ColumnName.DonationDate));
+            columnNames.add((ColumnName.Amount));
+            columnNames.add((ColumnName.DonationType));
+            columnNames.add((ColumnName.PaymentMode));
+            
+            detailLevelVsColumnsMap.put(DetailsLevel.MemberStatement, columnNames);
+        }
+        
+    }
+    
     
     public Donor() {
     }
@@ -57,12 +211,16 @@ public class Donor extends Member
     
     static public String getNextUniqueID()
     {
-        String id = PreferenceManager.getIntance().getString(PreferenceManager.NEXT_DONATION_ID, "1");
-        return "AYF/don/" + 
-                NumberUtil.getFormattedNumber(DateTime.getMonth(DateTime.getToday()) + 1) + 
-                "/" + 
-                DateTime.getYear(DateTime.getToday()) +
-                "/"+ NumberUtil.getFormattedNumber(Integer.parseInt(id));
+        try {
+            String id = PreferenceManager.getIntance().getString(PreferenceManager.NEXT_DONATION_ID, "1");
+            return "AYF/don/" +
+                    NumberUtil.getFormattedNumber(DateTime.getMonth(DateTime.getToday()) + 1) +
+                    "/" +
+                    DateTime.getYear(DateTime.getToday()) +
+                    "/"+ NumberUtil.getFormattedNumber(Integer.parseInt(id));
+        } catch (InvalidArgument ex) {
+            return "";
+        }
     }
 
     public String getMemberUniqueID() {
@@ -147,7 +305,7 @@ public class Donor extends Member
     }
     
     
-    public static String getNameForColumnID(ColumnName name)
+    public String getNameForColumnID(ColumnName name)
     {
         switch(name)
         {
@@ -156,101 +314,19 @@ public class Donor extends Member
             case MemberUniqueID:
                 return "Member ID";
             default:
-                return Member.getNameForColumnID(name);
+                return super.getNameForColumnID(name);
         }
     }
     
     
     public Vector getColumnsForDetailsLevel(DetailsLevel level)
     {
-        Vector columnNames = new Vector();
-        switch(level)
-        {
-            case Database:
-                columnNames.add(getNameForColumnID(ColumnName.UniqueID));
-                columnNames.add(getNameForColumnID(ColumnName.MemberUniqueID));
-                columnNames.add(getNameForColumnID(ColumnName.FirstName));
-                columnNames.add(getNameForColumnID(ColumnName.MiddleName));
-                columnNames.add(getNameForColumnID(ColumnName.LastName));
-                columnNames.add(getNameForColumnID(ColumnName.ReceiptNumber));
-                columnNames.add(getNameForColumnID(ColumnName.DonationDate));
-                columnNames.add(getNameForColumnID(ColumnName.Amount));
-                columnNames.add(getNameForColumnID(ColumnName.DonationType));
-                columnNames.add(getNameForColumnID(ColumnName.PaymentMode));
-                columnNames.add(getNameForColumnID(ColumnName.PermanentAddress));
-                columnNames.add(getNameForColumnID(ColumnName.TemporaryAddress));
-                columnNames.add(getNameForColumnID(ColumnName.ContactNumber));
-                columnNames.add(getNameForColumnID(ColumnName.EmailAddress));
-                columnNames.add(getNameForColumnID(ColumnName.Profession));
-                columnNames.add(getNameForColumnID(ColumnName.DateOfBirth));
-                columnNames.add(getNameForColumnID(ColumnName.Gender));
-                break;
-            default:
-            {
-                if(level != Member.DetailsLevel.MemberStatement)
-                {
-                    columnNames.addAll(super.getColumnsForDetailsLevel(level));
-                }
-                
-                columnNames.remove(getNameForColumnID(ColumnName.ImagePath));
-                
-                columnNames.add(getNameForColumnID(ColumnName.ReceiptNumber));
-                columnNames.add(getNameForColumnID(ColumnName.DonationDate));
-                columnNames.add(getNameForColumnID(ColumnName.Amount));
-                columnNames.add(getNameForColumnID(ColumnName.DonationType));
-                columnNames.add(getNameForColumnID(ColumnName.PaymentMode));
-
-                return columnNames;
-            }
-        }
-        
-        return columnNames;
+        return super.getColumnsForDetailsLevel(level, detailLevelVsColumnsMap);
     }
     
     public Vector<ColumnName> getColumnIDsForDetailLevel(DetailsLevel level)
     {
-        Vector<ColumnName> columnIDs = new Vector<ColumnName>();
-        
-        switch(level)
-        {
-            case Database:
-                columnIDs.add((ColumnName.UniqueID));
-                columnIDs.add((ColumnName.MemberUniqueID));
-                columnIDs.add((ColumnName.FirstName));
-                columnIDs.add((ColumnName.MiddleName));
-                columnIDs.add((ColumnName.LastName));
-                columnIDs.add((ColumnName.PermanentAddress));
-                columnIDs.add((ColumnName.TemporaryAddress));
-                columnIDs.add((ColumnName.ContactNumber));
-                columnIDs.add((ColumnName.EmailAddress));
-                columnIDs.add((ColumnName.Profession));
-                columnIDs.add((ColumnName.DateOfBirth));
-                columnIDs.add((ColumnName.Gender));
-                columnIDs.add((ColumnName.ReceiptNumber));
-                columnIDs.add((ColumnName.DonationDate));
-                columnIDs.add((ColumnName.Amount));
-                columnIDs.add((ColumnName.DonationType));
-                columnIDs.add((ColumnName.PaymentMode));
-                columnIDs.add((ColumnName.ImagePath));
-                break;
-            default:
-            {
-                if(level != Member.DetailsLevel.MemberStatement)
-                {
-                    columnIDs.addAll(super.getColumnIDsForDetailLevel(level));
-                }
-                
-                columnIDs.remove(ColumnName.ImagePath);
-                
-                columnIDs.add((ColumnName.ReceiptNumber));
-                columnIDs.add((ColumnName.DonationDate));
-                columnIDs.add((ColumnName.Amount));
-                columnIDs.add((ColumnName.DonationType));
-                columnIDs.add((ColumnName.PaymentMode));
-            }
-        }
-
-        return columnIDs;
+        return super.getColumnIDsForDetailLevel(level, detailLevelVsColumnsMap);
     }
     
     @Override
@@ -279,7 +355,7 @@ public class Donor extends Member
     @Override
     public void setValueForField(ColumnName fieldName, Object value) 
     {
-        if(value == null) return;
+        if(value == null) value = "";
         
         switch(fieldName)
         {
@@ -301,7 +377,11 @@ public class Donor extends Member
                 }
                 break;
             case ReceiptNumber:
-                setReceiptNumber(Integer.valueOf(value.toString()).intValue());
+                try {
+                    setReceiptNumber(Integer.parseInt(value.toString()));
+                } catch (NumberFormatException numberFormatException) {
+                    setReceiptNumber(-1);
+                }
                 break;
             case DonationType:
                 setDonationType((String) value);
@@ -322,28 +402,7 @@ public class Donor extends Member
     @Override
     public Vector toDataArray(DetailsLevel detailLevel)
     {
-        Vector memberDetails;
-        if(detailLevel != Member.DetailsLevel.MemberStatement)
-        {
-            memberDetails = super.toDataArray(detailLevel);
-        }
-        else
-        {
-            memberDetails = new Vector();
-        }
-        
-        if(detailLevel == DetailsLevel.Database)
-        {
-            memberDetails.add(getValueForField(ColumnName.MemberUniqueID));
-        }
-        
-        memberDetails.add(getValueForField(ColumnName.ReceiptNumber));
-        memberDetails.add(getValueForField(ColumnName.DonationDate));
-        memberDetails.add(getValueForField(ColumnName.Amount));
-        memberDetails.add(getValueForField(ColumnName.DonationType));
-        memberDetails.add(getValueForField(ColumnName.PaymentMode));
-
-        return memberDetails;
+        return super.toDataArray(detailLevel, detailLevelVsColumnsMap);
     }
     
     

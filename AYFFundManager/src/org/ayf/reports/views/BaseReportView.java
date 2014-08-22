@@ -176,6 +176,15 @@ public abstract class BaseReportView extends BackgroundPanel implements ReportVi
     public Report getReport() {
         return report;
     }
+
+    public void setReport(Report report) {
+        this.report = report;
+        if(getReport() != null)
+        {
+            getReport().updateReport();
+        }
+    }
+    
     
     public void refresh()
     {
