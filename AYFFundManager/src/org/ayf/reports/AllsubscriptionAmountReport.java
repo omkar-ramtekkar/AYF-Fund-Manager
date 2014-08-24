@@ -6,7 +6,6 @@
 
 package org.ayf.reports;
 
-import com.sun.tools.corba.se.idl.InvalidArgument;
 import java.util.ArrayList;
 import java.util.Vector;
 import java.util.logging.Level;
@@ -40,7 +39,7 @@ public class AllsubscriptionAmountReport extends GenericSearchReport {
         try {
             SubscriptionUtil util = new SubscriptionUtil(rows, true);
             rows = util.getAllSubscriptionAmounts();
-        } catch (InvalidArgument ex) {
+        } catch (IllegalArgumentException ex) {
             Logger.getLogger(AllsubscriptionAmountReport.class.getName()).log(Level.SEVERE, null, ex);
         }
         

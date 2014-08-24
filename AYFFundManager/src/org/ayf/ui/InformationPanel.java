@@ -6,7 +6,7 @@
 
 package org.ayf.ui;
 
-import com.sun.tools.corba.se.idl.InvalidArgument;
+
 import java.io.File;
 import java.util.Arrays;
 import java.util.Vector;
@@ -283,7 +283,7 @@ public class InformationPanel extends BackgroundPanel {
             
             try {
                 this.dobDate.setText(Integer.toString(DateTime.getDay(member.getDateOfBirth())));
-            } catch (InvalidArgument ex) {
+            } catch (IllegalArgumentException ex) {
                 Toast.showToast(this.dobDate, "Invalid date of birth", false);
                 this.dobDate.setText("");
             }
@@ -293,7 +293,7 @@ public class InformationPanel extends BackgroundPanel {
             {
                 try {
                     dobMonth.add(DateTime.Months[DateTime.getMonth(member.getDateOfBirth())]);
-                } catch (InvalidArgument ex) {
+                } catch (IllegalArgumentException ex) {
                     
                 }
                 setDateOfBirthMonthComboBox(dobMonth);
@@ -304,14 +304,14 @@ public class InformationPanel extends BackgroundPanel {
                 setDateOfBirthMonthComboBox(dobMonth);            
                 try {
                     this.dateOfBirthMonths.setSelectedIndex(DateTime.getMonth(member.getDateOfBirth()));
-                } catch (InvalidArgument ex) {
+                } catch (IllegalArgumentException ex) {
                     Logger.getLogger(InformationPanel.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
             
             try {
                 this.dobYear.setText(Integer.toString(DateTime.getYear(member.getDateOfBirth())));
-            } catch (InvalidArgument ex) {
+            } catch (IllegalArgumentException ex) {
                 this.dobYear.setText("");
                 Toast.showToast(this.dobYear, "Invalid Date of Birth", false);
             }
@@ -328,7 +328,7 @@ public class InformationPanel extends BackgroundPanel {
             
             try {
                 this.registerationDay.setText(Integer.toString(DateTime.getDay(regOrDonationDate)));
-            } catch (InvalidArgument ex) {
+            } catch (IllegalArgumentException ex) {
                 this.registerationDay.setText("");
                 Toast.showToast(this.dobYear, "Invalid Date", false);
             }
@@ -337,7 +337,7 @@ public class InformationPanel extends BackgroundPanel {
             {
                 try {
                     registerationMonth.add(DateTime.Months[DateTime.getMonth(regOrDonationDate)]);
-                } catch (InvalidArgument ex) {
+                } catch (IllegalArgumentException ex) {
                     
                 }
                 setRegisterationMonthComboBox(registerationMonth);
@@ -348,14 +348,14 @@ public class InformationPanel extends BackgroundPanel {
                 setRegisterationMonthComboBox(registerationMonth);
                 try {
                     this.registerationMonth.setSelectedIndex(DateTime.getMonth(regOrDonationDate));
-                } catch (InvalidArgument ex) {
+                } catch (IllegalArgumentException ex) {
                     
                 }
             }
             
             try {
                 this.registerationYear.setText(Integer.toString(DateTime.getYear(regOrDonationDate)));
-            } catch (InvalidArgument ex) {
+            } catch (IllegalArgumentException ex) {
                 Toast.showToast(this.registerationYear, "Invalid Registeration Date", false);
             }
             
@@ -486,7 +486,7 @@ public class InformationPanel extends BackgroundPanel {
                 } else {
                     this.registerationNumber.setText(Member.getNextUniqueID());
                 }
-            } catch (InvalidArgument invalidArgument) {
+            } catch (IllegalArgumentException invalidArgument) {
                 Toast.showToast(this.registerationNumber, "Failed to generate unique id", false);
                 this.registerationNumber.setText("");
             }
@@ -772,7 +772,7 @@ public class InformationPanel extends BackgroundPanel {
                 
                 try {
                     member.setUniqueID(Member.getNextUniqueID());
-                } catch (InvalidArgument ex) {
+                } catch (IllegalArgumentException ex) {
                     member.setUniqueID("");
                 }
                 return member;

@@ -6,10 +6,8 @@
 
 package org.ayf.reports.views;
 
-import com.sun.tools.corba.se.idl.InvalidArgument;
+
 import java.awt.IllegalComponentStateException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JTable;
 import org.ayf.models.GenericDefaultTableModel;
 import org.ayf.reports.AllMembersReport;
@@ -146,7 +144,7 @@ public class AllMemberReportView extends BaseReportView {
             
             try {
                 Toast.showToast(toastMessage, ScreenUtil.getCenterPointOnScreen(getReportTable()), success);
-            } catch (InvalidArgument ex) {
+            } catch (IllegalArgumentException ex) {
                 
             } catch (IllegalComponentStateException ex) {
                 
@@ -159,7 +157,7 @@ public class AllMemberReportView extends BaseReportView {
             this.memberEditButton.setText("Save");
             try {
                 Toast.showToast("Click 'Save' to save details", ScreenUtil.getCenterPointOnScreen(getReportTable()), true);
-            } catch (InvalidArgument ex) {
+            } catch (IllegalArgumentException ex) {
             } catch (IllegalComponentStateException ex) {
             }
             

@@ -11,6 +11,7 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.ArrayList;
 import org.ayf.command.Command;
 import org.ayf.database.entities.BaseEntity;
 import org.ayf.database.entities.Donor;
@@ -30,7 +31,7 @@ import org.ayf.util.Toast;
  
  * @author om
  */
-public class ApplicationManager implements ActionListener
+public class ApplicationManager implements ActionListener, DatabaseUpdateListener
 {
     private MainFrame mainFrame = null;
     private SideBarTableController sidebarTableController;
@@ -67,6 +68,8 @@ public class ApplicationManager implements ActionListener
         {
             DatabaseManager.initializeDatabaseManager();
         }
+
+        DatabaseManager.addDatabaseUpdateListner(this);
         
         this.mainFrame = new MainFrame();
 
@@ -200,32 +203,7 @@ public class ApplicationManager implements ActionListener
             this.settingViewController.showSettingsView();
         }
     }
-    
-    public void memberDidRegister(Member member)
-    {
-        PreferenceManager.updateNextRegID();
-    }
-    
-    public void donationDidPerform(Donor donor)
-    {
-        PreferenceManager.updateNextDonationID();
-    }
-
-    void entityDidAdded(BaseEntity entity) 
-    {
-        if(entity != null)
-        {
-            if(entity.getClass().equals(Donor.class))
-            {
-                donationDidPerform((Donor) entity);
-            }
-            else if(entity.getClass().equals(Member.class))
-            {
-                memberDidRegister((Member) entity);
-            }
-        }
-    }
-    
+        
     public void databasePathDidChange(String oldPath, String newPath)
     {
         DatabaseManager.initializeDatabaseManager();
@@ -242,5 +220,47 @@ public class ApplicationManager implements ActionListener
 
     private void handleAdminSettings() {
         
+    }
+    
+    private void memberDidRegister(Member member)
+    {
+        PreferenceManager.updateNextRegID();
+    }
+    
+    private void donationDidPerform(Donor donor)
+    {
+        PreferenceManager.updateNextDonationID();
+    }
+
+    @Override
+    public void entityDidAdded(BaseEntity entity) 
+    {
+        if(entity != null)
+        {
+            if(entity.getClass().equals(Donor.class))
+            {
+                donationDidPerform((Donor) entity);
+            }
+            else if(entity.getClass().equals(Member.class))
+            {
+                memberDidRegister((Member) entity);
+            }
+        }
+    }
+    
+    @Override
+    public void entityDidUpdated(BaseEntity entity) {
+    }
+
+    @Override
+    public void entityDidRemoved(BaseEntity entity) {
+    }
+
+    @Override
+    public void entityDidRead(BaseEntity entity) {
+    }
+
+    @Override
+    public void entitiesDidRead(ArrayList<BaseEntity> entities) {
     }
 }

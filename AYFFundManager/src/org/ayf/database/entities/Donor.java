@@ -6,14 +6,11 @@
 
 package org.ayf.database.entities;
 
-import com.sun.tools.corba.se.idl.InvalidArgument;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.ayf.reports.ReportData;
 import org.ayf.util.DateTime;
 import org.ayf.util.NumberUtil;
@@ -214,11 +211,11 @@ public class Donor extends Member
         try {
             String id = PreferenceManager.getIntance().getString(PreferenceManager.NEXT_DONATION_ID, "1");
             return "AYF/don/" +
-                    NumberUtil.getFormattedNumber(DateTime.getMonth(DateTime.getToday()) + 1) +
+                    NumberUtil.convertIntToDoubleDigitNumber(DateTime.getMonth(DateTime.getToday()) + 1) +
                     "/" +
                     DateTime.getYear(DateTime.getToday()) +
-                    "/"+ NumberUtil.getFormattedNumber(Integer.parseInt(id));
-        } catch (InvalidArgument ex) {
+                    "/"+ NumberUtil.convertIntToDoubleDigitNumber(Integer.parseInt(id));
+        } catch (IllegalArgumentException ex) {
             return "";
         }
     }

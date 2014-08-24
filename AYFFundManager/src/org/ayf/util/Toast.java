@@ -6,7 +6,6 @@
 
 package org.ayf.util;
 
-import com.sun.tools.corba.se.idl.InvalidArgument;
 import java.awt.Color;
 import java.awt.IllegalComponentStateException;
 import java.awt.Label;
@@ -194,7 +193,7 @@ public class Toast {
     {
         try {
             showToast(message, getProperLocationOfToast(message, ScreenUtil.getCenterPointOnScreen(component)), isPositive);
-        } catch (InvalidArgument ex) {
+        } catch (IllegalArgumentException ex) {
         } catch (IllegalComponentStateException ex) {
         }
     }

@@ -22,12 +22,12 @@ import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import org.ayf.database.entities.Type;
 import static javax.swing.JOptionPane.ERROR_MESSAGE;
+import javax.swing.event.EventListenerList;
 import net.ucanaccess.jdbc.UcanaccessDriver;
 import org.ayf.database.entities.BaseEntity;
 import org.ayf.database.entities.CashFlow;
 import org.ayf.database.entities.Expense;
 import org.ayf.database.entities.SubscriptionAmountDetails;
-import org.ayf.reports.EntityReportData;
 import org.ayf.reports.ReportData;
 import org.ayf.tpl.java2s.FilenameUtils;
 import org.ayf.util.PreferenceManager;
@@ -62,10 +62,16 @@ public class DatabaseManager {
     public static  ArrayList<Type> PAYMENT_MODE_TYPES;
     public static  ArrayList<Type> STATUS_TYPES;
     
+    enum UpdateAction { Add, Remove, Update, Read };
+    
+    private static EventListenerList listenerList = new EventListenerList();
+    
     public static void initializeDatabaseManager()
     {
         try
         {
+            CacheManager.initialize();
+            
             getProfessionTypes();
             getExpenseTypes();
             getDonationTypes();
@@ -113,16 +119,6 @@ public class DatabaseManager {
     private static Connection createConnection()
     {
         String url = UcanaccessDriver.URL_PREFIX + PreferenceManager.getDatabaseDir() + ";newDatabaseVersion=V2007";
-//        if(System.getProperty("os.name").toLowerCase().contains("win"))
-//        {
-//            url = UcanaccessDriver.URL_PREFIX + "D:/database.accdb" + ";newDatabaseVersion=V2007";
-//        }
-//        else
-//        {
-//            url = UcanaccessDriver.URL_PREFIX + "/Volumes/MACINTOSH 2/Projects/AadimYouthFoundation/AYF-Fund-Manager/AYFFundManager/database.accdb"+ ";newDatabaseVersion=V2007";
-//        }            
-        
-        // specify url, username, pasword - make sure these are valid 
         
         Connection conn = null;
         try {
@@ -153,10 +149,69 @@ public class DatabaseManager {
         return bSuccess;
     }
     
-    /**
-     *
-     * @return
-     */
+    
+    static public void addDatabaseUpdateListner(DatabaseUpdateListener listner)
+    {
+        if(listner == null) throw new IllegalArgumentException("listner is null");
+        
+        listenerList.add(DatabaseUpdateListener.class, listner);
+    }
+    
+    static public void removeActionListener(DatabaseUpdateListener listener) {
+        
+        if(listener == null) return;
+        
+        listenerList.remove(DatabaseUpdateListener.class, listener);
+    }
+    
+    static protected void fireActionPerformed(UpdateAction updateAction, BaseEntity entity)
+    {
+        // Guaranteed to return a non-null array
+        Object[] listeners = listenerList.getListenerList();
+
+        // Process the listeners last to first, notifying
+        // those that are interested in this event
+        for (int i=listeners.length-2; i>=0; i-=2)
+        {
+            if (listeners[i]==DatabaseUpdateListener.class) {
+                switch(updateAction)
+                {
+                    case Add:
+                        ((DatabaseUpdateListener)listeners[i+1]).entityDidAdded(entity);
+                        break;
+                    case Update:
+                        ((DatabaseUpdateListener)listeners[i+1]).entityDidUpdated(entity);
+                        break;
+                    case Remove:
+                        ((DatabaseUpdateListener)listeners[i+1]).entityDidRemoved(entity);
+                        break;
+                    case Read:
+                        ((DatabaseUpdateListener)listeners[i+1]).entityDidRead(entity);
+                }
+            }
+        }
+    }
+    
+    static protected void fireActionPerformed(UpdateAction updateAction, ArrayList<BaseEntity> entities)
+    {
+        // Guaranteed to return a non-null array
+        Object[] listeners = listenerList.getListenerList();
+
+        // Process the listeners last to first, notifying
+        // those that are interested in this event
+        for (int i=listeners.length-2; i>=0; i-=2)
+        {
+            if (listeners[i]==DatabaseUpdateListener.class) {
+                switch(updateAction)
+                {
+                    case Read:
+                        ((DatabaseUpdateListener)listeners[i+1]).entitiesDidRead(entities);
+                        break;
+                }
+            }
+        }
+    }
+    
     public static ArrayList<Type> getDonationTypes()
     {
         if(DONATION_TYPES == null)
@@ -382,6 +437,8 @@ public class DatabaseManager {
         
         if(entityClass != null)
         {
+            if(CacheManager.getCacheEntities(entityClass) != null) return  CacheManager.getCacheEntities(entityClass);
+            
             Connection conn = null;
             conn = createConnection();
             
@@ -455,8 +512,9 @@ public class DatabaseManager {
                     closeConnection(conn);
                 }
             }
-            
         }
+        
+        fireActionPerformed(UpdateAction.Read, entities);
         
         return entities;
     }
@@ -610,7 +668,7 @@ public class DatabaseManager {
     {
         boolean bUpdated = entities.size() > 0; 
         Connection conn = null;
-        if(entities != null && entities.size() > 0)
+        if(entities.size() > 0)
         {
             try 
             {
@@ -652,11 +710,11 @@ public class DatabaseManager {
                 for (BaseEntity.ColumnName columnName : columns) {
                     if(columns.lastElement() == columnName)
                     {
-                        sqlQuery.append(columnName.toString() + "=?");
+                        sqlQuery.append(columnName.toString()).append("=?");
                     }
                     else
                     {
-                        sqlQuery.append(columnName.toString() + "=?,");
+                        sqlQuery.append(columnName.toString()).append("=?,");
                     }
                 }
                 
@@ -725,10 +783,19 @@ public class DatabaseManager {
             } catch (SQLException ex) {
                 Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, ex);
                 JOptionPane.showMessageDialog(null, ex.getLocalizedMessage(), "Unable to register member ", ERROR_MESSAGE);
+                bUpdated = false;
             }
             finally
             {
                 closeConnection(conn);
+            }
+        }
+        
+        if(bUpdated)
+        {
+            for (BaseEntity baseEntity : entities) 
+            {
+                 fireActionPerformed(UpdateAction.Update, baseEntity);
             }
         }
         
@@ -737,16 +804,16 @@ public class DatabaseManager {
     
     public static boolean insertEntities(Vector<BaseEntity> entities, Class<?> entityClass)
     {
-        boolean bInserted = true; 
+        boolean bInserted = !entities.isEmpty(); 
         
         Connection conn = null;
-        if(entities != null && entities.size() > 0)
+        if(entities.size() > 0)
         {
             try 
             {
                 conn = createConnection();
                 
-                StringBuffer sqlQuery = new StringBuffer("INSERT INTO ");
+                StringBuilder sqlQuery = new StringBuilder("INSERT INTO ");
                 String tableName = null;
                 
                 if(entityClass.equals(Member.class))
@@ -777,7 +844,7 @@ public class DatabaseManager {
                 sqlQuery.append(tableName);
                 
                 StringBuilder valuesString = new StringBuilder(100);
-                StringBuffer  valuePlacement = new StringBuffer(entities.size());
+                StringBuilder  valuePlacement = new StringBuilder(entities.size());
                 
                 Vector<BaseEntity.ColumnName> columns = entities.get(0).getColumnIDsForDetailLevel(BaseEntity.DetailsLevel.Database);
                 
@@ -789,7 +856,7 @@ public class DatabaseManager {
                     }
                     else
                     {
-                        valuesString.append(columnName.toString() + ",");
+                        valuesString.append(columnName.toString()).append(",");
                         valuePlacement.append("?,");
                     }
                 }
@@ -851,15 +918,20 @@ public class DatabaseManager {
                     
                     bInserted &= ps.executeUpdate() > 0;
                     
-                    ApplicationManager.getSharedManager().entityDidAdded(entity);
+                    if(!bInserted) 
+                    {
+                        conn.rollback();
+                        break;
+                    }
                 }
                 
                 conn.commit();
-                ps.close();
-                               
+                ps.close();               
+                
             } catch (SQLException ex) {
                 Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, ex);
                 JOptionPane.showMessageDialog(null, ex.getLocalizedMessage(), "Unable to register member ", ERROR_MESSAGE);
+                
                 bInserted = false;
             }
             finally
@@ -868,16 +940,23 @@ public class DatabaseManager {
             }
         }
         
+        if(bInserted)
+        {
+            for (BaseEntity baseEntity : entities) 
+            {
+                 fireActionPerformed(UpdateAction.Add, baseEntity);
+            }
+        }
         return bInserted;
     }
     
     public static boolean registerMember(Member member)
     {
-        Logger.getLogger(DatabaseManager.class.getName()).log(Level.INFO, null, "registerMember :" + member.toString());
-        
         boolean bRegistered = false; 
         if(member != null)
         {
+            Logger.getLogger(DatabaseManager.class.getName()).log(Level.INFO, null, "registerMember :" + member.toString());
+            
             String imagePath = member.getImagePath();
             
             if(imagePath != null)
@@ -1031,8 +1110,5 @@ public class DatabaseManager {
         }
     }
     
-    public static EntityReportData getMemberReportData()
-    {
-        return null;
-    }
+    
 }

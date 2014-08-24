@@ -6,7 +6,7 @@
 
 package org.ayf.util;
 
-import com.sun.tools.corba.se.idl.InvalidArgument;
+
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -48,9 +48,9 @@ public class DateTime {
         return timeFormat.format(getToday());
     }
     
-    public static int getDay(java.sql.Date date) throws InvalidArgument
+    public static int getDay(java.sql.Date date) throws IllegalArgumentException
     {
-        if(date == null) throw new InvalidArgument("Provided date is null/invalid");
+        if(date == null) throw new IllegalArgumentException("Provided date is null/invalid");
         
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
@@ -58,14 +58,14 @@ public class DateTime {
         return cal.get(Calendar.DAY_OF_MONTH);
     }
     
-    public static int getDay(java.util.Date date) throws InvalidArgument
+    public static int getDay(java.util.Date date) throws IllegalArgumentException
     {
         return getDay(toSQLDate(date));
     }
     
-    public static int getMonth(java.sql.Date date) throws InvalidArgument
+    public static int getMonth(java.sql.Date date) throws IllegalArgumentException
     {
-        if(date == null) throw new InvalidArgument("Provided date is null/invalid");
+        if(date == null) throw new IllegalArgumentException("Provided date is null/invalid");
         
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
@@ -73,9 +73,9 @@ public class DateTime {
         return cal.get(Calendar.MONTH);
     }
     
-    public static int getMonth(java.util.Date date) throws InvalidArgument
+    public static int getMonth(java.util.Date date) throws IllegalArgumentException
     {
-        if(date == null) throw new InvalidArgument("Provided date is null/invalid");
+        if(date == null) throw new IllegalArgumentException("Provided date is null/invalid");
         
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
@@ -83,9 +83,9 @@ public class DateTime {
         return cal.get(Calendar.MONTH);
     }
     
-    public static int getYear(java.sql.Date date) throws InvalidArgument
+    public static int getYear(java.sql.Date date) throws IllegalArgumentException
     {
-        if(date == null) throw new InvalidArgument("Provided date is null/invalid");
+        if(date == null) throw new IllegalArgumentException("Provided date is null/invalid");
         
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
@@ -93,7 +93,7 @@ public class DateTime {
         return cal.get(Calendar.YEAR);
     }
     
-    public static int getYear(java.util.Date date) throws InvalidArgument
+    public static int getYear(java.util.Date date) throws IllegalArgumentException
     {
         return getYear(toSQLDate(date));
     }
@@ -128,6 +128,13 @@ public class DateTime {
         if(date == null) return null;
         
         return new java.sql.Date(date.getTime());
+    }
+    
+    public static java.util.Date toUtilDate(java.sql.Date date)
+    {
+        if(date == null) return null;
+        
+        return new java.util.Date(date.getTime());
     }
     
     public static java.sql.Date toSQLDate(String dateString)
@@ -169,6 +176,11 @@ public class DateTime {
         return today;
     }
     
+    public static java.sql.Date getTodaySQL()
+    {
+        return toSQLDate(getToday());
+    }
+    
     static public java.util.Date getBeforeDate(java.util.Date date1, java.util.Date date2)
     {
         if(date1 != null && date2 != null)
@@ -197,12 +209,12 @@ public class DateTime {
     
     static public java.sql.Date getBeforeDate(java.sql.Date date1, java.sql.Date date2)
     {
-        return toSQLDate(getBeforeDate(toSQLDate(date1), toSQLDate(date2)));
+        return date1.getTime() < date2.getTime() ? date1 : date2;
     }
     
     static public java.sql.Date getAfterDate(java.sql.Date date1, java.sql.Date date2)
     {
-        return toSQLDate(getAfterDate(toSQLDate(date1), toSQLDate(date2)));
+        return date1.getTime() > date2.getTime() ? date1 : date2;
     }
     
     static public boolean isDateBetween(java.sql.Date date1, java.sql.Date date2, java.sql.Date checkDate)
@@ -211,8 +223,7 @@ public class DateTime {
         
         if(checkDate == null) return false;
         
-        if(DateTime.getBeforeDate(date1, checkDate).equals(date1) &&
-                    DateTime.getAfterDate(date2, checkDate).equals(date2))
+        if(date1.getTime() <= checkDate.getTime() && date2.getTime() >= checkDate.getTime())
         {
             return true;
         }
@@ -226,8 +237,7 @@ public class DateTime {
         
         if(checkDate == null) return false;
         
-        if(DateTime.getBeforeDate(date1, checkDate).equals(date1) &&
-                    DateTime.getAfterDate(date2, checkDate).equals(date2))
+        if(date1.getTime() <= checkDate.getTime() && date2.getTime() >= checkDate.getTime())
         {
             return true;
         }

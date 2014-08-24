@@ -6,10 +6,11 @@
 
 package org.ayf.reports.views;
 
-import com.sun.tools.corba.se.idl.InvalidArgument;
+import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
 import java.sql.Date;
 import java.util.Arrays;
 import java.util.Vector;
@@ -19,6 +20,8 @@ import javax.swing.JRootPane;
 import javax.swing.KeyStroke;
 import org.ayf.database.entities.BaseEntity;
 import org.ayf.database.entities.Donor;
+import org.ayf.managers.ResourceManager;
+import org.ayf.ui.BackgroundPanel;
 import org.ayf.util.DateTime;
 import org.ayf.util.Toast;
 
@@ -34,6 +37,8 @@ public class DonationDialog extends javax.swing.JDialog {
     
     ReportDataProcessor processor;
     boolean userCancelledDialog = true;
+    protected BufferedImage backgroundImage = null;
+    protected BackgroundPanel.BackgroundStyle style = BackgroundPanel.BackgroundStyle.Default;
     
     public DonationDialog(java.awt.Frame parent, boolean modal, ReportDataProcessor processor)
     {
@@ -66,7 +71,7 @@ public class DonationDialog extends javax.swing.JDialog {
             this.monthCombo.setSelectedIndex(DateTime.getMonth(today));
         
             this.yearTxt.setText(Integer.toString(DateTime.getYear(today)));
-        } catch (InvalidArgument ex) {
+        } catch (IllegalArgumentException ex) {
             
         }
         
@@ -75,6 +80,23 @@ public class DonationDialog extends javax.swing.JDialog {
         setLocationRelativeTo(null);
             
     }
+
+    @Override
+    public void paint(Graphics g) {
+        
+        if(backgroundImage == null)
+        {
+            backgroundImage = ResourceManager.getImage("background_" + this.style.toString(), getSize());
+        }
+        
+        if(backgroundImage != null)
+        {
+            g.drawImage(backgroundImage, 0, 0, null);
+        }
+        
+        super.paint(g);
+    }
+    
     
     @Override
     protected JRootPane createRootPane() 
@@ -239,7 +261,7 @@ public class DonationDialog extends javax.swing.JDialog {
 
         jLabel5.setText("Description");
 
-        jLabel6.setText("Date Of Birth");
+        jLabel6.setText("Donation Date");
 
         dobDate.setMinimumSize(new java.awt.Dimension(6, 23));
         dobDate.addFocusListener(new java.awt.event.FocusAdapter() {
@@ -249,6 +271,17 @@ public class DonationDialog extends javax.swing.JDialog {
         });
 
         monthCombo.setMaximumRowCount(12);
+        monthCombo.addPopupMenuListener(new javax.swing.event.PopupMenuListener() {
+            public void popupMenuWillBecomeVisible(javax.swing.event.PopupMenuEvent evt) {
+                monthComboPopupMenuWillBecomeVisible(evt);
+            }
+            public void popupMenuWillBecomeInvisible(javax.swing.event.PopupMenuEvent evt) {
+                monthComboPopupMenuWillBecomeInvisible(evt);
+            }
+            public void popupMenuCanceled(javax.swing.event.PopupMenuEvent evt) {
+                monthComboPopupMenuCanceled(evt);
+            }
+        });
 
         yearTxt.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
@@ -409,6 +442,18 @@ public class DonationDialog extends javax.swing.JDialog {
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
         dispose();
     }//GEN-LAST:event_cancelButtonActionPerformed
+
+    private void monthComboPopupMenuCanceled(javax.swing.event.PopupMenuEvent evt) {//GEN-FIRST:event_monthComboPopupMenuCanceled
+        this.repaint();
+    }//GEN-LAST:event_monthComboPopupMenuCanceled
+
+    private void monthComboPopupMenuWillBecomeInvisible(javax.swing.event.PopupMenuEvent evt) {//GEN-FIRST:event_monthComboPopupMenuWillBecomeInvisible
+        this.repaint();
+    }//GEN-LAST:event_monthComboPopupMenuWillBecomeInvisible
+
+    private void monthComboPopupMenuWillBecomeVisible(javax.swing.event.PopupMenuEvent evt) {//GEN-FIRST:event_monthComboPopupMenuWillBecomeVisible
+        this.repaint();
+    }//GEN-LAST:event_monthComboPopupMenuWillBecomeVisible
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

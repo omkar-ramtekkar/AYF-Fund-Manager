@@ -195,7 +195,7 @@
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel6">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Date Of Birth"/>
+            <Property name="text" type="java.lang.String" value="Donation Date"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JTextField" name="dobDate">
@@ -212,6 +212,11 @@
           <Properties>
             <Property name="maximumRowCount" type="int" value="12"/>
           </Properties>
+          <Events>
+            <EventHandler event="popupMenuWillBecomeVisible" listener="javax.swing.event.PopupMenuListener" parameters="javax.swing.event.PopupMenuEvent" handler="monthComboPopupMenuWillBecomeVisible"/>
+            <EventHandler event="popupMenuWillBecomeInvisible" listener="javax.swing.event.PopupMenuListener" parameters="javax.swing.event.PopupMenuEvent" handler="monthComboPopupMenuWillBecomeInvisible"/>
+            <EventHandler event="popupMenuCanceled" listener="javax.swing.event.PopupMenuListener" parameters="javax.swing.event.PopupMenuEvent" handler="monthComboPopupMenuCanceled"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JTextField" name="yearTxt">
           <Events>

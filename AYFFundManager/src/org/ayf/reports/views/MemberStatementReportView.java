@@ -6,11 +6,13 @@
 
 package org.ayf.reports.views;
 
-import com.sun.tools.corba.se.idl.InvalidArgument;
+
+import java.awt.Color;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import org.ayf.database.entities.BaseEntity;
 import org.ayf.database.entities.Donor;
@@ -26,6 +28,8 @@ import org.ayf.reports.ReportData;
 import org.ayf.ui.InformationPanel;
 import org.ayf.ui.MemberFrame;
 import org.ayf.util.DateTime;
+import org.ayf.util.NumberUtil;
+import org.ayf.util.SubscriptionUtil;
 import org.ayf.util.Toast;
 import org.jdesktop.swingx.prompt.PromptSupport;
 
@@ -63,11 +67,6 @@ public class MemberStatementReportView extends BaseReportView implements ReportD
         searchMemberButton = new javax.swing.JButton();
         showStatementButton = new javax.swing.JButton();
         searchMemberTxt = new javax.swing.JTextField();
-        reportPanel = new javax.swing.JPanel();
-        searchTextField = new javax.swing.JTextField();
-        refreshButton = new javax.swing.JButton();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        memberStatementTable = new ReportTable();
         memberInformationPanel = new javax.swing.JPanel();
         memberImageLabel = new javax.swing.JLabel();
         memberFullName = new javax.swing.JLabel();
@@ -85,6 +84,21 @@ public class MemberStatementReportView extends BaseReportView implements ReportD
         paySubscriptionButton = new javax.swing.JButton();
         duesButton = new javax.swing.JButton();
         deactivateButton = new javax.swing.JButton();
+        tabbedPane = new javax.swing.JTabbedPane();
+        reportPanel = new javax.swing.JPanel();
+        searchTextField = new javax.swing.JTextField();
+        refreshButton = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        memberStatementTable = new ReportTable();
+        jPanel1 = new javax.swing.JPanel();
+        duesPanel = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
+        jlabel10 = new javax.swing.JLabel();
+        jlabel11 = new javax.swing.JLabel();
+        totalSubscriptionToBePaid = new javax.swing.JLabel();
+        totalSubscriptionAlreadyPaid = new javax.swing.JLabel();
+        totalsubscriptionNeedToBePaid = new javax.swing.JLabel();
+        jPanel2 = new javax.swing.JPanel();
 
         addComponentListener(new java.awt.event.ComponentAdapter() {
             public void componentShown(java.awt.event.ComponentEvent evt) {
@@ -130,58 +144,6 @@ public class MemberStatementReportView extends BaseReportView implements ReportD
                     .add(searchMemberButton)
                     .add(searchMemberTxt, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .add(0, 8, Short.MAX_VALUE))
-        );
-
-        reportPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Transactions", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 3, 11))); // NOI18N
-
-        searchTextField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                searchTextFieldActionPerformed(evt);
-            }
-        });
-
-        refreshButton.setText("Refresh");
-        refreshButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                refreshButtonActionPerformed(evt);
-            }
-        });
-
-        memberStatementTable.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-
-            }
-        ));
-        memberStatementTable.setColumnSelectionAllowed(true);
-        jScrollPane1.setViewportView(memberStatementTable);
-
-        org.jdesktop.layout.GroupLayout reportPanelLayout = new org.jdesktop.layout.GroupLayout(reportPanel);
-        reportPanel.setLayout(reportPanelLayout);
-        reportPanelLayout.setHorizontalGroup(
-            reportPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(reportPanelLayout.createSequentialGroup()
-                .add(6, 6, 6)
-                .add(reportPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(jScrollPane1)
-                    .add(reportPanelLayout.createSequentialGroup()
-                        .add(searchTextField)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(refreshButton)))
-                .addContainerGap())
-        );
-        reportPanelLayout.setVerticalGroup(
-            reportPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(reportPanelLayout.createSequentialGroup()
-                .add(6, 6, 6)
-                .add(reportPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(searchTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(refreshButton))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE)
-                .addContainerGap())
         );
 
         memberInformationPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Basic Details", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 3, 11))); // NOI18N
@@ -335,6 +297,160 @@ public class MemberStatementReportView extends BaseReportView implements ReportD
                 .add(6, 6, 6))
         );
 
+        tabbedPane.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                tabbedPaneStateChanged(evt);
+            }
+        });
+
+        reportPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Transactions", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 3, 11))); // NOI18N
+
+        searchTextField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                searchTextFieldActionPerformed(evt);
+            }
+        });
+
+        refreshButton.setText("Refresh");
+        refreshButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                refreshButtonActionPerformed(evt);
+            }
+        });
+
+        memberStatementTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+
+            }
+        ));
+        memberStatementTable.setColumnSelectionAllowed(true);
+        jScrollPane1.setViewportView(memberStatementTable);
+
+        org.jdesktop.layout.GroupLayout reportPanelLayout = new org.jdesktop.layout.GroupLayout(reportPanel);
+        reportPanel.setLayout(reportPanelLayout);
+        reportPanelLayout.setHorizontalGroup(
+            reportPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(reportPanelLayout.createSequentialGroup()
+                .add(6, 6, 6)
+                .add(reportPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(jScrollPane1)
+                    .add(reportPanelLayout.createSequentialGroup()
+                        .add(searchTextField)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(refreshButton)))
+                .addContainerGap())
+        );
+        reportPanelLayout.setVerticalGroup(
+            reportPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(reportPanelLayout.createSequentialGroup()
+                .add(6, 6, 6)
+                .add(reportPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(searchTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(refreshButton))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 104, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        tabbedPane.addTab("Statement", reportPanel);
+
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Subscription Dues"));
+
+        jLabel1.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
+        jLabel1.setText("Total Subscription To Be Paid          :");
+
+        jlabel10.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
+        jlabel10.setText("Total Subscription Already Paid       :");
+
+        jlabel11.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
+        jlabel11.setText("Total Subscription Need To Be Paid  :");
+
+        totalSubscriptionToBePaid.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
+        totalSubscriptionToBePaid.setPreferredSize(new java.awt.Dimension(45, 16));
+
+        totalSubscriptionAlreadyPaid.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
+        totalSubscriptionAlreadyPaid.setPreferredSize(new java.awt.Dimension(45, 16));
+
+        totalsubscriptionNeedToBePaid.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
+        totalsubscriptionNeedToBePaid.setPreferredSize(new java.awt.Dimension(45, 16));
+
+        org.jdesktop.layout.GroupLayout duesPanelLayout = new org.jdesktop.layout.GroupLayout(duesPanel);
+        duesPanel.setLayout(duesPanelLayout);
+        duesPanelLayout.setHorizontalGroup(
+            duesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(duesPanelLayout.createSequentialGroup()
+                .add(16, 16, 16)
+                .add(duesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(jLabel1)
+                    .add(jlabel10)
+                    .add(jlabel11))
+                .add(49, 49, 49)
+                .add(duesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
+                    .add(totalSubscriptionToBePaid, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .add(totalSubscriptionAlreadyPaid, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .add(totalsubscriptionNeedToBePaid, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 106, Short.MAX_VALUE))
+                .addContainerGap(268, Short.MAX_VALUE))
+        );
+
+        duesPanelLayout.linkSize(new java.awt.Component[] {jLabel1, jlabel10, jlabel11}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
+
+        duesPanelLayout.linkSize(new java.awt.Component[] {totalSubscriptionAlreadyPaid, totalSubscriptionToBePaid, totalsubscriptionNeedToBePaid}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
+
+        duesPanelLayout.setVerticalGroup(
+            duesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(duesPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .add(duesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(jLabel1)
+                    .add(totalSubscriptionToBePaid, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .add(18, 18, 18)
+                .add(duesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(jlabel10)
+                    .add(totalSubscriptionAlreadyPaid, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .add(18, 18, 18)
+                .add(duesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(jlabel11)
+                    .add(totalsubscriptionNeedToBePaid, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(10, Short.MAX_VALUE))
+        );
+
+        duesPanelLayout.linkSize(new java.awt.Component[] {totalSubscriptionAlreadyPaid, totalSubscriptionToBePaid, totalsubscriptionNeedToBePaid}, org.jdesktop.layout.GroupLayout.VERTICAL);
+
+        org.jdesktop.layout.GroupLayout jPanel1Layout = new org.jdesktop.layout.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .add(duesPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jPanel1Layout.createSequentialGroup()
+                .add(18, 18, 18)
+                .add(duesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(12, 12, 12))
+        );
+
+        tabbedPane.addTab("Dues", jPanel1);
+
+        org.jdesktop.layout.GroupLayout jPanel2Layout = new org.jdesktop.layout.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(0, 732, Short.MAX_VALUE)
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(0, 174, Short.MAX_VALUE)
+        );
+
+        tabbedPane.addTab("Summary", jPanel2);
+
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -343,9 +459,9 @@ public class MemberStatementReportView extends BaseReportView implements ReportD
                 .addContainerGap()
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(searchDetailsPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .add(reportPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .add(memberInformationPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .add(actionPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .add(actionPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .add(tabbedPane)))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -356,10 +472,12 @@ public class MemberStatementReportView extends BaseReportView implements ReportD
                 .add(memberInformationPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(actionPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(12, 12, 12)
-                .add(reportPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                .add(tabbedPane)
                 .addContainerGap())
         );
+
+        tabbedPane.getAccessibleContext().setAccessibleName("Statement Of Donation");
     }// </editor-fold>//GEN-END:initComponents
 
     private void refreshButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshButtonActionPerformed
@@ -393,7 +511,7 @@ public class MemberStatementReportView extends BaseReportView implements ReportD
         try {
             genericSearchDialog = new GenericSearchDialog(new GenericSearchReport(Member.class, BaseEntity.DetailsLevel.Search), this, ApplicationManager.getSharedManager().getMainFrame(), true);
             genericSearchDialog.setVisible(true);
-        } catch (InvalidArgument ex) {
+        } catch (IllegalArgumentException ex) {
             Logger.getLogger(MemberStatementReportView.class.getName()).log(Level.SEVERE, null, ex);
         }
         
@@ -437,7 +555,11 @@ public class MemberStatementReportView extends BaseReportView implements ReportD
 
             if(this.currentMember.getCurrentStatus() != BaseEntity.ActiveStatus.Active)
             {
-                JOptionPane.showMessageDialog(this, "Member is not active. Activate member before donation.", "Donation Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, 
+                        "Member is not active. Activate member before donation.", 
+                        "Member Statement Error", 
+                        JOptionPane.ERROR_MESSAGE);
+                
                 throw new Exception("Activate member before donation.");
             }
             
@@ -482,7 +604,7 @@ public class MemberStatementReportView extends BaseReportView implements ReportD
 
             if(this.currentMember.getCurrentStatus() != BaseEntity.ActiveStatus.Active)
             {
-                JOptionPane.showMessageDialog(this, "Member is not active. Activate member before paying subscription.", "Subscription Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Member is not active. Please activate member before paying subscription.", "Subscription Error", JOptionPane.ERROR_MESSAGE);
                 throw new Exception("Activate member before paying subscription.");
             }
             
@@ -516,7 +638,10 @@ public class MemberStatementReportView extends BaseReportView implements ReportD
     }//GEN-LAST:event_paySubscriptionButtonActionPerformed
 
     private void duesButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_duesButtonActionPerformed
-        // TODO add your handling code here:
+        
+        if(this.tabbedPane.getSelectedIndex() == 1) return;
+        
+        this.tabbedPane.setSelectedIndex(1);
     }//GEN-LAST:event_duesButtonActionPerformed
 
     private void searchTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchTextFieldActionPerformed
@@ -587,6 +712,17 @@ public class MemberStatementReportView extends BaseReportView implements ReportD
         }
     }//GEN-LAST:event_deactivateButtonActionPerformed
 
+    private void tabbedPaneStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_tabbedPaneStateChanged
+        JTabbedPane sourceTabbedPane = (JTabbedPane) evt.getSource();
+        if(sourceTabbedPane != null)
+        {
+            if(sourceTabbedPane.getSelectedIndex() == 1)
+            {
+                updateDuesView();
+            }
+        }
+    }//GEN-LAST:event_tabbedPaneStateChanged
+
     @Override
     public void updateView(ReportData data) 
     {
@@ -629,6 +765,9 @@ public class MemberStatementReportView extends BaseReportView implements ReportD
             this.memberImageLabel.setIcon(ResourceManager.getIcon("no_photo_men", this.memberImageLabel.getPreferredSize()));
             this.deactivateButton.setText(member.getCurrentStatus() == BaseEntity.ActiveStatus.Active ? "Deactivate" : "Activate");
             this.memberImageLabel.setIcon(ResourceManager.getImageFromImageFolder(this.currentMember.getImagePath(), this.memberImageLabel.getPreferredSize()));
+            
+            updateDuesView();
+                    
         }
         else
         {
@@ -641,6 +780,85 @@ public class MemberStatementReportView extends BaseReportView implements ReportD
 
             Toast.showToast(this.searchMemberTxt, "Member not found", false);
         }
+    }
+    
+    void updateDuesView()
+    {
+        if(this.currentMember != null)
+        {
+            try 
+            {
+                SubscriptionUtil util = new SubscriptionUtil(true);
+                float totalSubscriptionToBePaid = util.getSubscriptionAmountToBePaidBetweenDates(this.currentMember.getRegisterationDate(), DateTime.getTodaySQL());
+                this.totalSubscriptionToBePaid.setText("₹ " + NumberUtil.getFormattedNumber(Float.toString(totalSubscriptionToBePaid)));
+                
+                float totalSubscriptionalreadyPaid = getSubscriptionPaidByMember();
+                this.totalSubscriptionAlreadyPaid.setText("₹ " + NumberUtil.getFormattedNumber(Float.toString(totalSubscriptionalreadyPaid)));
+                
+                this.totalsubscriptionNeedToBePaid.setText("₹ " + NumberUtil.getFormattedNumber(Float.toString(totalSubscriptionToBePaid - totalSubscriptionalreadyPaid)));
+                
+                if((totalSubscriptionToBePaid - totalSubscriptionalreadyPaid) > 0)
+                {
+                    this.totalsubscriptionNeedToBePaid.setForeground(Color.red);
+                }
+                else
+                {
+                    this.totalsubscriptionNeedToBePaid.setForeground(Color.GREEN);
+                }
+                
+            } catch (IllegalArgumentException invalidArgument) {
+                this.totalsubscriptionNeedToBePaid.setForeground(Color.BLACK);
+                this.totalSubscriptionToBePaid.setText("");
+                this.totalSubscriptionAlreadyPaid.setText("");
+                this.totalsubscriptionNeedToBePaid.setText("");
+                
+                if(this.tabbedPane.getSelectedIndex() == 1)
+                {
+                    JOptionPane.showMessageDialog(this, 
+                            "Failed to get member dues details. Please check member registeration date.", 
+                            "Member Statement Error", 
+                            JOptionPane.ERROR_MESSAGE);
+
+                    Logger.getLogger(MemberStatementReportView.class.getName()).log(Level.SEVERE, null, invalidArgument);
+                }
+                
+                Toast.showToastOnComponentCenter(duesPanel, "Failed to get member dues details. Please check member registeration date.", false);
+            }
+        }
+        else
+        {
+            this.totalsubscriptionNeedToBePaid.setForeground(Color.BLACK);
+            this.totalSubscriptionToBePaid.setText("");
+            this.totalSubscriptionAlreadyPaid.setText("");
+            this.totalsubscriptionNeedToBePaid.setText("");
+            
+            Toast.showToastOnComponentCenter(duesPanel, "Select member to view dues details.", false);
+        }
+    }
+    
+    float getSubscriptionPaidByMember()
+    {
+        if(this.currentMember == null)
+            return 0;
+        
+        ReportData reportData = getReport().getData();
+        
+        if(reportData == null || reportData.getEntities().isEmpty()) return 0;
+        
+        Vector<BaseEntity> donationEntities = reportData.getEntities();
+        
+        float totalSubscriptionalreadyPaid = 0;
+        
+        for (BaseEntity baseEntity : donationEntities) 
+        {
+            Donor donation = (Donor) baseEntity;
+            
+            if(donation == null || !donation.isSubscription()) continue;
+            
+            totalSubscriptionalreadyPaid += donation.getDonationAmount();
+        }
+        
+        return totalSubscriptionalreadyPaid;
     }
 
     
@@ -663,7 +881,7 @@ public class MemberStatementReportView extends BaseReportView implements ReportD
             if(entity != null)
             {
                 this.searchMemberTxt.setText(entity.getUniqueID());
-                updateViewInternal((Member)entity);
+                //updateViewInternal((Member)entity);
                 updateReportView(entity.getUniqueID());
             }
         }
@@ -677,11 +895,17 @@ public class MemberStatementReportView extends BaseReportView implements ReportD
     private javax.swing.JLabel districtLabel;
     private javax.swing.JButton donateButton;
     private javax.swing.JButton duesButton;
+    private javax.swing.JPanel duesPanel;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel jlabel10;
+    private javax.swing.JLabel jlabel11;
     private javax.swing.JLabel memberFullName;
     private javax.swing.JLabel memberImageLabel;
     private javax.swing.JPanel memberInformationPanel;
@@ -696,6 +920,10 @@ public class MemberStatementReportView extends BaseReportView implements ReportD
     private javax.swing.JTextField searchTextField;
     private javax.swing.JButton showFullDetailsButton;
     private javax.swing.JButton showStatementButton;
+    private javax.swing.JTabbedPane tabbedPane;
+    private javax.swing.JLabel totalSubscriptionAlreadyPaid;
+    private javax.swing.JLabel totalSubscriptionToBePaid;
+    private javax.swing.JLabel totalsubscriptionNeedToBePaid;
     // End of variables declaration//GEN-END:variables
 
 }

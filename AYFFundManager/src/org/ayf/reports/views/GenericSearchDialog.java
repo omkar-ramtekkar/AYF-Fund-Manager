@@ -6,7 +6,6 @@
 
 package org.ayf.reports.views;
 
-import com.sun.tools.corba.se.idl.InvalidArgument;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -31,14 +30,14 @@ public class GenericSearchDialog extends javax.swing.JDialog
     protected ReportDataProcessor dataProcessor;
     protected Report report;
     
-    public GenericSearchDialog(final Report report, final ReportDataProcessor dataProcessor, final java.awt.Frame parent, boolean modal) throws InvalidArgument 
+    public GenericSearchDialog(final Report report, final ReportDataProcessor dataProcessor, final java.awt.Frame parent, boolean modal) throws IllegalArgumentException 
     {
         super(parent, modal);
         initComponents();
         
         if(report == null)
         {
-            throw new InvalidArgument("null report object");
+            throw new IllegalArgumentException("null report object");
         }
 
         setDataProcessor(dataProcessor);
