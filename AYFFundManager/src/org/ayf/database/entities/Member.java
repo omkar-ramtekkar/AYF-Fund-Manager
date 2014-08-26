@@ -239,6 +239,22 @@ public class Member extends BaseEntity
             
             detailLevelVsColumnsMap.put(DetailsLevel.Search, columnNames);
         }
+        
+        
+        {
+            Vector columnNames = new Vector(20);
+            columnNames.add((ColumnName.UniqueID));
+            columnNames.add((ColumnName.RegisterationDate));
+            columnNames.add((ColumnName.FirstName));
+            columnNames.add((ColumnName.MiddleName));
+            columnNames.add((ColumnName.LastName));
+            columnNames.add((ColumnName.ContactNumber));
+            columnNames.add((ColumnName.EmailAddress));
+            columnNames.add((ColumnName.Status));
+            
+            detailLevelVsColumnsMap.put(DetailsLevel.SubscriptionEndingDetails, columnNames);
+        }
+        
     }
     
     public MaritalStatus getMaritalStatus() {
@@ -609,6 +625,11 @@ public class Member extends BaseEntity
     }
     
     @Override
+    public int compareTo(BaseEntity o) {
+        return getUniqueID().compareTo(o.getUniqueID());
+    }
+    
+    @Override
     public int hashCode() {
         int hash = 7;
         hash = 47 * hash + this.getID();
@@ -617,24 +638,6 @@ public class Member extends BaseEntity
         return hash;
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final Member other = (Member) obj;
-        if (this.getID() != other.getID()) {
-            return false;
-        }
-        if (this.dateOfBirth.equals(other.dateOfBirth)) {
-            return false;
-        }
-        return this.gender == other.gender;
-    }
-    
     @Override
     public String toString() {
         StringBuilder memberString = new StringBuilder(30);
@@ -743,6 +746,10 @@ public class Member extends BaseEntity
             default:
                 super.setValueForField(fieldName, value);
         }
+    }
+
+    public boolean isActive() {
+        return getCurrentStatus() == ActiveStatus.Active;
     }
         
 }

@@ -88,6 +88,8 @@ public class TableAutoFilterAdapter implements DocumentListener, ActionListener,
     
     void updateTable()
     {
+        if(this.searchField == null) return ;
+        
         if (searchField.getText().length() == 0) 
         {
             sorter.setRowFilter(null);

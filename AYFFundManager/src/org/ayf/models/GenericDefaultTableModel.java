@@ -59,9 +59,13 @@ public class GenericDefaultTableModel extends DefaultTableModel{
         {
             return "";
         }
-        else if(value instanceof Date)
+        else if(value instanceof java.sql.Date)
         {
-            return DateTime.getFormattedDateSQL((Date) value);
+            return DateTime.getFormattedDateSQL((java.sql.Date) value);
+        }
+        else if(value instanceof java.util.Date)
+        {
+            return DateTime.getFormattedDate((java.util.Date) value);
         }
         
         return value;

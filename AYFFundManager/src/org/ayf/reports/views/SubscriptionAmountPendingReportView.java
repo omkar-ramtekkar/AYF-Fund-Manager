@@ -7,7 +7,7 @@
 package org.ayf.reports.views;
 
 import javax.swing.JTable;
-import javax.swing.table.DefaultTableModel;
+import org.ayf.models.GenericDefaultTableModel;
 import org.ayf.reports.Report;
 import org.ayf.reports.ReportData;
 
@@ -15,13 +15,16 @@ import org.ayf.reports.ReportData;
  *
  * @author om
  */
-public class SubscriptionNotificationReportView extends BaseReportView {
+public class SubscriptionAmountPendingReportView extends BaseReportView {
 
     /**
-     * Creates new form SubscriptionNotificationReportView
+     * Creates new form SubscriptionAmountPendingReportView
      */
-    public SubscriptionNotificationReportView(Report report) {
+    public SubscriptionAmountPendingReportView(Report report) {
         super(report);
+        initComponents();
+        
+        setupTextSearchForReportTable(null);
     }
 
     /**
@@ -37,6 +40,8 @@ public class SubscriptionNotificationReportView extends BaseReportView {
         refreshButton = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         reportTable = new ReportTable();
+        searchoptionsPanel = new javax.swing.JPanel();
+        showOnlyActiveMemberCkBox = new javax.swing.JCheckBox();
 
         refreshButton.setText("Refresh");
         refreshButton.addActionListener(new java.awt.event.ActionListener() {
@@ -56,6 +61,31 @@ public class SubscriptionNotificationReportView extends BaseReportView {
         reportTable.setColumnSelectionAllowed(true);
         jScrollPane1.setViewportView(reportTable);
 
+        searchoptionsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Search Filter"));
+
+        showOnlyActiveMemberCkBox.setText("Show only Active Members");
+        showOnlyActiveMemberCkBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                showOnlyActiveMemberCkBoxActionPerformed(evt);
+            }
+        });
+
+        org.jdesktop.layout.GroupLayout searchoptionsPanelLayout = new org.jdesktop.layout.GroupLayout(searchoptionsPanel);
+        searchoptionsPanel.setLayout(searchoptionsPanelLayout);
+        searchoptionsPanelLayout.setHorizontalGroup(
+            searchoptionsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(searchoptionsPanelLayout.createSequentialGroup()
+                .add(showOnlyActiveMemberCkBox)
+                .add(0, 0, Short.MAX_VALUE))
+        );
+        searchoptionsPanelLayout.setVerticalGroup(
+            searchoptionsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(searchoptionsPanelLayout.createSequentialGroup()
+                .add(16, 16, 16)
+                .add(showOnlyActiveMemberCkBox)
+                .addContainerGap(20, Short.MAX_VALUE))
+        );
+
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -63,11 +93,12 @@ public class SubscriptionNotificationReportView extends BaseReportView {
             .add(layout.createSequentialGroup()
                 .addContainerGap()
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(searchoptionsPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .add(layout.createSequentialGroup()
                         .add(searchTextField)
-                        .add(18, 18, 18)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                         .add(refreshButton))
-                    .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 482, Short.MAX_VALUE))
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 530, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -77,18 +108,21 @@ public class SubscriptionNotificationReportView extends BaseReportView {
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(searchTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(refreshButton))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 311, Short.MAX_VALUE)
+                .add(18, 18, 18)
+                .add(searchoptionsPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(18, 18, 18)
+                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 281, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
 
     private void refreshButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshButtonActionPerformed
-        if(report != null)
-        {
-            report.updateReport();
-        }
+        refresh();
     }//GEN-LAST:event_refreshButtonActionPerformed
+
+    private void showOnlyActiveMemberCkBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showOnlyActiveMemberCkBoxActionPerformed
+        
+    }//GEN-LAST:event_showOnlyActiveMemberCkBoxActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -96,20 +130,21 @@ public class SubscriptionNotificationReportView extends BaseReportView {
     private javax.swing.JButton refreshButton;
     private javax.swing.JTable reportTable;
     private javax.swing.JTextField searchTextField;
+    private javax.swing.JPanel searchoptionsPanel;
+    private javax.swing.JCheckBox showOnlyActiveMemberCkBox;
     // End of variables declaration//GEN-END:variables
 
     @Override
     public void updateView(ReportData data) {
         if(data != null)
         {
-            getReportTable().setModel(new DefaultTableModel(data.getData(), data.getColumns()));
+            getReportTable().setModel(new GenericDefaultTableModel(data.getData(), data.getColumns()));
             adjustReportTableColumns();
         }
     }
 
     @Override
-    protected JTable getReportTable() 
-    {
+    protected JTable getReportTable() {
         return this.reportTable;
     }
 }

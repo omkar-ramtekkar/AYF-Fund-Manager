@@ -41,6 +41,7 @@ public class Command {
         StatementsByMember,
         StatementsCashFlows,
         NotificationsMemberSubscription,
+        NotificationsMemberSubscriptionPending,
         
         //Report Command for all kind of search reports
         GenericSearch,
@@ -125,6 +126,8 @@ public class Command {
                 return "Statement of Cash Flows";
             case NotificationsMemberSubscription:
                 return "Subscription Reminder";
+            case NotificationsMemberSubscriptionPending:
+                return "Subscription Pending";
             case ExportAsExcel:
                 return "Export As Excel";
                 
@@ -150,8 +153,8 @@ public class Command {
             case Settings:
                 return "Settings";
         }
-        
-        return null;
+
+        return type.toString();
     }
     
     

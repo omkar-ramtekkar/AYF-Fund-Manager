@@ -139,34 +139,38 @@ public class DateTime {
     
     public static java.sql.Date toSQLDate(String dateString)
     {
+        if(dateString == null || dateString.isEmpty()) return null;
+        
         java.sql.Date date = null;
-        if(dateString != null && dateString.length() > 0)
-        {
-            try {
-                date = toSQLDate(dateFormat.parse(dateString));
-                return date;
-            } catch (ParseException ex) {}
-            
-            try {
-                date = toSQLDate(new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH).parse(dateString));
-                return date;
-            } catch (ParseException ex) {}
-            
-            try {
-                date = toSQLDate(new SimpleDateFormat("dd-MM-yy", Locale.ENGLISH).parse(dateString));
-                return date;
-            } catch (ParseException ex) {}
-            
-            try {
-                date = toSQLDate(new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH).parse(dateString));
-                return date;
-            } catch (ParseException ex) {}
-            
-            try {
-                date = toSQLDate(new SimpleDateFormat("dd/MMM/yyyy", Locale.ENGLISH).parse(dateString));
-                return date;
-            } catch (ParseException ex) {}
-        }
+        StringBuilder tempDateString = new StringBuilder(dateString.length() + 5);
+        tempDateString.append(" ").append(dateString.trim()).append(" ");
+        
+        dateString = tempDateString.toString();
+        
+        try {
+            date = toSQLDate(dateFormat.parse(dateString));
+            return date;
+        } catch (ParseException ex) {}
+
+        try {
+            date = toSQLDate(new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH).parse(dateString));
+            return date;
+        } catch (ParseException ex) {}
+
+        try {
+            date = toSQLDate(new SimpleDateFormat("dd-MM-yy", Locale.ENGLISH).parse(dateString));
+            return date;
+        } catch (ParseException ex) {}
+
+        try {
+            date = toSQLDate(new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH).parse(dateString));
+            return date;
+        } catch (ParseException ex) {}
+
+        try {
+            date = toSQLDate(new SimpleDateFormat("dd/MMM/yyyy", Locale.ENGLISH).parse(dateString));
+            return date;
+        } catch (ParseException ex) {}
         
         return null;
     }

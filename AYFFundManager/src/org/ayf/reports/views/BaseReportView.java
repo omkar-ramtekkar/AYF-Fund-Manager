@@ -165,9 +165,8 @@ public abstract class BaseReportView extends BackgroundPanel implements ReportVi
     
     protected void setupTextSearchForReportTable(JTextField searchField)
     {
-        
         JTable reportTable = getReportTable();
-        if(searchField != null && reportTable != null)
+        if(reportTable != null)
         {
             rowFilter = new TableAutoFilterAdapter(reportTable, searchField);
         }

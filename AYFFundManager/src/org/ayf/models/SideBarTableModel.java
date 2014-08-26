@@ -146,6 +146,7 @@ public final class SideBarTableModel extends AbstractTableModel implements Mouse
         HeaderOption notificationOption = new HeaderOption(ReportCommand.SubCommandType.Notifications);
         this.options.add(notificationOption);
         notificationOption.addSubOption(new Option(ReportCommand.SubCommandType.NotificationsMemberSubscription, notificationOption));
+        notificationOption.addSubOption(new Option(ReportCommand.SubCommandType.NotificationsMemberSubscriptionPending, notificationOption));
         notificationOption.addSubOption(new Option(ReportCommand.SubCommandType.None, notificationOption));
         
         

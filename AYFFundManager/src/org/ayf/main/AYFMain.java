@@ -6,6 +6,7 @@ import java.util.logging.Logger;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import org.ayf.managers.ApplicationManager;
+import org.ayf.util.DateTime;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -20,6 +21,10 @@ import org.ayf.managers.ApplicationManager;
 public class AYFMain {
 
     public static void main(String[] args) {
+        
+        
+        DateTime.toSQLDate(DateTime.getFormattedDate());
+        
         try 
         {
             UIManager.setLookAndFeel("com.seaglasslookandfeel.SeaGlassLookAndFeel");

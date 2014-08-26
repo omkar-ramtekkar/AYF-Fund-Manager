@@ -7,7 +7,6 @@
 package org.ayf.reports.views;
 
 import java.awt.Point;
-import java.util.Vector;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JComboBox;
 import javax.swing.JTable;

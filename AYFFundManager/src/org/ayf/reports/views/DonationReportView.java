@@ -10,6 +10,7 @@ import java.awt.image.BufferedImage;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
+import org.ayf.models.GenericDefaultTableModel;
 import org.ayf.reports.Report;
 import org.ayf.reports.ReportData;
 
@@ -39,7 +40,7 @@ public class DonationReportView extends BaseReportView {
     {
         if(data != null)
         {
-            getReportTable().setModel(new DefaultTableModel(data.getData(), data.getColumns()));
+            getReportTable().setModel(new GenericDefaultTableModel(data.getData(), data.getColumns()));
             adjustReportTableColumns();
         }
     }

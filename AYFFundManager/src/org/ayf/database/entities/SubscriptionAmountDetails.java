@@ -55,17 +55,10 @@ public class SubscriptionAmountDetails extends BaseEntity
         if (getClass() != obj.getClass()) {
             return false;
         }
+        
         final SubscriptionAmountDetails other = (SubscriptionAmountDetails) obj;
-        if (this.fromDate != other.fromDate && (this.fromDate == null || !this.fromDate.equals(other.fromDate))) {
-            return false;
-        }
-        if (this.toDate != other.toDate && (this.toDate == null || !this.toDate.equals(other.toDate))) {
-            return false;
-        }
-        if (Float.floatToIntBits(this.amount) != Float.floatToIntBits(other.amount)) {
-            return false;
-        }
-        return true;
+        
+        return getID() == other.getID();
     }
     
     

@@ -9,7 +9,6 @@ package org.ayf.database.entities;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Vector;
-import static org.ayf.database.entities.Member.detailLevelVsColumnsMap;
 import org.ayf.managers.DatabaseManager;
 import org.ayf.reports.ReportData;
 import org.ayf.ui.InformationPanel;
@@ -32,7 +31,7 @@ public abstract class BaseEntity implements Comparable<BaseEntity>
     
     public enum DetailsLevel
     {
-        None, OnlyIDAndName, Basic, AllPersonal, AllProfessional, AllSocial,  Complete, MemberStatement, Database, Search  
+        None, OnlyIDAndName, Basic, AllPersonal, AllProfessional, AllSocial,  Complete, MemberStatement, Database, Search, SubscriptionEndingDetails  
     }
     
     public enum ColumnName
@@ -65,6 +64,22 @@ public abstract class BaseEntity implements Comparable<BaseEntity>
         setID(id);
         setUniqueID(uniqueID);
         setDescription(description);
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+        
+        if (obj == null) {
+            return false;
+        }
+        
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        
+        final BaseEntity other = (BaseEntity) obj;
+        
+        return this.getUniqueID().equals(other.getUniqueID());
     }
     
     public Vector<ColumnName> getColumnIDsForDetailLevel(DetailsLevel level, Map<DetailsLevel, Vector<ColumnName>> detailLevelVsColumnsMap) 

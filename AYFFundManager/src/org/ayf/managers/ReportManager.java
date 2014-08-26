@@ -18,6 +18,8 @@ import org.ayf.reports.AllsubscriptionAmountReport;
 import org.ayf.reports.DonationReport;
 import org.ayf.reports.MemberStatementReport;
 import org.ayf.reports.Report;
+import org.ayf.reports.SubscriptionAmountPendingReport;
+import org.ayf.reports.SubscriptionReminderReport;
 
 /**
  *
@@ -35,6 +37,7 @@ public class ReportManager
         initializeDashboardReports();
         initializeDetailsReports();
         initializeStatementsReports();
+        initializeNotificationReports();
     }
     
     void initializeDashboardReports()
@@ -65,6 +68,15 @@ public class ReportManager
         statementReports.add(new MemberStatementReport());
         
         reports.put(ReportCommand.SubCommandType.Statements, statementReports);
+    }
+    
+    void initializeNotificationReports()
+    {
+        Vector<Report> notificationReports = new Vector();
+        notificationReports.add(new SubscriptionReminderReport());
+        notificationReports.add(new SubscriptionAmountPendingReport());
+        
+        reports.put(ReportCommand.SubCommandType.Notifications, notificationReports);
     }
 
     public Vector<Report> getReports(ReportCommand.SubCommandType type)

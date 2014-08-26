@@ -16,6 +16,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.sql.Date;
 import java.sql.Statement;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -30,6 +33,7 @@ import org.ayf.database.entities.Expense;
 import org.ayf.database.entities.SubscriptionAmountDetails;
 import org.ayf.reports.ReportData;
 import org.ayf.tpl.java2s.FilenameUtils;
+import org.ayf.util.DateTime;
 import org.ayf.util.PreferenceManager;
 
 
@@ -61,6 +65,7 @@ public class DatabaseManager {
     public static  ArrayList<Type> POSITION_TYPES;
     public static  ArrayList<Type> PAYMENT_MODE_TYPES;
     public static  ArrayList<Type> STATUS_TYPES;
+
     
     enum UpdateAction { Add, Remove, Update, Read };
     
@@ -139,6 +144,9 @@ public class DatabaseManager {
     }
     
     private static boolean closeConnection(Connection connection){
+        
+        if(connection == null) return false;
+        
         boolean bSuccess = true;
         try {
             connection.close();
@@ -146,6 +154,49 @@ public class DatabaseManager {
             bSuccess = false;
             Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, ex);
         }
+        return bSuccess;
+    }
+    
+    private static boolean closeResultSet(ResultSet rs)
+    {
+        if(rs == null) return false;
+        
+        boolean bSuccess = true;
+        
+        try {
+            rs.close();
+        } catch (SQLException ex) {
+            bSuccess = false;
+            Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return bSuccess;
+    }
+    
+    private static boolean closeStatement(Statement s)
+    {
+        if(s == null) return false;
+        
+        boolean bSuccess = true;
+        
+        try {
+            s.close();
+        } catch (SQLException ex) {
+            bSuccess = false;
+            Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return bSuccess;
+    }
+    
+    
+    private static boolean closeConnectionObjects(ResultSet rs, Statement s, Connection conn)
+    {
+        boolean bSuccess = true;
+        bSuccess &= closeResultSet(rs);
+        bSuccess &= closeStatement(s);
+        bSuccess &= closeConnection(conn);
+        
         return bSuccess;
     }
     
@@ -1110,5 +1161,176 @@ public class DatabaseManager {
         }
     }
     
+    public static ArrayList<BaseEntity> getMemberSubscriptionEndingBetween(java.sql.Date date1, java.sql.Date date2) {
+        
+//        Connection conn = null;
+//        PreparedStatement ps = null;
+//        ResultSet rs = null;
+//        
+//        ArrayList<String> uniqueIDs = new ArrayList<String>(10);
+//        
+//        try {
+//            
+//            conn = createConnection();
+//
+//            StringBuilder sqlString = new StringBuilder(100);
+//        
+//            
+//            sqlString.append("SELECT ").
+//                append(BaseEntity.ColumnName.UniqueID).
+//                append(" FROM ").
+//                append(MEMBER_TABLE_NAME).
+//                append(" as memberTable ").
+//                append(" WHERE ( MONTH(memberTable.RegisterationDate) >= MONTH(CAST(? as datetime)) AND "
+//                        + "MONTH(memberTable.RegisterationDate) <= MONTH(CAST(? as datetime)))");
+//            /*
+//             AND"
+//                        + " DAY(memberTable.RegisterationDate) >= DAY(CAST(? as datetime)) AND"
+//                        + " DAY(memberTable.RegisterationDate) <= DAY(CAST(? as datetime))
+//            */
+//        
+//            ps = conn.prepareStatement(sqlString.toString());
+//            
+//            ps.setDate(1, date1);
+//            ps.setDate(2, date2);
+//            //ps.setDate(3, date1);
+//            //ps.setDate(4, date2);
+//            
+//            rs = ps.executeQuery();
+//            
+//            
+//            while(rs.next())
+//            {
+//                String uniqueID = rs.getString(BaseEntity.ColumnName.UniqueID.toString());
+//                uniqueIDs.add(uniqueID);
+//            }
+//            
+//        } catch (SQLException e) {
+//            JOptionPane.showMessageDialog(null, e.getLocalizedMessage(), "Database Error", ERROR_MESSAGE);
+//        }
+//        finally
+//        {
+//            closeConnectionObjects(rs, ps, conn);
+//        }
+//        
+//        
+//        ArrayList<BaseEntity> entities = getAllEntities(Member.class);
+//        
+//        Comparator<BaseEntity> comp = new Comparator<BaseEntity>() {
+//
+//            @Override
+//            public int compare(BaseEntity o1, BaseEntity o2) {
+//                return o1.getUniqueID().compareTo(o2.getUniqueID());
+//            }
+//        };
+//        
+//        
+//        ArrayList<BaseEntity> resultEntities = new ArrayList<BaseEntity>(uniqueIDs.size());
+//        
+//        try {
+//            Collections.sort(entities, comp);
+//            
+//            Member testMember = new Member();
+//            
+//            Object[] entityArray = entities.toArray();
+//            
+//            
+//            
+//            for (String uniqueID : uniqueIDs) {
+//                testMember.setUniqueID(uniqueID);
+//                
+//                int index = Arrays.binarySearch(entityArray, testMember);
+//                
+//                if (index == -1) {
+//                    continue;
+//                }
+//                
+//                resultEntities.add((BaseEntity) entityArray[index]);
+//            }
+//        } catch (Exception e) {
+//            Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//        
+//        return resultEntities;
+        
+        ArrayList<BaseEntity> allEntities = getAllEntities(Member.class);
+        ArrayList<BaseEntity> resultEntities = new ArrayList<BaseEntity>(10);
+        
+        for (BaseEntity baseEntity : allEntities) 
+        {
+            Member member = (Member) baseEntity;
+            
+            if(!member.isActive())
+                continue;
+            
+            java.sql.Date regDate = member.getRegisterationDate();
+            
+            if(regDate == null)
+                continue;
+            
+            int day = DateTime.getDay(regDate);
+            int month = DateTime.getMonth(regDate);
+            int currentYear = DateTime.getYear(date1);
+            
+            java.sql.Date newRegDate = DateTime.getDate(day, month, currentYear);
+            
+            if(newRegDate.getTime() >= date1.getTime() && newRegDate.getTime() <= date2.getTime())
+                resultEntities.add(member);
+        }
+        
+        return resultEntities;
+    }
+    
+    
+    public static ArrayList<BaseEntity> getMemberSubscriptionEndingBy(java.sql.Date date1) {
+        return getMemberSubscriptionEndingBetween(DateTime.getTodaySQL(), date1);
+    }
+    
+    public static float getTotalDonationPaidByMember(String regID, String donationType)
+    {
+        if(regID == null || regID.isEmpty()) return 0;
+        
+        if(donationType == null || donationType.isEmpty()) return 0;
+
+        float totalDonation = 0;
+
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try
+        {
+            StringBuilder sqlString = new StringBuilder(50);
+            sqlString.append("SELECT SUM(Amount) as Total FROM ").append(DONATIONS_TABLE_NAME).
+                    append(" WHERE (MemberUniqueID=CAST(? as VARCHAR(20)) AND DonationType=CAST(? as VARCHAR(30)))");
+            
+            conn = createConnection();
+            
+            ps = conn.prepareStatement(sqlString.toString());
+            
+            //ps.setString(1, BaseEntity.ColumnName.Amount.toString());
+            //ps.setString(1, BaseEntity.ColumnName.MemberUniqueID.toString());
+            ps.setString(1, regID);
+            //ps.setString(3, BaseEntity.ColumnName.DonationType.toString());
+            ps.setString(2, donationType);
+            
+            rs = ps.executeQuery();
+            
+            if(rs.next())
+                totalDonation = rs.getFloat("Total");
+            
+        }
+        catch(SQLException ex)
+        {
+            Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, ex);
+            //JOptionPane.showMessageDialog(null, ex.getLocalizedMessage(), "Database Error", ERROR_MESSAGE);
+        }
+        finally
+        {
+            closeConnectionObjects(rs, ps, conn);
+        }
+        
+        return totalDonation;
+    }
     
 }
