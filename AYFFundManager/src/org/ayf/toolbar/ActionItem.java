@@ -70,10 +70,12 @@ public class ActionItem extends AbstractAction{
 
     public void setTitle(String title) {
         this.title = title;
+        putValue(SHORT_DESCRIPTION, title);
     }
 
     public void setIcon(ImageIcon icon) {
         this.icon = icon;
+        putValue(LARGE_ICON_KEY, icon);      
     }
 
     public void setType(ToolbarCommand.SubCommandType type) {

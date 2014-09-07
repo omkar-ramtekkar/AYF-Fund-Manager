@@ -10,6 +10,7 @@ import javax.swing.JTable;
 import org.ayf.models.GenericDefaultTableModel;
 import org.ayf.reports.Report;
 import org.ayf.reports.ReportData;
+import org.ayf.reports.SubscriptionAmountPendingReport;
 
 /**
  *
@@ -24,7 +25,8 @@ public class SubscriptionAmountPendingReportView extends BaseReportView {
         super(report);
         initComponents();
         
-        setupTextSearchForReportTable(null);
+        this.infoLabel.setText("<html> <b> Note: Pending amount is calculated as difference between - </b> <br>Total subscription amount to be paid by member from his registeration date - </br> <br>Total subscription amount paid by the member as of today</br></html>");
+        setupTextSearchForReportTable(this.searchTextField);
     }
 
     /**
@@ -42,6 +44,7 @@ public class SubscriptionAmountPendingReportView extends BaseReportView {
         reportTable = new ReportTable();
         searchoptionsPanel = new javax.swing.JPanel();
         showOnlyActiveMemberCkBox = new javax.swing.JCheckBox();
+        infoLabel = new javax.swing.JLabel();
 
         refreshButton.setText("Refresh");
         refreshButton.addActionListener(new java.awt.event.ActionListener() {
@@ -63,7 +66,7 @@ public class SubscriptionAmountPendingReportView extends BaseReportView {
 
         searchoptionsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Search Filter"));
 
-        showOnlyActiveMemberCkBox.setText("Show only Active Members");
+        showOnlyActiveMemberCkBox.setText("Show Inactive Members");
         showOnlyActiveMemberCkBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 showOnlyActiveMemberCkBoxActionPerformed(evt);
@@ -76,14 +79,20 @@ public class SubscriptionAmountPendingReportView extends BaseReportView {
             searchoptionsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(searchoptionsPanelLayout.createSequentialGroup()
                 .add(showOnlyActiveMemberCkBox)
-                .add(0, 0, Short.MAX_VALUE))
+                .add(0, 304, Short.MAX_VALUE))
+            .add(searchoptionsPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .add(infoLabel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
         searchoptionsPanelLayout.setVerticalGroup(
             searchoptionsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(searchoptionsPanelLayout.createSequentialGroup()
                 .add(16, 16, 16)
                 .add(showOnlyActiveMemberCkBox)
-                .addContainerGap(20, Short.MAX_VALUE))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(infoLabel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 50, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
@@ -98,7 +107,7 @@ public class SubscriptionAmountPendingReportView extends BaseReportView {
                         .add(searchTextField)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                         .add(refreshButton))
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 530, Short.MAX_VALUE))
+                    .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 495, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -110,8 +119,8 @@ public class SubscriptionAmountPendingReportView extends BaseReportView {
                     .add(refreshButton))
                 .add(18, 18, 18)
                 .add(searchoptionsPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(18, 18, 18)
-                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 281, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 166, Short.MAX_VALUE)
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -121,11 +130,13 @@ public class SubscriptionAmountPendingReportView extends BaseReportView {
     }//GEN-LAST:event_refreshButtonActionPerformed
 
     private void showOnlyActiveMemberCkBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showOnlyActiveMemberCkBoxActionPerformed
-        
+        boolean bShowInActiveMembers = this.showOnlyActiveMemberCkBox.isSelected();
+        ((SubscriptionAmountPendingReport) getReport()).setShowInactiveMembers(bShowInActiveMembers);
     }//GEN-LAST:event_showOnlyActiveMemberCkBoxActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel infoLabel;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JButton refreshButton;
     private javax.swing.JTable reportTable;
@@ -135,12 +146,7 @@ public class SubscriptionAmountPendingReportView extends BaseReportView {
     // End of variables declaration//GEN-END:variables
 
     @Override
-    public void updateView(ReportData data) {
-        if(data != null)
-        {
-            getReportTable().setModel(new GenericDefaultTableModel(data.getData(), data.getColumns()));
-            adjustReportTableColumns();
-        }
+    public void updateViewDecoration(ReportData data) {
     }
 
     @Override

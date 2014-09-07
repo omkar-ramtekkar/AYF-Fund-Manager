@@ -8,16 +8,17 @@ package org.ayf.ui.controllers;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.util.Vector;
-import javax.swing.JPanel;
+import javax.print.PrintException;
 import org.ayf.command.Command;
 import org.ayf.managers.ApplicationManager;
 import org.ayf.managers.ReportManager;
 import org.ayf.command.ReportCommand;
 import org.ayf.models.SideBarTableModel.Option;
 import org.ayf.reports.Report;
+import org.ayf.reports.print.BasicPrintable;
+import org.ayf.reports.print.ProgressTracker;
+import org.ayf.reports.print.ReportPrintable;
 import org.ayf.reports.views.BaseReportView;
 import org.ayf.reports.views.ReportViewDelegate;
 import org.ayf.ui.ReportView;
@@ -26,10 +27,12 @@ import org.ayf.ui.ReportView;
  *
  * @author om
  */
-public class ReportViewController implements ActionListener, MouseListener
+public class ReportViewController implements ActionListener
 {
     ReportManager reportManager;
     ReportView reportView;
+    
+    Vector<Report> currentReports;
 
     public ReportViewController() {
         initialize();
@@ -50,7 +53,7 @@ public class ReportViewController implements ActionListener, MouseListener
         return reportManager;
     }
 
-    public JPanel getReportView() {
+    public ReportView getReportView() {
         return reportView;
     }
     
@@ -83,8 +86,13 @@ public class ReportViewController implements ActionListener, MouseListener
     
     public void openReport(Command.SubCommandType type, Command.SubCommandType subType)
     {
+        updateReportViewWithReports(getReport(type, subType));
+    }
+    
+    private Vector<Report> getReport(Command.SubCommandType type, Command.SubCommandType subType)
+    {
         Vector<Report> reports = null;
-        if(type != null && subType != null)
+        if(type != null && (subType != null && subType != Command.SubCommandType.None))
         {
             reports = new Vector<Report>();
             Report report = reportManager.getReportsForType(type, subType);
@@ -98,14 +106,18 @@ public class ReportViewController implements ActionListener, MouseListener
             reports = reportManager.getReports(type);
         }
         
-        updateReportViewWithReports(reports);
+        return reports;
     }
     
     void updateReportViewWithReports(Vector<Report> reports)
     {
         if(reports != null && !reports.isEmpty())
         {
+            currentReports = new Vector<Report>(reports);
+            
             cleanReportView();
+            
+            reportView.prepareForReports(reports.size());
             
             for (Report report : reports) 
             {
@@ -140,35 +152,27 @@ public class ReportViewController implements ActionListener, MouseListener
             }
         }
     }
-
-    @Override
-    public void mouseClicked(MouseEvent e) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void mousePressed(MouseEvent e) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void mouseReleased(MouseEvent e) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void mouseEntered(MouseEvent e) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void mouseExited(MouseEvent e) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
+    
     public void refresh() {
-        openReport(Command.SubCommandType.Dashboard, Command.SubCommandType.None);
+        updateReportViewWithReports(currentReports);
     }
     
     
+    public ReportPrintable getPrintableReport() throws PrintException {
+        if(this.currentReports == null || this.currentReports.isEmpty()) throw new PrintException("No reports to print.");
+        
+        return this.currentReports.firstElement().getPrintableReport();
+    }
+    
+    public Vector<BasicPrintable> getPrintableReports() throws PrintException {
+        if(this.currentReports == null || this.currentReports.isEmpty()) throw new PrintException("No reports to print.");
+        
+        Vector<BasicPrintable> printables = new Vector<BasicPrintable>(this.currentReports.size());
+        
+        for (Report report : this.currentReports) {
+            printables.add(report.getPrintableReport());
+        }
+        
+        return printables;
+    }
 }

@@ -156,14 +156,7 @@ public class AllSubscriptionAmountsReportView extends BaseReportView {
     // End of variables declaration//GEN-END:variables
 
     @Override
-    public void updateView(ReportData data) {
-        if(data != null)
-        {
-            GenericDefaultTableModel model = new GenericDefaultTableModel(data);
-            getReportTable().setModel(model);
-
-            adjustReportTableColumns();
-        }
+    public void updateViewDecoration(ReportData data) {
     }
 
     @Override

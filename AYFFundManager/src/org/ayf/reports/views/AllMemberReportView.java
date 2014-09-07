@@ -8,11 +8,12 @@ package org.ayf.reports.views;
 
 
 import java.awt.IllegalComponentStateException;
+import java.awt.print.PageFormat;
 import javax.swing.JTable;
-import org.ayf.models.GenericDefaultTableModel;
 import org.ayf.reports.AllMembersReport;
 import org.ayf.reports.Report;
 import org.ayf.reports.ReportData;
+import org.ayf.reports.print.PrintPreview;
 import org.ayf.util.ScreenUtil;
 import org.ayf.util.Toast;
 import org.jdesktop.swingx.prompt.PromptSupport;
@@ -35,14 +36,7 @@ public class AllMemberReportView extends BaseReportView {
     }
     
     @Override
-    public void updateView(ReportData data) {
-        if(data != null)
-        {
-            GenericDefaultTableModel model = new GenericDefaultTableModel(data);
-            this.allMembersTable.setModel(model);
-
-            adjustReportTableColumns();
-        }
+    public void updateViewDecoration(ReportData data) {
     }
     
     /**
@@ -117,11 +111,7 @@ public class AllMemberReportView extends BaseReportView {
     }// </editor-fold>//GEN-END:initComponents
 
     private void refreshButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshButtonActionPerformed
-        // TODO add your handling code here:
-        if(getReport() != null)
-        {
-            getReport().updateReport();
-        }
+        refresh();
     }//GEN-LAST:event_refreshButtonActionPerformed
 
     private void memberEditButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_memberEditButtonActionPerformed

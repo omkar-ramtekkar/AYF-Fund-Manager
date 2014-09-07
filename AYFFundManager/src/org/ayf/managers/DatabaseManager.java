@@ -6,6 +6,7 @@
 
 package org.ayf.managers;
 
+import java.io.File;
 import org.ayf.database.entities.Donor;
 import org.ayf.database.entities.Member;
 import java.sql.Connection;
@@ -16,9 +17,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.sql.Date;
 import java.sql.Statement;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -86,21 +84,19 @@ public class DatabaseManager {
         catch(Exception ex)
         {
         }
-        
     }
     
     
     static public void loadDatabaseClass()
-    {
-        //PreferenceManager.setDatabaseDir("");
-        
+    {        
         try {
             // Load MS accces driver class
             Class.forName("net.ucanaccess.jdbc.UcanaccessDriver");
-        } catch (Exception ex) {
+        } catch (ClassNotFoundException ex) {
             Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, ex);
-            JOptionPane.showMessageDialog(null, ex.getLocalizedMessage(), "Failed to load database Driver", ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, ex.getLocalizedMessage(), "Database Error", ERROR_MESSAGE);
         }
+        
     }
     
     private static void dump(ResultSet rs,String exName)
@@ -123,6 +119,9 @@ public class DatabaseManager {
     
     private static Connection createConnection()
     {
+        File dbFile = new File(PreferenceManager.getDatabaseDir());
+        if(!dbFile.exists()) return null;
+        
         String url = UcanaccessDriver.URL_PREFIX + PreferenceManager.getDatabaseDir() + ";newDatabaseVersion=V2007";
         
         Connection conn = null;
@@ -451,12 +450,18 @@ public class DatabaseManager {
         
         ArrayList<Type> types = new ArrayList();
         Connection connection = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        
         try {
+            
             connection = createConnection();
             
-            PreparedStatement ps = connection.prepareStatement("SELECT * FROM " + tableName);
+            if(connection == null) return types;
             
-            ResultSet rs = ps.executeQuery();
+            ps = connection.prepareStatement("SELECT * FROM " + tableName);
+            
+            rs = ps.executeQuery();
             
             Logger.getLogger(DatabaseManager.class.getName()).log(Level.INFO, "getTypesFromTable({0}) : Column Count - " + rs.getMetaData().getColumnCount() , tableName);
             
@@ -468,17 +473,15 @@ public class DatabaseManager {
                 types.add(type);
             }
             
-            ps.close();
-            rs.close();
-            
         } catch (SQLException ex) {
             Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, ex);
-            JOptionPane.showMessageDialog(null, ex.getLocalizedMessage(), "Unable to fetch data from table" + tableName, ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, ex.getLocalizedMessage(), "Database Error" + tableName, ERROR_MESSAGE);
         }
         finally
         {
-            if(connection != null) closeConnection(connection);
+            closeConnectionObjects(rs, ps, connection);
         }
+        
         return types;
     }
     
@@ -543,7 +546,7 @@ public class DatabaseManager {
                             {
                                 Object value = rs.getObject(columnName.toString());
                                 entity.setValueForField(columnName, value);
-                            }catch(Exception ex){ ex.printStackTrace(); }
+                            }catch(SQLException ex){ ex.printStackTrace(); }
                         }
                         
                         int id = rs.getInt(BaseEntity.ColumnName.ID.toString());
@@ -551,16 +554,13 @@ public class DatabaseManager {
                         entity.setValueForField(BaseEntity.ColumnName.ID, id);
                         entities.add(entity);
                     }
-                    
-                    if(rs != null) rs.close();
-                    if(statement != null) statement.close();
-                    
-                } catch (Exception ex) {
-                    ex.printStackTrace();
+                } catch (SQLException ex) {
+                } catch (InstantiationException ex) {
+                } catch (IllegalAccessException ex) {
                 }
                 finally
                 {
-                    closeConnection(conn);
+                    closeConnectionObjects(rs, statement, conn);
                 }
             }
         }
@@ -578,6 +578,11 @@ public class DatabaseManager {
         {
             Connection conn = null;
             conn = createConnection();
+            
+            if(conn == null) return entities;
+            
+            PreparedStatement ps = null;
+            ResultSet rs = null;
             
             StringBuilder sqlQuery = new StringBuilder("SELECT * FROM ");
             String tableName = null;
@@ -630,7 +635,7 @@ public class DatabaseManager {
                 try 
                 {
                     
-                    PreparedStatement ps = conn.prepareStatement(sqlQuery.toString());;
+                    ps = conn.prepareStatement(sqlQuery.toString());;
                     
                     for (int i = 1; i <= conditionColumns.size(); ++i)
                     {
@@ -673,7 +678,7 @@ public class DatabaseManager {
                         }
                     }
                     
-                    ResultSet rs = ps.executeQuery();
+                    rs = ps.executeQuery();
                 
                     BaseEntity dummyEntity = (BaseEntity) entityClass.newInstance();
                     Vector<BaseEntity.ColumnName> columns = dummyEntity.getColumnIDsForDetailLevel(BaseEntity.DetailsLevel.Database);
@@ -697,15 +702,12 @@ public class DatabaseManager {
                         entities.add(entity);
                     }
                     
-                    if(rs != null) rs.close();
-                    if(ps != null) ps.close();
-                    
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
                 finally
                 {
-                    closeConnection(conn);
+                    closeConnectionObjects(rs, ps, conn);
                 }
             }
             
@@ -718,14 +720,19 @@ public class DatabaseManager {
     public static boolean updateEntities(Vector<BaseEntity> entities, Class<?> entityClass)
     {
         boolean bUpdated = entities.size() > 0; 
-        Connection conn = null;
+        
         if(entities.size() > 0)
         {
+            Connection conn = null;
+            PreparedStatement ps = null;
+            
             try 
             {
                 conn = createConnection();
                 
-                StringBuffer sqlQuery = new StringBuffer("UPDATE ");
+                if(conn == null) return false;
+                
+                StringBuilder sqlQuery = new StringBuilder("UPDATE ");
                 String tableName = null;
                 
                 if(entityClass.equals(Member.class))
@@ -775,7 +782,7 @@ public class DatabaseManager {
                 
                 Logger.getLogger(DatabaseManager.class.getName()).log(Level.INFO, sqlQuery.toString(), "");
                 
-                PreparedStatement ps = conn.prepareStatement(sqlQuery.toString());
+                ps = conn.prepareStatement(sqlQuery.toString());
                 
                 for (BaseEntity entity : entities)
                 {
@@ -829,7 +836,6 @@ public class DatabaseManager {
                 }
                 
                 conn.commit();
-                ps.close();
                                
             } catch (SQLException ex) {
                 Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, ex);
@@ -838,7 +844,7 @@ public class DatabaseManager {
             }
             finally
             {
-                closeConnection(conn);
+                closeConnectionObjects(null, ps, conn);
             }
         }
         
@@ -857,9 +863,11 @@ public class DatabaseManager {
     {
         boolean bInserted = !entities.isEmpty(); 
         
-        Connection conn = null;
         if(entities.size() > 0)
         {
+            Connection conn = null;
+            PreparedStatement ps = null;
+            
             try 
             {
                 conn = createConnection();
@@ -919,7 +927,7 @@ public class DatabaseManager {
                 
                 Logger.getLogger(DatabaseManager.class.getName()).log(Level.INFO, sqlQuery.toString(), "");
                 
-                PreparedStatement ps = conn.prepareStatement(sqlQuery.toString());
+                ps = conn.prepareStatement(sqlQuery.toString());
                 
                 for (BaseEntity entity : entities)
                 {
@@ -977,7 +985,6 @@ public class DatabaseManager {
                 }
                 
                 conn.commit();
-                ps.close();               
                 
             } catch (SQLException ex) {
                 Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, ex);
@@ -987,7 +994,7 @@ public class DatabaseManager {
             }
             finally
             {
-                closeConnection(conn);
+                closeConnectionObjects(null, ps, conn);
             }
         }
         
@@ -1051,6 +1058,8 @@ public class DatabaseManager {
     public static ReportData getDonationBySubscription()
     {
         Connection conn = null;
+        Statement statement = null;
+        ResultSet rs = null;
         
         Vector rows = new Vector();
         Vector columns = new Vector();
@@ -1063,8 +1072,8 @@ public class DatabaseManager {
             conn = createConnection();
 
             String sql = "SELECT DonationType, sum(Amount) as TotalAmount FROM " + DONATIONS_TABLE_NAME + " GROUP BY DonationType";
-            Statement statement = conn.createStatement();
-            ResultSet rs = statement.executeQuery(sql);
+            statement = conn.createStatement();
+            rs = statement.executeQuery(sql);
             
             
             while(rs.next())
@@ -1076,17 +1085,13 @@ public class DatabaseManager {
                 rows.add(rowData);
             }
             
-            rs.close();
-            statement.close();
-            
-
         } catch (SQLException ex) {
             Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, ex);
             JOptionPane.showMessageDialog(null, ex.getLocalizedMessage(), "Unable to get donations by type ", ERROR_MESSAGE);
         }
         finally
         {
-            if(conn != null) { closeConnection(conn); }
+            closeConnectionObjects(rs, statement, conn);
         }
         
         return new ReportData(rows, columns);
@@ -1161,98 +1166,8 @@ public class DatabaseManager {
         }
     }
     
-    public static ArrayList<BaseEntity> getMemberSubscriptionEndingBetween(java.sql.Date date1, java.sql.Date date2) {
-        
-//        Connection conn = null;
-//        PreparedStatement ps = null;
-//        ResultSet rs = null;
-//        
-//        ArrayList<String> uniqueIDs = new ArrayList<String>(10);
-//        
-//        try {
-//            
-//            conn = createConnection();
-//
-//            StringBuilder sqlString = new StringBuilder(100);
-//        
-//            
-//            sqlString.append("SELECT ").
-//                append(BaseEntity.ColumnName.UniqueID).
-//                append(" FROM ").
-//                append(MEMBER_TABLE_NAME).
-//                append(" as memberTable ").
-//                append(" WHERE ( MONTH(memberTable.RegisterationDate) >= MONTH(CAST(? as datetime)) AND "
-//                        + "MONTH(memberTable.RegisterationDate) <= MONTH(CAST(? as datetime)))");
-//            /*
-//             AND"
-//                        + " DAY(memberTable.RegisterationDate) >= DAY(CAST(? as datetime)) AND"
-//                        + " DAY(memberTable.RegisterationDate) <= DAY(CAST(? as datetime))
-//            */
-//        
-//            ps = conn.prepareStatement(sqlString.toString());
-//            
-//            ps.setDate(1, date1);
-//            ps.setDate(2, date2);
-//            //ps.setDate(3, date1);
-//            //ps.setDate(4, date2);
-//            
-//            rs = ps.executeQuery();
-//            
-//            
-//            while(rs.next())
-//            {
-//                String uniqueID = rs.getString(BaseEntity.ColumnName.UniqueID.toString());
-//                uniqueIDs.add(uniqueID);
-//            }
-//            
-//        } catch (SQLException e) {
-//            JOptionPane.showMessageDialog(null, e.getLocalizedMessage(), "Database Error", ERROR_MESSAGE);
-//        }
-//        finally
-//        {
-//            closeConnectionObjects(rs, ps, conn);
-//        }
-//        
-//        
-//        ArrayList<BaseEntity> entities = getAllEntities(Member.class);
-//        
-//        Comparator<BaseEntity> comp = new Comparator<BaseEntity>() {
-//
-//            @Override
-//            public int compare(BaseEntity o1, BaseEntity o2) {
-//                return o1.getUniqueID().compareTo(o2.getUniqueID());
-//            }
-//        };
-//        
-//        
-//        ArrayList<BaseEntity> resultEntities = new ArrayList<BaseEntity>(uniqueIDs.size());
-//        
-//        try {
-//            Collections.sort(entities, comp);
-//            
-//            Member testMember = new Member();
-//            
-//            Object[] entityArray = entities.toArray();
-//            
-//            
-//            
-//            for (String uniqueID : uniqueIDs) {
-//                testMember.setUniqueID(uniqueID);
-//                
-//                int index = Arrays.binarySearch(entityArray, testMember);
-//                
-//                if (index == -1) {
-//                    continue;
-//                }
-//                
-//                resultEntities.add((BaseEntity) entityArray[index]);
-//            }
-//        } catch (Exception e) {
-//            Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-//        
-//        return resultEntities;
-        
+    public static ArrayList<BaseEntity> getMemberSubscriptionEndingBetween(java.sql.Date date1, java.sql.Date date2, boolean includeInactiveMembers) {
+                
         ArrayList<BaseEntity> allEntities = getAllEntities(Member.class);
         ArrayList<BaseEntity> resultEntities = new ArrayList<BaseEntity>(10);
         
@@ -1260,8 +1175,11 @@ public class DatabaseManager {
         {
             Member member = (Member) baseEntity;
             
-            if(!member.isActive())
-                continue;
+            if(!includeInactiveMembers)
+            {
+                if(!member.isActive())
+                    continue;
+            }
             
             java.sql.Date regDate = member.getRegisterationDate();
             
@@ -1282,8 +1200,8 @@ public class DatabaseManager {
     }
     
     
-    public static ArrayList<BaseEntity> getMemberSubscriptionEndingBy(java.sql.Date date1) {
-        return getMemberSubscriptionEndingBetween(DateTime.getTodaySQL(), date1);
+    public static ArrayList<BaseEntity> getMemberSubscriptionEndingBy(java.sql.Date date1, boolean includeInactiveMembers) {
+        return getMemberSubscriptionEndingBetween(DateTime.getTodaySQL(), date1, includeInactiveMembers);
     }
     
     public static float getTotalDonationPaidByMember(String regID, String donationType)
@@ -1306,12 +1224,11 @@ public class DatabaseManager {
             
             conn = createConnection();
             
+            if(conn == null) return totalDonation;
+            
             ps = conn.prepareStatement(sqlString.toString());
             
-            //ps.setString(1, BaseEntity.ColumnName.Amount.toString());
-            //ps.setString(1, BaseEntity.ColumnName.MemberUniqueID.toString());
             ps.setString(1, regID);
-            //ps.setString(3, BaseEntity.ColumnName.DonationType.toString());
             ps.setString(2, donationType);
             
             rs = ps.executeQuery();
@@ -1323,7 +1240,6 @@ public class DatabaseManager {
         catch(SQLException ex)
         {
             Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, ex);
-            //JOptionPane.showMessageDialog(null, ex.getLocalizedMessage(), "Database Error", ERROR_MESSAGE);
         }
         finally
         {
@@ -1332,5 +1248,4 @@ public class DatabaseManager {
         
         return totalDonation;
     }
-    
 }

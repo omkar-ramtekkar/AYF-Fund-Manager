@@ -37,7 +37,6 @@ public class MainFrame extends javax.swing.JFrame {
         setSize(screenSize.width, screenSize.height - taskBarSize);
         
         this.statusBar = new StatusBarPanel();
-        //this.statusBar.setSize(getWidth(), 33);
         this.statusBar.setBounds(0, getHeight() - 33, getWidth(), 33);
         add(this.statusBar, BorderLayout.SOUTH);
         

@@ -7,7 +7,6 @@
 package org.ayf.reports.views;
 
 import javax.swing.JTable;
-import org.ayf.models.GenericDefaultTableModel;
 import org.ayf.reports.Report;
 import org.ayf.reports.ReportData;
 import org.jdesktop.swingx.prompt.PromptSupport;
@@ -106,13 +105,8 @@ public class AllDonationsReportView extends BaseReportView {
     // End of variables declaration//GEN-END:variables
 
     @Override
-    public void updateView(ReportData data) 
+    public void updateViewDecoration(ReportData data) 
     {
-        if(data != null)
-        {
-            this.allMembersTable.setModel(new GenericDefaultTableModel(data));
-            adjustReportTableColumns();
-        }
     }
     
     protected JTable getReportTable()

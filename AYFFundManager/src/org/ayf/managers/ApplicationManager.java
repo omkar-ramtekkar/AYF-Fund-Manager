@@ -11,12 +11,26 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.print.PrintException;
+import javax.swing.JOptionPane;
 import org.ayf.command.Command;
 import org.ayf.database.entities.BaseEntity;
 import org.ayf.database.entities.Donor;
 import org.ayf.database.entities.Member;
 import org.ayf.mainmenubar.MainMenuController;
+import org.ayf.reports.GenericSearchReport;
+import org.ayf.reports.ReportData;
+import org.ayf.reports.print.BasicPrintable;
+import org.ayf.reports.print.PrintingDialog;
+import org.ayf.reports.print.ReportPrintable;
+import org.ayf.reports.views.BaseReportView;
+import org.ayf.reports.views.GenericSearchDialog;
+import org.ayf.reports.views.ReportDataProcessor;
 import org.ayf.toolbar.ToolbarController;
 import org.ayf.ui.InformationPanel;
 import org.ayf.ui.MainFrame;
@@ -60,28 +74,27 @@ public class ApplicationManager implements ActionListener, DatabaseUpdateListene
     public void initialize()
     {
         DatabaseManager.loadDatabaseClass();
-        
-        this.settingViewController = new SettingsViewController();
-        
-        File databaseFile = new File(PreferenceManager.getDatabaseDir());
-        if(!databaseFile.isDirectory() && databaseFile.exists())
-        {
-            DatabaseManager.initializeDatabaseManager();
-        }
-
         DatabaseManager.addDatabaseUpdateListner(this);
         
         this.mainFrame = new MainFrame();
-
+        this.settingViewController = new SettingsViewController();
         this.toolbarController = new ToolbarController();        
         this.mainMenuBarController = new MainMenuController();
 
         //Configure sidebar table
         this.sidebarTableController = new SideBarTableController();
-        this.reportController = new ReportViewController();
-        this.sidebarTableController.addActionListener(this);
+
+        File databaseFile = new File(PreferenceManager.getDatabaseDir());
         
         checkAndUpdateDatabaseLocation();
+        
+        if(!databaseFile.isDirectory() && databaseFile.exists())
+        {
+            DatabaseManager.initializeDatabaseManager();
+        }
+
+        this.reportController = new ReportViewController();
+        this.sidebarTableController.addActionListener(this);
     }
 
     
@@ -158,7 +171,8 @@ public class ApplicationManager implements ActionListener, DatabaseUpdateListene
                 case AdminPassword:
                     handleAdminSettings();
                     break;
-                    
+                case PrintReport:
+                    handlePrint();
             }
         }
     }
@@ -168,16 +182,86 @@ public class ApplicationManager implements ActionListener, DatabaseUpdateListene
         new MemberFrame(null, InformationPanel.PanelType.Registeration).setVisible(true);
     }
 
-    private void handleUserDeleteAction() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    private void handleUserDeleteAction() 
+    {
+        ReportDataProcessor processor = new ReportDataProcessor() {
+
+            @Override
+            public void processSelectedData(ReportData data, BaseReportView reportView) {
+                if(data.getEntities() != null && !data.getEntities().isEmpty())
+                {
+                    Member member = (Member) data.getEntities().get(0);
+
+                    BaseEntity.ActiveStatus currentActuveStatus = member.getCurrentStatus();
+
+                    if(currentActuveStatus != BaseEntity.ActiveStatus.Active)
+                    {
+                        JOptionPane.showMessageDialog(getMainFrame(), "Member is not active. Select other active member.");
+                        return;
+                    }
+                    
+                    String message = "Are you sure, you want to Deactivate member?";
+                    
+                    int userChoice = JOptionPane.showConfirmDialog(getMainFrame(), message, "Deactivate Member", JOptionPane.YES_NO_OPTION);
+                    
+                    if(userChoice == JOptionPane.YES_OPTION)
+                    {
+                        member.setCurrentStatus(BaseEntity.ActiveStatus.Inactive);
+                        
+                        Vector<BaseEntity> entity = new Vector<BaseEntity>(1);
+                        entity.add(member);
+
+                        boolean entityUpdated = DatabaseManager.updateEntities(entity, Member.class);
+                        
+                        if(entityUpdated)
+                            Toast.showToastOnComponentCenter(reportView, "Member deactivated successfully.", true);
+                        else
+                            Toast.showToastOnComponentCenter(reportView, "Failed to deactivated member.", false);
+                    }
+                    
+                }
+            }
+        };
+                
+        GenericSearchDialog dialog = new GenericSearchDialog(new GenericSearchReport(Member.class, BaseEntity.DetailsLevel.Database), processor, getMainFrame(), true);
+        dialog.setTitle("Deactivate Member Search Dialog");
+        dialog.setVisible(true);
     }
 
     private void handleUserSearchAction() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        ReportDataProcessor processor = new ReportDataProcessor() {
+
+            @Override
+            public void processSelectedData(ReportData data, BaseReportView reportView) {
+                if(data.getEntities() != null && !data.getEntities().isEmpty())
+                {
+                    MemberFrame editMember = new MemberFrame((Member)data.getEntities().get(0), InformationPanel.PanelType.View);
+                    editMember.setVisible(true);
+                }
+            }
+        };
+                
+        GenericSearchDialog dialog = new GenericSearchDialog(new GenericSearchReport(Member.class, BaseEntity.DetailsLevel.Database), processor, getMainFrame(), true);
+        dialog.setTitle("Edit Member Search Dialog");
+        dialog.setVisible(true);
     }
 
     private void handleUserEditAction() {
-        
+        ReportDataProcessor processor = new ReportDataProcessor() {
+
+            @Override
+            public void processSelectedData(ReportData data, BaseReportView reportView) {
+                if(data.getEntities() != null && !data.getEntities().isEmpty())
+                {
+                    MemberFrame editMember = new MemberFrame((Member)data.getEntities().get(0), InformationPanel.PanelType.Update);
+                    editMember.setVisible(true);
+                }
+            }
+        };
+                
+        GenericSearchDialog dialog = new GenericSearchDialog(new GenericSearchReport(Member.class, BaseEntity.DetailsLevel.Database), processor, getMainFrame(), true);
+        dialog.setTitle("Edit Member Search Dialog");
+        dialog.setVisible(true);
     }
 
     private void handleSettingsAction() {
@@ -194,9 +278,9 @@ public class ApplicationManager implements ActionListener, DatabaseUpdateListene
             File databaseFile = new File(PreferenceManager.getDatabaseDir());
             if (databaseFile.isDirectory() || !databaseFile.exists()) 
             {
-                throw new Exception();
+                throw new FileNotFoundException("Database file not found");
             }
-        } catch (Exception exception) 
+        } catch (FileNotFoundException exception) 
         {
             Point centerPoint = new Point((int) (Toolkit.getDefaultToolkit().getScreenSize().getWidth() / 2.0), (int) (Toolkit.getDefaultToolkit().getScreenSize().getHeight() / 2.0));
             Toast.showToast("Invalid Database directory path", centerPoint, false);
@@ -215,7 +299,7 @@ public class ApplicationManager implements ActionListener, DatabaseUpdateListene
     }
 
     public void imagePathDidChange(String oldPath, String newPath) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        
     }
 
     private void handleAdminSettings() {
@@ -230,6 +314,19 @@ public class ApplicationManager implements ActionListener, DatabaseUpdateListene
     private void donationDidPerform(Donor donor)
     {
         PreferenceManager.updateNextDonationID();
+    }
+    
+    private void handlePrint() 
+    {
+        try {
+            Vector<BasicPrintable> printableReports = reportController.getPrintableReports();
+            PrintingDialog printdialog = new PrintingDialog(printableReports, mainFrame, true);
+            printdialog.setLocationRelativeTo(null);
+            printdialog.setVisible(true);
+        } catch (PrintException ex) {
+            Logger.getLogger(ApplicationManager.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(mainFrame, ex.getMessage(), "Print Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     @Override
@@ -263,4 +360,5 @@ public class ApplicationManager implements ActionListener, DatabaseUpdateListene
     @Override
     public void entitiesDidRead(ArrayList<BaseEntity> entities) {
     }
+
 }

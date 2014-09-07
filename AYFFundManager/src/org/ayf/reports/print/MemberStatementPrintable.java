@@ -1,0 +1,255 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+package org.ayf.reports.print;
+
+import java.awt.Graphics;
+import java.awt.print.PageFormat;
+import java.awt.print.PrinterException;
+import java.io.File;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.apache.commons.io.FileUtils;
+import org.ayf.database.entities.Member;
+import org.ayf.managers.ResourceManager;
+import org.ayf.reports.views.BaseReportView;
+import org.ayf.reports.views.HTMLPrintable;
+import org.ayf.util.ComponentPrinter;
+import org.ayf.util.DateTime;
+
+/**
+ *
+ * @author om
+ */
+public class MemberStatementPrintable extends PrintableView {
+
+    /**
+     * Creates new form MemberStatementPrintable
+     */
+    
+    Member member;
+    
+    public MemberStatementPrintable(BaseReportView baseReportView, Member member)
+    {
+        super(baseReportView);
+        initComponents();
+        
+        setMember(member);
+    }
+    
+    void initUI()
+    {
+        if(this.member == null) return ;
+        
+        String fn = this.member.getFirstName();
+        String mn = this.member.getMiddleName();
+        String ln = this.member.getLastName();
+        String fullName =  (fn != null ? fn : "") + " " + (mn != null ? mn : "") + " " +(ln != null ? ln : "");
+        this.memberFullName.setText(fullName);
+        this.registerationDateLabel.setText(DateTime.getFormattedDateSQL(this.member.getRegisterationDate()));
+        this.contactNumberLabel.setText(this.member.getContactNumber());
+        this.dateOfBirthLabel.setText(DateTime.getFormattedDateSQL(this.member.getDateOfBirth()));
+        this.districtLabel.setText(this.member.getDistrict());
+        this.memberImageLabel.setIcon(ResourceManager.getIcon("no_photo_men", this.memberImageLabel.getPreferredSize()));
+        this.memberImageLabel.setIcon(ResourceManager.getImageFromImageFolder(this.member.getImagePath(), this.memberImageLabel.getPreferredSize()));
+            
+    }
+
+    public Member getMember() {
+        return member;
+    }
+
+    public void setMember(Member member) {
+        this.member = member;
+        initUI();
+    }
+    
+    @Override
+    public String getHtml() {
+        File file = ResourceManager.getResource("/org/ayf/resources/misc/", "HTMLLayoutMemberStatement.html");
+        if(file.exists())
+        {
+            try {
+                String html = FileUtils.readFileToString(file);
+                return prepareHtml(html);
+            } catch (IOException ex) {
+                Logger.getLogger(HTMLPrintable.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        
+        return null;
+    }
+    
+    @Override
+    public int print(Graphics graphics, PageFormat pageFormat, int pageIndex) throws PrinterException 
+    {
+        ComponentPrinter.printComponent(this.memberBasicInfoPanel, graphics, pageFormat, pageIndex);
+     
+        return super.print(graphics, pageFormat, pageIndex);
+    }
+    
+    private String prepareHtml(String html) 
+    {
+        html = html.replace("__dob__", this.dateOfBirthLabel.getText());
+        html = html.replace("__district__", this.districtLabel.getText());
+        html = html.replace("__regdate__", this.registerationDateLabel.getText());
+        html = html.replace("__contact__", this.contactNumberLabel.getText());
+        
+        html = html.replace("__report__", "<table border=\"1\" summary=\"keyboard and mouse actions for table operations\">\n" +
+"            <tbody>\n" +
+"                <tr>\n" +
+"                    <th id=\"h1\">Operation</th>\n" +
+"                    <th id=\"h2\">Mouse Action</th>\n" +
+"                    <th id=\"h3\">Keyboard Action</th>\n" +
+"                </tr>\n" +
+"                <tr>\n" +
+"                    <td >Select single row.</td>\n" +
+"                    <td >Click.</td>\n" +
+"                    <td >Up Arrow or Down Arrow.</td>\n" +
+"                </tr>\n" +
+"                <tr>\n" +
+"                    <td >Extend contiguous selection.</td>\n" +
+"                    <td >Shift-Click or Drag over rows.</td>\n" +
+"                    <td >Shift-Up Arrow or Shift-Down Arrow.</td>\n" +
+"                </tr>\n" +
+"                <tr>\n" +
+"                    <td >Add row to selection/toggle row selection.</td>\n" +
+"                    <td >Control-Click</td>\n" +
+"                    <td >>Move lead selection with Control-Up Arrow or Control-Down Arrow, then use Space Bar to add to selection or Control-Space Bar to toggle row selection.</td>\n" +
+"                </tr>\n" +
+"            </tbody>\n" +
+"        </table> ");
+        
+        return html;
+    }
+
+    
+    
+
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        memberBasicInfoPanel = new javax.swing.JPanel();
+        memberImageLabel = new javax.swing.JLabel();
+        memberFullName = new javax.swing.JLabel();
+        dateOfBirthLabel = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        registerationDateLabel = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        districtLabel = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
+        contactNumberLabel = new javax.swing.JLabel();
+
+        memberBasicInfoPanel.setPreferredSize(new java.awt.Dimension(741, 120));
+
+        memberImageLabel.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(51, 255, 255), 1, true));
+        memberImageLabel.setMaximumSize(new java.awt.Dimension(88, 88));
+        memberImageLabel.setMinimumSize(new java.awt.Dimension(88, 88));
+        memberImageLabel.setPreferredSize(new java.awt.Dimension(88, 88));
+
+        memberFullName.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+
+        jLabel2.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel2.setText("Registeration Date      :");
+
+        jLabel3.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel3.setText("Date of Birth                  :");
+
+        jLabel4.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel4.setText("District                          :");
+
+        jLabel6.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel6.setText("Contact Number         :");
+
+        org.jdesktop.layout.GroupLayout memberBasicInfoPanelLayout = new org.jdesktop.layout.GroupLayout(memberBasicInfoPanel);
+        memberBasicInfoPanel.setLayout(memberBasicInfoPanelLayout);
+        memberBasicInfoPanelLayout.setHorizontalGroup(
+            memberBasicInfoPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(memberBasicInfoPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .add(memberImageLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 88, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(18, 18, 18)
+                .add(memberBasicInfoPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
+                    .add(jLabel3, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .add(jLabel2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 130, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .add(30, 30, 30)
+                .add(memberBasicInfoPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
+                    .add(dateOfBirthLabel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .add(registerationDateLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 113, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .add(66, 66, 66)
+                .add(memberBasicInfoPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
+                    .add(jLabel4, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .add(jLabel6, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 123, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .add(30, 30, 30)
+                .add(memberBasicInfoPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
+                    .add(districtLabel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .add(contactNumberLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 131, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .add(memberBasicInfoPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                .add(memberBasicInfoPanelLayout.createSequentialGroup()
+                    .add(112, 112, 112)
+                    .add(memberFullName, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .add(133, 133, 133)))
+        );
+        memberBasicInfoPanelLayout.setVerticalGroup(
+            memberBasicInfoPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, memberBasicInfoPanelLayout.createSequentialGroup()
+                .add(12, 12, 12)
+                .add(memberImageLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 77, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(31, Short.MAX_VALUE))
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, memberBasicInfoPanelLayout.createSequentialGroup()
+                .add(18, 18, 18)
+                .add(memberBasicInfoPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(memberBasicInfoPanelLayout.createSequentialGroup()
+                        .add(memberBasicInfoPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                            .add(jLabel4, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 17, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                            .add(districtLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 17, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                            .add(jLabel3, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 17, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(memberBasicInfoPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                            .add(memberBasicInfoPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                                .add(org.jdesktop.layout.GroupLayout.TRAILING, jLabel6, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 17, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                                .add(contactNumberLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 17, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                            .add(jLabel2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 17, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+                    .add(memberBasicInfoPanelLayout.createSequentialGroup()
+                        .add(dateOfBirthLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 17, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(registerationDateLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 17, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+                .add(18, 18, 18))
+            .add(memberBasicInfoPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                .add(memberBasicInfoPanelLayout.createSequentialGroup()
+                    .addContainerGap(17, Short.MAX_VALUE)
+                    .add(memberFullName, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 29, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(74, 74, 74)))
+        );
+
+        add(memberBasicInfoPanel, java.awt.BorderLayout.PAGE_START);
+    }// </editor-fold>//GEN-END:initComponents
+
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel contactNumberLabel;
+    private javax.swing.JLabel dateOfBirthLabel;
+    private javax.swing.JLabel districtLabel;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JPanel memberBasicInfoPanel;
+    private javax.swing.JLabel memberFullName;
+    private javax.swing.JLabel memberImageLabel;
+    private javax.swing.JLabel registerationDateLabel;
+    // End of variables declaration//GEN-END:variables
+
+}

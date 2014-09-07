@@ -31,6 +31,12 @@ public class CacheManager implements DatabaseUpdateListener{
         DatabaseManager.addDatabaseUpdateListner(this);
     }
     
+    private void clearCache()
+    {
+        entityCacheMap.clear();
+        objectCacheMap.clear();
+    }
+    
     static private CacheManager getInstance()
     {
         if(cacheInstance == null) cacheInstance = new CacheManager();
@@ -40,7 +46,7 @@ public class CacheManager implements DatabaseUpdateListener{
     
     static public void initialize()
     {
-        getInstance();
+        getInstance().clearCache();
     }
     
     private void clearObjects(Class<?> type)

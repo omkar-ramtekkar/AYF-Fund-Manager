@@ -6,7 +6,6 @@
 
 package org.ayf.models;
 
-import java.sql.Date;
 import java.util.Vector;
 import javax.swing.table.DefaultTableModel;
 import org.ayf.database.entities.BaseEntity;

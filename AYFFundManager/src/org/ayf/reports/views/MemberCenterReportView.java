@@ -319,12 +319,7 @@ public class MemberCenterReportView extends BaseReportView {
     // End of variables declaration//GEN-END:variables
 
     @Override
-    public void updateView(ReportData data) {
-        if(data != null)
-        {
-            getReportTable().setModel(new GenericDefaultTableModel(data));
-            adjustReportTableColumns();
-        }
+    public void updateViewDecoration(ReportData data) {
     }
 
     @Override

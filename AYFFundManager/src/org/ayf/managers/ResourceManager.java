@@ -12,6 +12,7 @@ import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -33,6 +34,23 @@ public class ResourceManager
     
     protected static BufferedImage backgroundImage = null;
     
+    public static File getResource(String domain, String resorceName)
+    {
+        if(domain == null || domain.isEmpty()) return null;
+        
+        if(resorceName == null || resorceName.isEmpty()) return null;
+        
+        URL url = ResourceManager.class.getResource(domain + resorceName);
+        if(url == null)
+            return null;
+        
+        try {
+            return new File(url.toURI());
+        } catch (URISyntaxException ex) {
+            Logger.getLogger(ResourceManager.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+    }
     public static ImageIcon getIcon(String imageName)
     {
         URL url = ResourceManager.class.getResource(DomainPath + imageName + ".png");

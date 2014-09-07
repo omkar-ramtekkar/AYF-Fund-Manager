@@ -6,7 +6,6 @@
 
 package org.ayf.reports;
 
-import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Vector;
 import org.ayf.command.ReportCommand;
@@ -14,7 +13,6 @@ import org.ayf.database.entities.BaseEntity;
 import org.ayf.database.entities.Member;
 import org.ayf.managers.DatabaseManager;
 import org.ayf.reports.views.SubscriptionReminderReportView;
-import org.ayf.util.DateTime;
 
 /**
  *
@@ -55,10 +53,11 @@ public class SubscriptionReminderReport extends Report{
         updateReport();
     }
     
+    
     @Override
     public ReportData getData() {
         
-        ArrayList<BaseEntity> subscriptionEndingMembers = DatabaseManager.getMemberSubscriptionEndingBetween(getFromDate(), getToDate());
+        ArrayList<BaseEntity> subscriptionEndingMembers = DatabaseManager.getMemberSubscriptionEndingBetween(getFromDate(), getToDate(), false /*dont include inactive members*/);
         
         ReportData reportData = new ReportData(new Vector<BaseEntity>(subscriptionEndingMembers), BaseEntity.DetailsLevel.SubscriptionEndingDetails, Member.class);
         

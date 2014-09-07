@@ -6,9 +6,10 @@
 
 package org.ayf.managers;
 
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 import java.util.Vector;
+import org.ayf.command.Command;
 import org.ayf.command.ReportCommand;
 import org.ayf.reports.AllCashFlowsReport;
 import org.ayf.reports.AllDonationsReport;
@@ -33,7 +34,7 @@ public class ReportManager
     
     void initialize()
     {
-        reports = new HashMap<ReportCommand.SubCommandType, Vector<Report>>();
+        reports = new EnumMap<ReportCommand.SubCommandType, Vector<Report>>(ReportCommand.SubCommandType.class);
         initializeDashboardReports();
         initializeDetailsReports();
         initializeStatementsReports();
@@ -44,7 +45,6 @@ public class ReportManager
     {
         Vector<Report> dashboardReports = new Vector();
         dashboardReports.add(new DonationReport());
-        
         reports.put(ReportCommand.SubCommandType.Dashboard, dashboardReports);
         
     }

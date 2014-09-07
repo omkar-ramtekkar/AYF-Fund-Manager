@@ -8,10 +8,6 @@ package org.ayf.ui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 import javax.swing.Timer;
 import org.ayf.util.DateTime;
 

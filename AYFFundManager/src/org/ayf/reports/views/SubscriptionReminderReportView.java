@@ -8,7 +8,7 @@ package org.ayf.reports.views;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JTable;
-import org.ayf.models.GenericDefaultTableModel;
+import org.ayf.command.Command;
 import org.ayf.reports.Report;
 import org.ayf.reports.ReportData;
 import org.ayf.reports.SubscriptionReminderReport;
@@ -27,7 +27,7 @@ public class SubscriptionReminderReportView extends BaseReportView {
         super(report);
         initComponents();
         
-        setupTextSearchForReportTable(null);
+        setupTextSearchForReportTable(this.searchTextField);
         
         Integer [] days  = { 15, 30, 45, 60, 90, 120, 150, 180 };
         this.daysRangeCombo.setModel(new DefaultComboBoxModel(days));
@@ -78,7 +78,7 @@ public class SubscriptionReminderReportView extends BaseReportView {
             }
         });
 
-        jLabel1.setText("Subscription of Members ending in coming ");
+        jLabel1.setText("Subscription of Members ending in next");
 
         jLabel2.setText("Days");
 
@@ -88,12 +88,12 @@ public class SubscriptionReminderReportView extends BaseReportView {
             searchoptionsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(searchoptionsPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .add(jLabel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 283, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(jLabel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 263, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(daysRangeCombo, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 121, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(6, 6, 6)
+                .add(daysRangeCombo, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 80, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(18, 18, 18)
                 .add(jLabel2)
-                .addContainerGap(263, Short.MAX_VALUE))
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         searchoptionsPanelLayout.setVerticalGroup(
             searchoptionsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -113,13 +113,14 @@ public class SubscriptionReminderReportView extends BaseReportView {
             .add(layout.createSequentialGroup()
                 .addContainerGap()
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(layout.createSequentialGroup()
+                        .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 579, Short.MAX_VALUE)
+                        .addContainerGap())
                     .add(searchoptionsPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .add(layout.createSequentialGroup()
                         .add(searchTextField)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                        .add(refreshButton))
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, jScrollPane1))
-                .addContainerGap())
+                        .add(refreshButton))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -130,8 +131,8 @@ public class SubscriptionReminderReportView extends BaseReportView {
                     .add(refreshButton))
                 .add(18, 18, 18)
                 .add(searchoptionsPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(18, 18, 18)
-                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 281, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(12, 12, 12)
+                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 210, Short.MAX_VALUE)
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -186,17 +187,18 @@ public class SubscriptionReminderReportView extends BaseReportView {
     // End of variables declaration//GEN-END:variables
 
     @Override
-    public void updateView(ReportData data) {
-        if(data != null)
-        {
-            getReportTable().setModel(new GenericDefaultTableModel(data.getData(), data.getColumns()));
-            adjustReportTableColumns();
-        }
-    }
+    public void updateViewDecoration(ReportData data) {
+     }
 
     @Override
     protected JTable getReportTable() 
     {
         return this.reportTable;
+    }
+
+    @Override
+    public void configure(Command.SubCommandType type) {
+        super.configure(type);
+        
     }
 }

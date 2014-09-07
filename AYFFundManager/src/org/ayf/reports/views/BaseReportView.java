@@ -6,29 +6,29 @@
 
 package org.ayf.reports.views;
 
-import java.awt.Component;
-import java.awt.Font;
 import java.awt.event.ContainerAdapter;
 import java.awt.event.ContainerEvent;
-import java.awt.font.FontRenderContext;
-import java.awt.geom.AffineTransform;
+import java.awt.print.Printable;
 import java.util.List;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.print.PrintException;
 import javax.swing.JComboBox;
-import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.ListSelectionModel;
-import javax.swing.table.JTableHeader;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumnModel;
+import org.ayf.command.Command;
 import org.ayf.database.entities.BaseEntity;
 import org.ayf.models.GenericDefaultTableModel;
 import org.ayf.reports.Report;
 import org.ayf.reports.ReportData;
+import org.ayf.reports.print.PrintInformation;
+import org.ayf.reports.print.PrintableView;
+import org.ayf.reports.print.ReportPrintable;
 import org.ayf.ui.BackgroundPanel;
-import org.ayf.util.JTableCellTabbing;
 import org.ayf.util.TableAutoFilterAdapter;
+import org.ayf.util.TableUtil;
+import org.ayf.util.Toast;
 import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 import org.jdesktop.swingx.autocomplete.ObjectToStringConverter;
 
@@ -58,22 +58,30 @@ public abstract class BaseReportView extends BackgroundPanel implements ReportVi
                 decorateReportTable();
             }
         });
+    }
+    
+    
+    public Printable getPrintable() throws PrintException {
+
+        if(getReport().getData() == null) throw new PrintException("Report data not available");
         
+        PrintInformation baseInfo = PrintInformation.getStandardPrintInformation();
+        baseInfo.setPrintableView(getPrintableView());
+        baseInfo.setBaseReportView(this);
+        
+        return new ReportPrintable(baseInfo);
+    }
+    
+    public PrintableView getPrintableView() throws PrintException 
+    {
+        PrintableView view = new PrintableView(this);
+        view.setReportTable(getReportTable());
+        return view;
     }
     
     protected void decorateReportTable()
     {
-        JTable reportTable = getReportTable();
-        if(reportTable != null)
-        {
-            reportTable.setRowHeight(DefaultRowHeight);
-            JTableHeader header = reportTable.getTableHeader();
-            header.setFont( header.getFont().deriveFont(Font.BOLD, 13) );
-            
-            JTableCellTabbing.setTabMapping(reportTable);
-            reportTable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-            reportTable.setColumnSelectionAllowed(false);        
-        }                
+        TableUtil.decorateTable(getReportTable());
     }
     
     protected void startEditingReportTable()
@@ -99,10 +107,52 @@ public abstract class BaseReportView extends BackgroundPanel implements ReportVi
         }
     }
     
+    public JTable getReportViewTable()
+    {
+        return getReportTable();
+    }
     
-    public abstract void updateView(ReportData data);
+    public void updateReportView(final ReportData data)
+    {
+        if(data != null)
+        {
+            this.getReportViewTable().setModel(new GenericDefaultTableModel(data));
+            adjustReportTableColumns();
+        }
+        
+        updateViewDecoration(data);
+        
+        Runnable showToastThread = new Runnable() 
+        {
+            @Override
+            public void run() 
+            {
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(BaseReportView.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                
+                if(data != null)
+                {
+                    Toast.showToastOnComponentCenter(getReportViewTable(), data.getData().size() + " Records Found", true);
+                }
+                else
+                {
+                    Toast.showToastOnComponentCenter(getReportViewTable(), "Report data not available", true);
+                }
+            }
+        };
+        
+        Thread t = new Thread(showToastThread);
+        t.start();
+    }
+    
+    public abstract void updateViewDecoration(ReportData data);
     
     protected abstract JTable getReportTable();
+    
+    public void configure(Command.SubCommandType type){}
     
     protected boolean shouldResizeReportTableColumnWidth() 
     { 
@@ -114,52 +164,11 @@ public abstract class BaseReportView extends BackgroundPanel implements ReportVi
         return 100; 
     }
     
-    private void resizeColumnWidth(JTable table) 
-    {
-        int totalTableWidth = 0;
-        
-        final TableColumnModel columnModel = table.getColumnModel();
-        
-        JLabel testLabel = new JLabel();
-        testLabel.setFont(table.getTableHeader().getFont());
-        AffineTransform affinetransform = new AffineTransform();     
-        FontRenderContext frc = new FontRenderContext(affinetransform,true,true);     
-        Font font = table.getTableHeader().getFont();
-                    
-        for (int column = 0; column < table.getColumnCount(); column++)
-        {
-            String columnName = table.getColumnName(column);
-            testLabel.setText(columnName);
-            testLabel.setSize(testLabel.getPreferredSize());
-            
-            int width = Math.max((int) font.getStringBounds(columnName, frc).getWidth() + 30, table.getColumnModel().getColumn(column).getWidth());
- 
-            //disabled row width calculation for now
-            for (int row = 0; row < table.getRowCount(); row++) 
-            {
-                TableCellRenderer renderer = table.getCellRenderer(row, column);
-                Component comp = table.prepareRenderer(renderer, row, column);
-                width = Math.max(comp.getPreferredSize().width, width);
-            }
-        
-            totalTableWidth += width;
-            columnModel.getColumn(column).setMinWidth(width);
-            columnModel.getColumn(column).setPreferredWidth(width);
-        }
-        
-        //table.setSize(totalTableWidth, table.getHeight());
-    }
-    
     protected void adjustReportTableColumns()
     {
         if(shouldResizeReportTableColumnWidth())
         {
-            JTable reportTable = getReportTable();
-            if(reportTable != null)
-            {
-                reportTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-                resizeColumnWidth(reportTable);
-            }
+            TableUtil.adjustReportTableColumns(getReportTable());
         }
     }
     
@@ -280,5 +289,9 @@ public abstract class BaseReportView extends BackgroundPanel implements ReportVi
         }
         
         return null;
+    }
+
+    public String getDisplayName() {
+        return getReport().getName();
     }
 }

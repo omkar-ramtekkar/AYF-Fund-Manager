@@ -6,6 +6,8 @@
 package org.ayf.ui;
 
 import java.awt.Graphics;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.image.BufferedImage;
 import org.ayf.managers.ResourceManager;
 
@@ -30,10 +32,22 @@ public class BackgroundPanel extends javax.swing.JPanel {
     }
 
     public BackgroundPanel() {
+        addComponentListener(new ComponentAdapter() 
+        {
+            public void componentResized(ComponentEvent e) 
+            {
+                setStyle(getStyle());
+            }
+        });
     }
 
     public BackgroundPanel(BackgroundStyle style) {
+        this();
         this.style = style;
+    }
+
+    public BackgroundStyle getStyle() {
+        return style;
     }
 
     public void setStyle(BackgroundStyle style) {

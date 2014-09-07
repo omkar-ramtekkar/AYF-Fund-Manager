@@ -19,7 +19,7 @@ import java.util.Locale;
  */
 public class DateTime {
    
-    private static final DateFormat timeFormat = new SimpleDateFormat("hh:mm:ss");
+    private static final DateFormat timeFormat = new SimpleDateFormat("hh:mm:ss a");
     private static final DateFormat dateFormat = new SimpleDateFormat(" dd-MMM-yyyy ");
     private static java.util.Date today = new java.util.Date();
     public static final String[] Months = { "Jan", "Feb", "March", "April", "May", "June", "July", "Aug", "Sep", "Oct", "Nov", "Dec" };

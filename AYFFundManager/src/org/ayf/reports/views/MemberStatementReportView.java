@@ -8,9 +8,12 @@ package org.ayf.reports.views;
 
 
 import java.awt.Color;
+import java.awt.print.PrinterException;
+import java.awt.print.PrinterJob;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.print.PrintException;
 import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
@@ -20,11 +23,12 @@ import org.ayf.database.entities.Member;
 import org.ayf.managers.ApplicationManager;
 import org.ayf.managers.DatabaseManager;
 import org.ayf.managers.ResourceManager;
-import org.ayf.models.GenericDefaultTableModel;
 import org.ayf.reports.GenericSearchReport;
 import org.ayf.reports.MemberStatementReport;
 import org.ayf.reports.Report;
 import org.ayf.reports.ReportData;
+import org.ayf.reports.print.MemberStatementPrintable;
+import org.ayf.reports.print.PrintableView;
 import org.ayf.ui.InformationPanel;
 import org.ayf.ui.MemberFrame;
 import org.ayf.util.DateTime;
@@ -482,16 +486,22 @@ public class MemberStatementReportView extends BaseReportView implements ReportD
 
     private void refreshButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshButtonActionPerformed
         // TODO add your handling code here:
-        if(report != null)
-        {
-            report.updateReport();
-        }
+        refresh();
     }//GEN-LAST:event_refreshButtonActionPerformed
 
     private void showStatementButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showStatementButtonActionPerformed
         updateReportView(this.searchMemberTxt.getText().trim());
     }//GEN-LAST:event_showStatementButtonActionPerformed
 
+    @Override
+    public PrintableView getPrintableView() throws PrintException {
+        MemberStatementPrintable printable = new MemberStatementPrintable(this, this.currentMember);
+        printable.setReportTable(this.memberStatementTable);
+        return printable;
+    }
+
+    
+    
     void updateReportView(String memberRegID)
     {
         if(report != null)
@@ -724,15 +734,10 @@ public class MemberStatementReportView extends BaseReportView implements ReportD
     }//GEN-LAST:event_tabbedPaneStateChanged
 
     @Override
-    public void updateView(ReportData data) 
+    public void updateViewDecoration(ReportData data) 
     {
         if(data != null)
-        {
-            getReportTable().setModel(new GenericDefaultTableModel(data));
-            adjustReportTableColumns();
-            
-            Toast.showToastOnComponentCenter(getReportTable(), data.getData().size() + " Records Found", true);
-            
+        {            
             if(report != null)
             {
                 if(report instanceof MemberStatementReport)

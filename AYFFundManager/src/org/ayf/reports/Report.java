@@ -6,9 +6,12 @@
 
 package org.ayf.reports;
 
+import javax.print.PrintException;
 import javax.swing.SwingUtilities;
+import org.ayf.command.Command;
 import org.ayf.command.ReportCommand;
 import org.ayf.managers.DatabaseManager;
+import org.ayf.reports.print.ReportPrintable;
 import org.ayf.reports.views.BaseReportView;
 
 /**
@@ -17,6 +20,8 @@ import org.ayf.reports.views.BaseReportView;
  */
 public abstract class Report {
     BaseReportView view;
+    ReportCommand.SubCommandType configurationType = ReportCommand.SubCommandType.None;
+    
     ReportCommand.SubCommandType reportType;
 
     public Report(ReportCommand.SubCommandType type, BaseReportView view) {
@@ -44,8 +49,24 @@ public abstract class Report {
     public ReportCommand.SubCommandType getReportType() {
         return reportType;
     }
+
+    public Command.SubCommandType getConfigurationType() {
+        return configurationType;
+    }
+
+    protected void setConfigurationType(Command.SubCommandType configurationType) {
+        this.configurationType = configurationType;
+    }
+    
+    public void configure(ReportCommand.SubCommandType type)
+    { 
+        setConfigurationType(configurationType); 
+        getView().configure(type);
+    }
+    
     
     public abstract ReportData getData();
+    
     
     public void updateReport()
     {
@@ -53,12 +74,12 @@ public abstract class Report {
         {
             @Override
             public void run() {
-                ReportData data = getData();
-                BaseReportView view = getView();
+                final ReportData data = getData();
+                final BaseReportView view = getView();
                 
                 if(view != null)
                 {
-                    view.updateView(data);
+                    view.updateReportView(data);
                 }
             }
         });
@@ -110,5 +131,10 @@ public abstract class Report {
     @Override
     public String toString() {
         return "Report{" + "reportType=" + reportType + '}';
+    }
+    
+    public ReportPrintable getPrintableReport() throws PrintException 
+    {
+       return (ReportPrintable) getView().getPrintable();
     }
 }

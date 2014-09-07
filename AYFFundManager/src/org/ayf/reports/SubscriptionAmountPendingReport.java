@@ -25,21 +25,22 @@ import org.ayf.util.SubscriptionUtil;
  */
 public class SubscriptionAmountPendingReport extends Report {
 
-    boolean showActiveMembers = false;
+    boolean showInactiveMembers = false;
     
     public SubscriptionAmountPendingReport() {
         super(ReportCommand.SubCommandType.NotificationsMemberSubscriptionPending, null);
         setView(new SubscriptionAmountPendingReportView(this));
     }
 
-    public boolean isShowActiveMembers() {
-        return showActiveMembers;
+    public boolean isShowInactiveMembers() {
+        return showInactiveMembers;
     }
 
-    public void setShowActiveMembers(boolean showActiveMembers) {
-        this.showActiveMembers = showActiveMembers;
+    public void setShowInactiveMembers(boolean showInactiveMembers) {
+        this.showInactiveMembers = showInactiveMembers;
         updateReport();
     }
+
     
     
     @Override
@@ -49,7 +50,17 @@ public class SubscriptionAmountPendingReport extends Report {
         ArrayList<BaseEntity> entities = DatabaseManager.getAllEntities(Member.class);
         Map<BaseEntity, Float> pendingSubscription = new HashMap<BaseEntity, Float>();
         
-        for (BaseEntity baseEntity : entities) {
+        for (BaseEntity baseEntity : entities)
+        {
+            if(isShowInactiveMembers())
+            {
+                if(((Member)baseEntity).isActive()) continue;
+            }
+            else
+            {
+                if(!((Member)baseEntity).isActive()) continue;
+            }
+            
             String regID = baseEntity.getValueForField(BaseEntity.ColumnName.UniqueID).toString();
             java.sql.Date regDate = (java.sql.Date)baseEntity.getValueForField(BaseEntity.ColumnName.RegisterationDate);
             

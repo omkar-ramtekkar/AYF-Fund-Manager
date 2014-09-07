@@ -192,7 +192,10 @@ public class Toast {
     public static void showToastOnComponentCenter(JComponent component, String message, boolean isPositive)
     {
         try {
-            showToast(message, getProperLocationOfToast(message, ScreenUtil.getCenterPointOnScreen(component)), isPositive);
+            if(component == null)
+                showToastOnScreenCenter(message, isPositive);
+            else
+                showToast(message, getProperLocationOfToast(message, ScreenUtil.getCenterPointOnScreen(component)), isPositive);
         } catch (IllegalArgumentException ex) {
         } catch (IllegalComponentStateException ex) {
         }

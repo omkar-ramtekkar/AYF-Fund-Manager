@@ -31,12 +31,6 @@ public final class SideBarTableModel extends AbstractTableModel implements Mouse
         public Option(ReportCommand.SubCommandType type, Option parent) {
             this.optionType = type;
             this.parentOption = parent;
-            
-            /*if(parent instanceof HeaderOption)
-            {
-                HeaderOption header = (HeaderOption) parent;
-                header.addSubOption(this);
-            }*/
         }
         
         public boolean isNoneOption()
@@ -127,16 +121,6 @@ public final class SideBarTableModel extends AbstractTableModel implements Mouse
         this.options.add(dashboardOption);
         this.selectedHelderOption = dashboardOption;
         
-        HeaderOption detailsOption = new HeaderOption(ReportCommand.SubCommandType.Details);
-        this.options.add(detailsOption);
-        detailsOption.addSubOption(new Option(ReportCommand.SubCommandType.DetailsAllMembers, detailsOption));
-        detailsOption.addSubOption(new Option(ReportCommand.SubCommandType.DetailsAllDonors, detailsOption));
-        detailsOption.addSubOption(new Option(ReportCommand.SubCommandType.DetailsAllExpenses, detailsOption));
-        detailsOption.addSubOption(new Option(ReportCommand.SubCommandType.DetailsAllCashFlows, detailsOption));
-        detailsOption.addSubOption(new Option(ReportCommand.SubCommandType.DetailsAllSubscriptionAmountDetails, detailsOption));
-        detailsOption.addSubOption(new Option(ReportCommand.SubCommandType.None, detailsOption));
-        
-        
         HeaderOption statementsOption = new HeaderOption(ReportCommand.SubCommandType.Statements);
         this.options.add(statementsOption);
         statementsOption.addSubOption(new Option(ReportCommand.SubCommandType.StatementsByMember, statementsOption));
@@ -149,6 +133,14 @@ public final class SideBarTableModel extends AbstractTableModel implements Mouse
         notificationOption.addSubOption(new Option(ReportCommand.SubCommandType.NotificationsMemberSubscriptionPending, notificationOption));
         notificationOption.addSubOption(new Option(ReportCommand.SubCommandType.None, notificationOption));
         
+        HeaderOption detailsOption = new HeaderOption(ReportCommand.SubCommandType.Details);
+        this.options.add(detailsOption);
+        detailsOption.addSubOption(new Option(ReportCommand.SubCommandType.DetailsAllMembers, detailsOption));
+        detailsOption.addSubOption(new Option(ReportCommand.SubCommandType.DetailsAllDonors, detailsOption));
+        detailsOption.addSubOption(new Option(ReportCommand.SubCommandType.DetailsAllExpenses, detailsOption));
+        detailsOption.addSubOption(new Option(ReportCommand.SubCommandType.DetailsAllCashFlows, detailsOption));
+        detailsOption.addSubOption(new Option(ReportCommand.SubCommandType.DetailsAllSubscriptionAmountDetails, detailsOption));
+        detailsOption.addSubOption(new Option(ReportCommand.SubCommandType.None, detailsOption));
         
         HeaderOption miscellaneousOption = new HeaderOption(ReportCommand.SubCommandType.Miscellaneous);
         this.options.add(miscellaneousOption);

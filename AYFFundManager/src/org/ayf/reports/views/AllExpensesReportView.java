@@ -10,6 +10,7 @@ import javax.swing.JTable;
 import org.ayf.models.GenericDefaultTableModel;
 import org.ayf.reports.Report;
 import org.ayf.reports.ReportData;
+import org.ayf.util.Toast;
 import org.jdesktop.swingx.prompt.PromptSupport;
 
 /**
@@ -104,12 +105,8 @@ public class AllExpensesReportView extends BaseReportView {
     // End of variables declaration//GEN-END:variables
 
     @Override
-    public void updateView(ReportData data) {
-        if(data != null)
-        {
-            this.allExpensesTable.setModel(new GenericDefaultTableModel(data));
-            adjustReportTableColumns();
-        }
+    public void updateViewDecoration(ReportData data) {
+    
     }
 
     @Override

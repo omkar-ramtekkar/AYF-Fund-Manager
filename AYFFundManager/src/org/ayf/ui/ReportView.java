@@ -6,6 +6,8 @@
 
 package org.ayf.ui;
 
+import java.awt.BorderLayout;
+import java.awt.GridLayout;
 import java.util.Vector;
 import javax.swing.JComponent;
 import org.ayf.reports.views.BaseReportView;
@@ -19,18 +21,9 @@ public class ReportView extends javax.swing.JPanel {
     /**
      * Creates new form ReportView
      */
+    
     public ReportView() {
         initComponents();
-        
-        {
-            rootPanel = new BackgroundPanel(BackgroundPanel.BackgroundStyle.Default);
-            setLayout(new java.awt.BorderLayout());
-
-            rootPanel.setLayout(new java.awt.BorderLayout());
-            jScrollPane1.setViewportView(rootPanel);
-
-            add(jScrollPane1, java.awt.BorderLayout.CENTER);
-        }
     }
     
     public void addView(JComponent view)
@@ -47,6 +40,18 @@ public class ReportView extends javax.swing.JPanel {
     {
         rootPanel.removeAll();
         rootPanel.repaint();
+    }
+    
+    public void prepareForReports(int count)
+    {
+        if(count == 1)
+        {
+            this.rootPanel.setLayout(new BorderLayout());
+        }
+        else
+        {
+            this.rootPanel.setLayout(new GridLayout(2, 2));
+        }
     }
     
     public Vector<BaseReportView> getReportViews()
@@ -74,16 +79,31 @@ public class ReportView extends javax.swing.JPanel {
     private void initComponents() {
 
         jScrollPane1 = new javax.swing.JScrollPane();
+        rootPanel = new BackgroundPanel();
 
         setLayout(new java.awt.BorderLayout());
+
+        rootPanel.setLayout(new java.awt.GridLayout(2, 2));
+        jScrollPane1.setViewportView(rootPanel);
+
         add(jScrollPane1, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
 
-    private BackgroundPanel rootPanel;
+    //private BackgroundPanel rootPanel;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JPanel rootPanel;
     // End of variables declaration//GEN-END:variables
+
+    public void printReport() 
+    {
+        if(rootPanel.getComponentCount() == 0)
+            return;
+        
+        BaseReportView reportView = (BaseReportView)rootPanel.getComponent(0);
+        
+    }
 
     
 }
