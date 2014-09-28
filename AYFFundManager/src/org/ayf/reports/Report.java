@@ -11,7 +11,7 @@ import javax.swing.SwingUtilities;
 import org.ayf.command.Command;
 import org.ayf.command.ReportCommand;
 import org.ayf.managers.DatabaseManager;
-import org.ayf.reports.print.ReportPrintable;
+import org.ayf.reports.print.PrintableView;
 import org.ayf.reports.views.BaseReportView;
 
 /**
@@ -133,8 +133,8 @@ public abstract class Report {
         return "Report{" + "reportType=" + reportType + '}';
     }
     
-    public ReportPrintable getPrintableReport() throws PrintException 
+    public PrintableView getPrintableView() throws PrintException 
     {
-       return (ReportPrintable) getView().getPrintable();
+       return getView().getPrintableView();
     }
 }

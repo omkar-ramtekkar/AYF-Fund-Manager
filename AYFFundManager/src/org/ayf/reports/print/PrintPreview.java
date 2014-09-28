@@ -39,18 +39,22 @@ public class PrintPreview extends JDialog implements ActionListener, ChangeListe
 
     public PrintPreview(Dialog owner, final Printable pr, final PageFormat p) {
         super(owner, "Print Preview");
+        
+        Graphics g = new java.awt.image.BufferedImage((int)p.getImageableWidth(), (int)p.getImageableHeight(), java.awt.image.BufferedImage.TYPE_INT_RGB).getGraphics();
+        int n = 0;
+        try {
+            while (pr.print(g, p, n) == pr.PAGE_EXISTS) {
+                n++;
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        
+        final int numberOfPages = n;
+                
         this.pg = new Pageable() {
             public int getNumberOfPages() {
-                Graphics g = new java.awt.image.BufferedImage(2, 2, java.awt.image.BufferedImage.TYPE_INT_RGB).getGraphics();
-                int n = 0;
-                try {
-                    while (pr.print(g, p, n) == pr.PAGE_EXISTS) {
-                        n++;
-                    }
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
-                return n;
+                return numberOfPages;
             }
 
             public PageFormat getPageFormat(int x) {
@@ -61,6 +65,7 @@ public class PrintPreview extends JDialog implements ActionListener, ChangeListe
                 return pr;
             }
         };
+        
         createPreview();
     }
 

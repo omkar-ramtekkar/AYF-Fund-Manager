@@ -16,9 +16,7 @@ import org.ayf.managers.ReportManager;
 import org.ayf.command.ReportCommand;
 import org.ayf.models.SideBarTableModel.Option;
 import org.ayf.reports.Report;
-import org.ayf.reports.print.BasicPrintable;
-import org.ayf.reports.print.ProgressTracker;
-import org.ayf.reports.print.ReportPrintable;
+import org.ayf.reports.print.PrintableView;
 import org.ayf.reports.views.BaseReportView;
 import org.ayf.reports.views.ReportViewDelegate;
 import org.ayf.ui.ReportView;
@@ -157,20 +155,13 @@ public class ReportViewController implements ActionListener
         updateReportViewWithReports(currentReports);
     }
     
-    
-    public ReportPrintable getPrintableReport() throws PrintException {
+    public Vector<PrintableView> getPrintableReports() throws PrintException {
         if(this.currentReports == null || this.currentReports.isEmpty()) throw new PrintException("No reports to print.");
         
-        return this.currentReports.firstElement().getPrintableReport();
-    }
-    
-    public Vector<BasicPrintable> getPrintableReports() throws PrintException {
-        if(this.currentReports == null || this.currentReports.isEmpty()) throw new PrintException("No reports to print.");
-        
-        Vector<BasicPrintable> printables = new Vector<BasicPrintable>(this.currentReports.size());
+        Vector<PrintableView> printables = new Vector<PrintableView>(this.currentReports.size());
         
         for (Report report : this.currentReports) {
-            printables.add(report.getPrintableReport());
+            printables.add(report.getPrintableView());
         }
         
         return printables;

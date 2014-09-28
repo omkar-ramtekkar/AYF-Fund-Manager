@@ -10,6 +10,7 @@ import java.awt.Component;
 import java.awt.Font;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.AffineTransform;
+import java.util.Vector;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
@@ -32,7 +33,7 @@ public class TableUtil {
         resizeColumnWidth(table);
     }
     
-    public static void resizeColumnWidth(JTable table) 
+    static void resizeColumnWidth(JTable table) 
     {
         final TableColumnModel columnModel = table.getColumnModel();
         
@@ -77,32 +78,40 @@ public class TableUtil {
         }
     }
     
-    public static String toHTML(JTable table)
+    public static String toHTML(JTable table, int width)
     {
-        if(table == null) return "";
+        if(table == null) return HTMLUtil.table(0, false, false, 0, 0, 0, null, null, null, null);
         
-        StringBuilder sb = new StringBuilder("<table>");
         int rows = table.getRowCount();
         int cols = table.getColumnCount();
 
+        Vector header = new Vector(cols);
+        for (int i = 0; i < cols; ++i)
+        {
+            header.add(table.getColumnName(i));
+        }
+        
+        String th = HTMLUtil.tableHeader(header, HTMLUtil.TextAlignment.center);
+        
+        StringBuilder trs = new StringBuilder(cols * 20 * rows);
+        
+        Vector tr = new Vector(rows);
+        
         for (int row = 0; row < rows; ++row) 
         {
-            int col_index = 0;
-            sb.append("<tr><td>");
+            tr.removeAllElements();
+            
             for (int col = 0; col < cols; ++col)
             {
                 Object value = table.getValueAt(row, col);
-                if (value != null)
-                    sb.append(value.toString());
-
-                if (col_index + 1 < cols)
-                    sb.append("</td><td>");
+                tr.add(value);
             }
             
-            sb.append("</td></tr>\n");
+            trs.append(HTMLUtil.tableRow(tr, HTMLUtil.TextAlignment.left));
         }
-        sb.append("</table>");
         
-        return sb.toString();
+        String tb = HTMLUtil.tableBody(trs.toString());
+        
+        return HTMLUtil.table(1, table.getShowVerticalLines(), table.getShowHorizontalLines(), 5, 0, width, "", "", th, tb);
     }
 }

@@ -25,9 +25,8 @@ import org.ayf.database.entities.Member;
 import org.ayf.mainmenubar.MainMenuController;
 import org.ayf.reports.GenericSearchReport;
 import org.ayf.reports.ReportData;
-import org.ayf.reports.print.BasicPrintable;
+import org.ayf.reports.print.PrintableView;
 import org.ayf.reports.print.PrintingDialog;
-import org.ayf.reports.print.ReportPrintable;
 import org.ayf.reports.views.BaseReportView;
 import org.ayf.reports.views.GenericSearchDialog;
 import org.ayf.reports.views.ReportDataProcessor;
@@ -319,7 +318,7 @@ public class ApplicationManager implements ActionListener, DatabaseUpdateListene
     private void handlePrint() 
     {
         try {
-            Vector<BasicPrintable> printableReports = reportController.getPrintableReports();
+            Vector<PrintableView> printableReports = reportController.getPrintableReports();
             PrintingDialog printdialog = new PrintingDialog(printableReports, mainFrame, true);
             printdialog.setLocationRelativeTo(null);
             printdialog.setVisible(true);

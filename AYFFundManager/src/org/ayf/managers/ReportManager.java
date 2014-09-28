@@ -9,7 +9,6 @@ package org.ayf.managers;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Vector;
-import org.ayf.command.Command;
 import org.ayf.command.ReportCommand;
 import org.ayf.reports.AllCashFlowsReport;
 import org.ayf.reports.AllDonationsReport;

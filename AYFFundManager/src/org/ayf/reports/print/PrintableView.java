@@ -42,6 +42,7 @@ public class PrintableView extends  JPanel implements Printable, HTMLSerializabl
     MessageFormat header;
     MessageFormat footer;
     boolean printPageWidth;
+    PageFormat pageFormat;
     
     Vector<TableColumnItem> tableColumns = new Vector<TableColumnItem>();
 
@@ -117,7 +118,7 @@ public class PrintableView extends  JPanel implements Printable, HTMLSerializabl
                 String html = FileUtils.readFileToString(file);
                 return prepareHtml(html);
             } catch (IOException ex) {
-                Logger.getLogger(org.ayf.reports.views.HTMLPrintable.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(HTMLPrintable.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         
@@ -194,11 +195,28 @@ public class PrintableView extends  JPanel implements Printable, HTMLSerializabl
         return printPageWidth;
     }
 
-    private String prepareHtml(String html) {
+    public void setPageFormat(PageFormat pageFormat) {
+        this.pageFormat = pageFormat;
+    }
+
+    public PageFormat getPageFormat() {
+        return pageFormat;
+    }
+    
+
+    protected String prepareHtml(String html) {
         
-        String tableHTML = TableUtil.toHTML(getReportTable());
+        String tableHTML = TableUtil.toHTML(getReportTable(), (int)getPageFormat().getImageableWidth());
         
         return html.replace("__report__", tableHTML);
+    }
+
+    void setShowVerticalLines(boolean selected) {
+        this.reportTable.setShowVerticalLines(selected);
+    }
+
+    void setShowHorizontalLines(boolean selected) {
+        this.reportTable.setShowHorizontalLines(selected);
     }
 
     class TableColumnItem

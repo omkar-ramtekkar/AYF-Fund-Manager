@@ -8,7 +8,6 @@ package org.ayf.reports.views;
 
 import java.awt.event.ContainerAdapter;
 import java.awt.event.ContainerEvent;
-import java.awt.print.Printable;
 import java.util.List;
 import java.util.Vector;
 import java.util.logging.Level;
@@ -22,9 +21,7 @@ import org.ayf.database.entities.BaseEntity;
 import org.ayf.models.GenericDefaultTableModel;
 import org.ayf.reports.Report;
 import org.ayf.reports.ReportData;
-import org.ayf.reports.print.PrintInformation;
 import org.ayf.reports.print.PrintableView;
-import org.ayf.reports.print.ReportPrintable;
 import org.ayf.ui.BackgroundPanel;
 import org.ayf.util.TableAutoFilterAdapter;
 import org.ayf.util.TableUtil;
@@ -60,20 +57,10 @@ public abstract class BaseReportView extends BackgroundPanel implements ReportVi
         });
     }
     
-    
-    public Printable getPrintable() throws PrintException {
-
-        if(getReport().getData() == null) throw new PrintException("Report data not available");
-        
-        PrintInformation baseInfo = PrintInformation.getStandardPrintInformation();
-        baseInfo.setPrintableView(getPrintableView());
-        baseInfo.setBaseReportView(this);
-        
-        return new ReportPrintable(baseInfo);
-    }
-    
     public PrintableView getPrintableView() throws PrintException 
     {
+        if(getReport().getData() == null) throw new PrintException("Report data not available");
+        
         PrintableView view = new PrintableView(this);
         view.setReportTable(getReportTable());
         return view;

@@ -59,7 +59,7 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="jPanel1" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="rootPrintableView" pref="287" max="32767" attributes="0"/>
+                  <Component id="rootPrintableView" pref="270" max="32767" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="jPanel3" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
@@ -101,12 +101,21 @@
                                           <Component id="footerText" max="32767" attributes="0"/>
                                       </Group>
                                   </Group>
-                                  <Group type="102" attributes="0">
-                                      <Component id="showPrintDialogCk" min="-2" max="-2" attributes="0"/>
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <Group type="103" groupAlignment="0" attributes="0">
+                                          <Component id="showPrintDialogCk" alignment="0" min="-2" max="-2" attributes="0"/>
+                                          <Component id="printVerticalLinesCk" alignment="0" min="-2" max="-2" attributes="0"/>
+                                      </Group>
+                                      <EmptySpace min="-2" pref="24" max="-2" attributes="0"/>
+                                      <Group type="103" groupAlignment="0" attributes="0">
+                                          <Component id="interactiveCk" alignment="0" min="-2" max="-2" attributes="0"/>
+                                          <Component id="printHorizontalLinesCk" alignment="0" min="-2" max="-2" attributes="0"/>
+                                      </Group>
                                       <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
-                                      <Component id="interactiveCk" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace type="separate" max="-2" attributes="0"/>
-                                      <Component id="fitWidthCk" min="-2" max="-2" attributes="0"/>
+                                      <Group type="103" groupAlignment="0" attributes="0">
+                                          <Component id="printPageNumberCk" min="-2" max="-2" attributes="0"/>
+                                          <Component id="fitWidthCk" min="-2" max="-2" attributes="0"/>
+                                      </Group>
                                   </Group>
                               </Group>
                           </Group>
@@ -138,6 +147,12 @@
                           <Component id="showPrintDialogCk" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="interactiveCk" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="fitWidthCk" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="printHorizontalLinesCk" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="printVerticalLinesCk" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="printPageNumberCk" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
                   </Group>
@@ -199,6 +214,27 @@
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fitWidthCkActionPerformed"/>
               </Events>
+            </Component>
+            <Component class="javax.swing.JCheckBox" name="printVerticalLinesCk">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Verticle Lines"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="printVerticalLinesCkActionPerformed"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JCheckBox" name="printHorizontalLinesCk">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Horizontal Lines"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="printHorizontalLinesCkActionPerformed"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JCheckBox" name="printPageNumberCk">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Page Number"/>
+              </Properties>
             </Component>
           </SubComponents>
         </Container>

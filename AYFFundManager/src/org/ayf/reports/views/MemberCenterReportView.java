@@ -8,7 +8,6 @@ package org.ayf.reports.views;
 
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import org.ayf.models.GenericDefaultTableModel;
 import org.ayf.reports.Report;
 import org.ayf.reports.ReportData;
 

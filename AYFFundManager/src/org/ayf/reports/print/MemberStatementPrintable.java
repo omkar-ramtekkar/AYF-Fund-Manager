@@ -17,7 +17,6 @@ import org.apache.commons.io.FileUtils;
 import org.ayf.database.entities.Member;
 import org.ayf.managers.ResourceManager;
 import org.ayf.reports.views.BaseReportView;
-import org.ayf.reports.views.HTMLPrintable;
 import org.ayf.util.ComponentPrinter;
 import org.ayf.util.DateTime;
 
@@ -92,39 +91,15 @@ public class MemberStatementPrintable extends PrintableView {
         return super.print(graphics, pageFormat, pageIndex);
     }
     
-    private String prepareHtml(String html) 
+    protected String prepareHtml(String html) 
     {
         html = html.replace("__dob__", this.dateOfBirthLabel.getText());
         html = html.replace("__district__", this.districtLabel.getText());
         html = html.replace("__regdate__", this.registerationDateLabel.getText());
         html = html.replace("__contact__", this.contactNumberLabel.getText());
+        html = html.replace("__baseinfo_tablewidth__", getPageFormat().getImageableWidth()+"");
         
-        html = html.replace("__report__", "<table border=\"1\" summary=\"keyboard and mouse actions for table operations\">\n" +
-"            <tbody>\n" +
-"                <tr>\n" +
-"                    <th id=\"h1\">Operation</th>\n" +
-"                    <th id=\"h2\">Mouse Action</th>\n" +
-"                    <th id=\"h3\">Keyboard Action</th>\n" +
-"                </tr>\n" +
-"                <tr>\n" +
-"                    <td >Select single row.</td>\n" +
-"                    <td >Click.</td>\n" +
-"                    <td >Up Arrow or Down Arrow.</td>\n" +
-"                </tr>\n" +
-"                <tr>\n" +
-"                    <td >Extend contiguous selection.</td>\n" +
-"                    <td >Shift-Click or Drag over rows.</td>\n" +
-"                    <td >Shift-Up Arrow or Shift-Down Arrow.</td>\n" +
-"                </tr>\n" +
-"                <tr>\n" +
-"                    <td >Add row to selection/toggle row selection.</td>\n" +
-"                    <td >Control-Click</td>\n" +
-"                    <td >>Move lead selection with Control-Up Arrow or Control-Down Arrow, then use Space Bar to add to selection or Control-Space Bar to toggle row selection.</td>\n" +
-"                </tr>\n" +
-"            </tbody>\n" +
-"        </table> ");
-        
-        return html;
+        return super.prepareHtml(html);
     }
 
     

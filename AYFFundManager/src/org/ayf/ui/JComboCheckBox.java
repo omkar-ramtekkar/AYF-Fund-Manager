@@ -13,6 +13,7 @@ import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.SwingUtilities;
 
 /**
  *
@@ -98,8 +99,19 @@ public class JComboCheckBox extends JComboBox {
         if (getSelectedItem() instanceof JCheckBox) {
             JCheckBox jcb = (JCheckBox) getSelectedItem();
             jcb.setSelected(!jcb.isSelected());
+            
+            SwingUtilities.invokeLater(new Runnable() {
+
+                @Override
+                public void run() 
+                {
+                    setPopupVisible(true);
+                }
+            });
         }
     }
+
+    
     
     public class CheckBoxItem extends JCheckBox
     {

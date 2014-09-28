@@ -10,6 +10,7 @@ import java.awt.BorderLayout;
 import java.awt.Frame;
 import java.awt.HeadlessException;
 import java.awt.print.PageFormat;
+import java.awt.print.Paper;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
 import java.text.MessageFormat;
@@ -21,9 +22,9 @@ import javax.print.PrintService;
 import javax.print.PrintServiceLookup;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
-import org.ayf.reports.views.HTMLPrintable;
 import org.ayf.ui.BackgroundPanel;
 import org.ayf.ui.JComboCheckBox;
+import org.ayf.util.Toast;
 
 /**
  *
@@ -43,31 +44,23 @@ public class PrintingDialog extends javax.swing.JDialog {
     
     boolean showPrintingDialog = true;
     boolean interactivePrinting = true;
+    boolean printVerticalLines = true;
+    boolean printHorizontalLines = true;
     boolean printPageWidth = true;
     
-    BasicPrintable currentPrintable;
-    Vector<BasicPrintable> printables;
+    PrintableView currentPrintable;
+    Vector<PrintableView> printables;
     
     JComboCheckBox reportColumnsCombo;
+    HTMLPrintable htmlPrintable;
+
+    public PrintingDialog(Vector<PrintableView> printables, Frame owner, boolean modal) {
+        super(owner, modal);
         
-    public PrintingDialog(java.awt.Frame parent, boolean modal) {
-        super(parent, modal);
         initComponents();
         
-        this.reportColumnsCombo = (JComboCheckBox)this.reportColumnsCombo1;
-    }
-
-    public PrintingDialog(BasicPrintable printable, Frame owner, boolean modal) {
-        this(owner, modal);
+        this.reportColumnsCombo = (JComboCheckBox) this.reportColumnsCombo1;
         
-        this.printables = new Vector<BasicPrintable>();
-        this.printables.add(printable);
-        
-        initUI();
-    }
-
-    public PrintingDialog(Vector<BasicPrintable> printables, Frame owner, boolean modal) {
-        this(owner, modal);
         this.printables = printables;
         
         initUI();
@@ -85,26 +78,29 @@ public class PrintingDialog extends javax.swing.JDialog {
         this.showPrintDialogCk.setSelected(this.showPrintingDialog);
         this.interactiveCk.setSelected(this.interactivePrinting);
         this.fitWidthCk.setSelected(printPageWidth);
+        this.printVerticalLinesCk.setSelected(this.printVerticalLines);
+        this.printHorizontalLinesCk.setSelected(this.printHorizontalLines);
         
         this.selectReportCombo.setModel(new DefaultComboBoxModel(printables));
-        
+        this.htmlPrintable = new HTMLPrintable("", this.pageFormat.getPaper(), null);
         setPrintable(this.printables.firstElement());
     }
     
-    void setPrintable(BasicPrintable printable)
+    void setPrintable(PrintableView printable)
     {
         if(this.currentPrintable != null)
         {
-            this.rootPrintableView.remove(this.currentPrintable.getPrintableView());
+            this.rootPrintableView.remove(this.currentPrintable);
         }
         
         this.currentPrintable = printable;
         
-        PrintableView printableView =  this.currentPrintable.getPrintableView();
+        this.currentPrintable.setPageFormat(this.pageFormat);
+        this.reportColumnsCombo.setItems(this.currentPrintable.getTableColumns());
         
-        this.reportColumnsCombo.setItems(printableView.getTableColumns());
-        
-        this.rootPrintableView.add(printableView, BorderLayout.CENTER);
+        this.htmlPrintable.setHtml(this.currentPrintable.getHtml());
+        this.rootPrintableView.add(this.htmlPrintable.getEditorViewScrollPane(), BorderLayout.CENTER);
+        //this.rootPrintableView.add(this.currentPrintable, BorderLayout.CENTER);
         
     }
     
@@ -128,6 +124,9 @@ public class PrintingDialog extends javax.swing.JDialog {
         showPrintDialogCk = new javax.swing.JCheckBox();
         interactiveCk = new javax.swing.JCheckBox();
         fitWidthCk = new javax.swing.JCheckBox();
+        printVerticalLinesCk = new javax.swing.JCheckBox();
+        printHorizontalLinesCk = new javax.swing.JCheckBox();
+        printPageNumberCk = new javax.swing.JCheckBox();
         rootPrintableView = new javax.swing.JPanel();
         jPanel4 = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
@@ -186,6 +185,22 @@ public class PrintingDialog extends javax.swing.JDialog {
             }
         });
 
+        printVerticalLinesCk.setText("Verticle Lines");
+        printVerticalLinesCk.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                printVerticalLinesCkActionPerformed(evt);
+            }
+        });
+
+        printHorizontalLinesCk.setText("Horizontal Lines");
+        printHorizontalLinesCk.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                printHorizontalLinesCkActionPerformed(evt);
+            }
+        });
+
+        printPageNumberCk.setText("Page Number");
+
         org.jdesktop.layout.GroupLayout jPanel1Layout = new org.jdesktop.layout.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -208,11 +223,17 @@ public class PrintingDialog extends javax.swing.JDialog {
                                     .add(headerText, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 292, Short.MAX_VALUE)
                                     .add(footerText)))
                             .add(jPanel1Layout.createSequentialGroup()
-                                .add(showPrintDialogCk)
+                                .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                                    .add(showPrintDialogCk)
+                                    .add(printVerticalLinesCk))
+                                .add(24, 24, 24)
+                                .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                                    .add(interactiveCk)
+                                    .add(printHorizontalLinesCk))
                                 .add(18, 18, 18)
-                                .add(interactiveCk)
-                                .add(18, 18, 18)
-                                .add(fitWidthCk)))))
+                                .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                                    .add(printPageNumberCk)
+                                    .add(fitWidthCk))))))
                 .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -238,6 +259,11 @@ public class PrintingDialog extends javax.swing.JDialog {
                     .add(showPrintDialogCk)
                     .add(interactiveCk)
                     .add(fitWidthCk))
+                .add(12, 12, 12)
+                .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(printHorizontalLinesCk)
+                    .add(printVerticalLinesCk)
+                    .add(printPageNumberCk))
                 .add(18, 18, 18))
         );
 
@@ -382,7 +408,7 @@ public class PrintingDialog extends javax.swing.JDialog {
                 .addContainerGap()
                 .add(jPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(rootPrintableView, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 287, Short.MAX_VALUE)
+                .add(rootPrintableView, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 270, Short.MAX_VALUE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jPanel3, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -407,15 +433,20 @@ public class PrintingDialog extends javax.swing.JDialog {
         try {
             this.pageFormat = this.printingJob.pageDialog(this.printingJob.defaultPage());
             this.pageFormat = this.printingJob.validatePage(this.pageFormat);
+            this.currentPrintable.setPageFormat(this.pageFormat);
         } catch (HeadlessException headlessException) 
         {
             JOptionPane.showMessageDialog(this, headlessException.getMessage(), "Page Setup Error", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_pageSetupButtonActionPerformed
 
+
+    
     private void previewButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_previewButtonActionPerformed
         
-        HTMLPrintable htmlPrintable = new HTMLPrintable(this.currentPrintable.getHtml(), this.pageFormat.getPaper(), null);
+        Paper p = new Paper();
+        p.setSize(this.htmlPrintable.getEditorView().getWidth(), this.htmlPrintable.getEditorView().getHeight());
+        final HTMLPrintable htmlPrintable = new HTMLPrintable(this.currentPrintable.getHtml(), p, null);
         
         PrintPreview preview = new PrintPreview(this, htmlPrintable, this.currentPrintable.getPageFormat());
         preview.setVisible(true);
@@ -451,13 +482,13 @@ public class PrintingDialog extends javax.swing.JDialog {
             this.printingJob.setPrintService(service);
         } catch (PrinterException ex) {
             Logger.getLogger(PrintingDialog.class.getName()).log(Level.SEVERE, null, ex);
-            JOptionPane.showMessageDialog(this, "Print service not found.", "Print Error", JOptionPane.ERROR_MESSAGE);
+            Toast.showToastOnScreenCenter("Printer is not configured.", false);
+            //JOptionPane.showMessageDialog(this, "Print service not found.", "Print Error", JOptionPane.ERROR_MESSAGE);
         }
 
         
-        this.printingJob.setPrintable(new HTMLPrintable(this.currentPrintable.getHtml(), this.pageFormat.getPaper(), null), this.pageFormat);
-//        this.printingJob.setPrintable(this.currentPrintable, this.pageFormat);
-        
+        this.printingJob.setPrintable(this.htmlPrintable, this.pageFormat);
+
         boolean doPrinting = true;
         
         if(this.showPrintingDialog)
@@ -477,6 +508,7 @@ public class PrintingDialog extends javax.swing.JDialog {
             try 
             {
                 this.printingJob.print();
+                //this.htmlPrintable.pri
             } catch (PrinterException ex) {
                 Logger.getLogger(PrintingDialog.class.getName()).log(Level.SEVERE, null, ex);
                 JOptionPane.showMessageDialog(this, ex.getMessage(), "Print Error", JOptionPane.ERROR_MESSAGE);
@@ -503,8 +535,21 @@ public class PrintingDialog extends javax.swing.JDialog {
 
     private void reportColumnsCombo1PopupMenuWillBecomeInvisible(javax.swing.event.PopupMenuEvent evt) {//GEN-FIRST:event_reportColumnsCombo1PopupMenuWillBecomeInvisible
         // TODO add your handling code here:
-        this.currentPrintable.getPrintableView().configureView(new Vector<Object>(Arrays.asList(this.reportColumnsCombo.getSelectedItems())));
+        this.currentPrintable.configureView(new Vector<Object>(Arrays.asList(this.reportColumnsCombo.getSelectedItems())));
+        this.htmlPrintable.setHtml(this.currentPrintable.getHtml());
     }//GEN-LAST:event_reportColumnsCombo1PopupMenuWillBecomeInvisible
+
+    private void printVerticalLinesCkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_printVerticalLinesCkActionPerformed
+        this.currentPrintable.setShowVerticalLines(this.printVerticalLinesCk.isSelected());
+        this.htmlPrintable.setShowTableVerticalLines(this.printVerticalLinesCk.isSelected());
+        this.htmlPrintable.setHtml(this.currentPrintable.getHtml());
+    }//GEN-LAST:event_printVerticalLinesCkActionPerformed
+
+    private void printHorizontalLinesCkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_printHorizontalLinesCkActionPerformed
+        this.currentPrintable.setShowHorizontalLines(this.printHorizontalLinesCk.isSelected());
+        this.htmlPrintable.setShowTableHorizontalLines(this.printHorizontalLinesCk.isSelected());
+        this.htmlPrintable.setHtml(this.currentPrintable.getHtml());
+    }//GEN-LAST:event_printHorizontalLinesCkActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -525,6 +570,9 @@ public class PrintingDialog extends javax.swing.JDialog {
     private javax.swing.JButton pageSetupButton;
     private javax.swing.JButton previewButton;
     private javax.swing.JButton printButton;
+    private javax.swing.JCheckBox printHorizontalLinesCk;
+    private javax.swing.JCheckBox printPageNumberCk;
+    private javax.swing.JCheckBox printVerticalLinesCk;
     private javax.swing.JComboBox reportColumnsCombo1;
     private javax.swing.JPanel rootPrintableView;
     private javax.swing.JButton saveAsImageButton;
