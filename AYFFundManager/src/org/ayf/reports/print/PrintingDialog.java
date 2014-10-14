@@ -20,6 +20,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.print.PrintService;
 import javax.print.PrintServiceLookup;
+import javax.print.attribute.HashPrintRequestAttributeSet;
+import javax.print.attribute.PrintRequestAttributeSet;
+import javax.print.attribute.standard.MediaSizeName;
+import javax.print.attribute.standard.Sides;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
 import org.ayf.ui.BackgroundPanel;
@@ -444,11 +448,11 @@ public class PrintingDialog extends javax.swing.JDialog {
     
     private void previewButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_previewButtonActionPerformed
         
-        Paper p = new Paper();
-        p.setSize(this.htmlPrintable.getEditorView().getWidth(), this.htmlPrintable.getEditorView().getHeight());
-        final HTMLPrintable htmlPrintable = new HTMLPrintable(this.currentPrintable.getHtml(), p, null);
-        
-        PrintPreview preview = new PrintPreview(this, htmlPrintable, this.currentPrintable.getPageFormat());
+//        Paper p = new Paper();
+//        p.setSize(this.htmlPrintable.getEditorView().getWidth(), this.htmlPrintable.getEditorView().getHeight());
+//        final HTMLPrintable htmlPrintable = new HTMLPrintable(this.currentPrintable.getHtml(), p, null);
+//        
+        PrintPreview preview = new PrintPreview(this, this.htmlPrintable, this.currentPrintable.getPageFormat());
         preview.setVisible(true);
     }//GEN-LAST:event_previewButtonActionPerformed
 
@@ -486,7 +490,9 @@ public class PrintingDialog extends javax.swing.JDialog {
             //JOptionPane.showMessageDialog(this, "Print service not found.", "Print Error", JOptionPane.ERROR_MESSAGE);
         }
 
-        
+        PrintRequestAttributeSet attr_set = new HashPrintRequestAttributeSet();
+        attr_set.add(MediaSizeName.ISO_A4);
+                    
         this.printingJob.setPrintable(this.htmlPrintable, this.pageFormat);
 
         boolean doPrinting = true;
@@ -507,7 +513,7 @@ public class PrintingDialog extends javax.swing.JDialog {
         {
             try 
             {
-                this.printingJob.print();
+                this.printingJob.print(attr_set);
                 //this.htmlPrintable.pri
             } catch (PrinterException ex) {
                 Logger.getLogger(PrintingDialog.class.getName()).log(Level.SEVERE, null, ex);

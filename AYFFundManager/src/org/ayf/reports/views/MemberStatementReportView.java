@@ -29,6 +29,7 @@ import org.ayf.reports.Report;
 import org.ayf.reports.ReportData;
 import org.ayf.reports.print.MemberStatementPrintable;
 import org.ayf.reports.print.PrintableView;
+import org.ayf.reports.print.ReceiptPrintableView;
 import org.ayf.ui.InformationPanel;
 import org.ayf.ui.MemberFrame;
 import org.ayf.util.DateTime;
@@ -495,9 +496,11 @@ public class MemberStatementReportView extends BaseReportView implements ReportD
 
     @Override
     public PrintableView getPrintableView() throws PrintException {
-        MemberStatementPrintable printable = new MemberStatementPrintable(this, this.currentMember);
-        printable.setReportTable(this.memberStatementTable);
-        return printable;
+//        MemberStatementPrintable printable = new MemberStatementPrintable(this, this.currentMember);
+//        printable.setReportTable(this.memberStatementTable);
+//        return printable;
+        
+        return new ReceiptPrintableView();
     }
 
     

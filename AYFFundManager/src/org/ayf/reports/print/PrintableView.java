@@ -111,7 +111,7 @@ public class PrintableView extends  JPanel implements Printable, HTMLSerializabl
     @Override
     public String getHtml()
     {
-        File file = ResourceManager.getResource("/org/ayf/resources/misc/", "HTMLLayoutBaseReport.html");
+        File file = ResourceManager.getResource("/org/ayf/resources/html/", "HTMLLayoutBaseReport.html");
         if(file.exists())
         {
             try {

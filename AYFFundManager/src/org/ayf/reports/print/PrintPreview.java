@@ -113,7 +113,7 @@ public class PrintPreview extends JDialog implements ActionListener, ChangeListe
         gbc.gridx = 0;
         gbc.gridwidth = 1;
         gbl.setConstraints(slider, gbc);
-        topPanel.add(slider);
+        //topPanel.add(slider);
         temp.add(back);
         temp.add(jcb);
         temp.add(forward);

@@ -69,7 +69,7 @@ public class MemberStatementPrintable extends PrintableView {
     
     @Override
     public String getHtml() {
-        File file = ResourceManager.getResource("/org/ayf/resources/misc/", "HTMLLayoutMemberStatement.html");
+        File file = ResourceManager.getResource("/org/ayf/resources/html/", "HTMLLayoutMemberStatement.html");
         if(file.exists())
         {
             try {
