@@ -9,13 +9,16 @@ package org.ayf.managers;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Vector;
+import org.ayf.command.Command;
 import org.ayf.command.ReportCommand;
 import org.ayf.reports.AllCashFlowsReport;
 import org.ayf.reports.AllDonationsReport;
 import org.ayf.reports.AllExpensesReport;
 import org.ayf.reports.AllMembersReport;
 import org.ayf.reports.AllsubscriptionAmountReport;
-import org.ayf.reports.DonationReport;
+import org.ayf.reports.DonationStatementReport;
+import org.ayf.reports.GenericCustomReport;
+import org.ayf.reports.MemberRegisterationReport;
 import org.ayf.reports.MemberStatementReport;
 import org.ayf.reports.Report;
 import org.ayf.reports.SubscriptionAmountPendingReport;
@@ -43,7 +46,7 @@ public class ReportManager
     void initializeDashboardReports()
     {
         Vector<Report> dashboardReports = new Vector();
-        dashboardReports.add(new DonationReport());
+        
         reports.put(ReportCommand.SubCommandType.Dashboard, dashboardReports);
         
     }
@@ -65,6 +68,10 @@ public class ReportManager
     {
         Vector<Report> statementReports = new Vector();
         statementReports.add(new MemberStatementReport());
+        statementReports.add(new MemberRegisterationReport());
+        statementReports.add(new DonationStatementReport());
+        statementReports.add(new GenericCustomReport(Command.SubCommandType.DashboardExpenses));
+        
         
         reports.put(ReportCommand.SubCommandType.Statements, statementReports);
     }

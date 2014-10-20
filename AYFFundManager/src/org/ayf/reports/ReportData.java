@@ -12,6 +12,8 @@ import java.util.logging.Logger;
 import org.ayf.database.entities.BaseEntity;
 import org.ayf.database.entities.BaseEntity.ColumnName;
 import org.ayf.database.entities.BaseEntity.DetailsLevel;
+import org.jfree.data.category.DefaultCategoryDataset;
+import org.jfree.data.general.DefaultPieDataset;
 
 /**
  *
@@ -28,7 +30,11 @@ public class ReportData
     protected Vector<ColumnName> columnIDs;
     protected BaseEntity dummyEntity;
     
-
+    protected DefaultPieDataset pieChartDataSet;
+    protected DefaultCategoryDataset categoryDataSet;
+    
+    ReportSpecificData reportSpecificData;
+    
     public ReportData(Vector<BaseEntity> data, DetailsLevel detailLevel, Class<?> entityClass) {
         try {
             this.dummyEntity = (BaseEntity) entityClass.newInstance();
@@ -122,5 +128,29 @@ public class ReportData
         }
         
         return null;
+    }
+
+    public DefaultPieDataset getPieChartDataSet() {
+        return pieChartDataSet;
+    }
+
+    public DefaultCategoryDataset getCategoryDataSet() {
+        return categoryDataSet;
+    }
+
+    public void setPieChartDataSet(DefaultPieDataset pieChartDataSet) {
+        this.pieChartDataSet = pieChartDataSet;
+    }
+
+    public void setCategoryDataSet(DefaultCategoryDataset categoryDataSet) {
+        this.categoryDataSet = categoryDataSet;
+    }
+
+    public ReportSpecificData getReportSpecificData() {
+        return reportSpecificData;
+    }
+
+    public void setReportSpecificData(ReportSpecificData reportSpecificData) {
+        this.reportSpecificData = reportSpecificData;
     }
 }

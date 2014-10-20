@@ -8,8 +8,6 @@ package org.ayf.reports.views;
 
 
 import java.awt.Color;
-import java.awt.print.PrinterException;
-import java.awt.print.PrinterJob;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -29,7 +27,6 @@ import org.ayf.reports.Report;
 import org.ayf.reports.ReportData;
 import org.ayf.reports.print.MemberStatementPrintable;
 import org.ayf.reports.print.PrintableView;
-import org.ayf.reports.print.ReceiptPrintableView;
 import org.ayf.ui.InformationPanel;
 import org.ayf.ui.MemberFrame;
 import org.ayf.util.DateTime;
@@ -365,13 +362,13 @@ public class MemberStatementReportView extends BaseReportView implements ReportD
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Subscription Dues"));
 
         jLabel1.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
-        jLabel1.setText("Total Subscription To Be Paid          :");
+        jLabel1.setText("Total subscription need to be paid :");
 
         jlabel10.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
-        jlabel10.setText("Total Subscription Already Paid       :");
+        jlabel10.setText("Total subscription paid till datte    :");
 
         jlabel11.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
-        jlabel11.setText("Total Subscription Need To Be Paid  :");
+        jlabel11.setText("Subscription paid in advance          :");
 
         totalSubscriptionToBePaid.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
         totalSubscriptionToBePaid.setPreferredSize(new java.awt.Dimension(45, 16));
@@ -397,7 +394,7 @@ public class MemberStatementReportView extends BaseReportView implements ReportD
                     .add(totalSubscriptionToBePaid, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .add(totalSubscriptionAlreadyPaid, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .add(totalsubscriptionNeedToBePaid, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 106, Short.MAX_VALUE))
-                .addContainerGap(268, Short.MAX_VALUE))
+                .addContainerGap(277, Short.MAX_VALUE))
         );
 
         duesPanelLayout.linkSize(new java.awt.Component[] {jLabel1, jlabel10, jlabel11}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
@@ -496,11 +493,11 @@ public class MemberStatementReportView extends BaseReportView implements ReportD
 
     @Override
     public PrintableView getPrintableView() throws PrintException {
-//        MemberStatementPrintable printable = new MemberStatementPrintable(this, this.currentMember);
-//        printable.setReportTable(this.memberStatementTable);
-//        return printable;
+        MemberStatementPrintable printable = new MemberStatementPrintable(this, this.currentMember);
+        printable.setReportTable(this.memberStatementTable);
+        return printable;
         
-        return new ReceiptPrintableView();
+//        return new ReceiptPrintableView();
     }
 
     
@@ -588,6 +585,7 @@ public class MemberStatementReportView extends BaseReportView implements ReportD
                 newDonation.setUniqueID(Donor.getNextUniqueID());
                 newDonation.setPaymentMode(donationDialog.getPaymentMode().toString());
                 newDonation.setReceiptNumber(donationDialog.getReceiptNumber());
+                newDonation.setDescription(donationDialog.getDescription());
 
                 if(!DatabaseManager.performDonate(newDonation))
                     throw new Exception("Donation failed. Unable to make database entry for the danation.");
@@ -649,13 +647,6 @@ public class MemberStatementReportView extends BaseReportView implements ReportD
             Toast.showToastOnComponentCenter(this, ex.getMessage(), false);
         }
     }//GEN-LAST:event_paySubscriptionButtonActionPerformed
-
-    private void duesButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_duesButtonActionPerformed
-        
-        if(this.tabbedPane.getSelectedIndex() == 1) return;
-        
-        this.tabbedPane.setSelectedIndex(1);
-    }//GEN-LAST:event_duesButtonActionPerformed
 
     private void searchTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchTextFieldActionPerformed
         // TODO add your handling code here:
@@ -736,6 +727,13 @@ public class MemberStatementReportView extends BaseReportView implements ReportD
         }
     }//GEN-LAST:event_tabbedPaneStateChanged
 
+    private void duesButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_duesButtonActionPerformed
+
+        if(this.tabbedPane.getSelectedIndex() == 1) return;
+
+        this.tabbedPane.setSelectedIndex(1);
+    }//GEN-LAST:event_duesButtonActionPerformed
+
     @Override
     public void updateViewDecoration(ReportData data) 
     {
@@ -803,15 +801,17 @@ public class MemberStatementReportView extends BaseReportView implements ReportD
                 float totalSubscriptionalreadyPaid = getSubscriptionPaidByMember();
                 this.totalSubscriptionAlreadyPaid.setText("₹ " + NumberUtil.getFormattedNumber(Float.toString(totalSubscriptionalreadyPaid)));
                 
-                this.totalsubscriptionNeedToBePaid.setText("₹ " + NumberUtil.getFormattedNumber(Float.toString(totalSubscriptionToBePaid - totalSubscriptionalreadyPaid)));
+                this.totalsubscriptionNeedToBePaid.setText("₹ " + NumberUtil.getFormattedNumber(Float.toString(Math.abs(totalSubscriptionToBePaid - totalSubscriptionalreadyPaid))));
                 
                 if((totalSubscriptionToBePaid - totalSubscriptionalreadyPaid) > 0)
                 {
+                    this.jlabel11.setText("Total subscription need to be paid  :");
                     this.totalsubscriptionNeedToBePaid.setForeground(Color.red);
                 }
                 else
                 {
-                    this.totalsubscriptionNeedToBePaid.setForeground(Color.GREEN);
+                    this.jlabel11.setText("Subscription paid in advance          :");
+                    this.totalsubscriptionNeedToBePaid.setForeground(Color.green.darker());
                 }
                 
             } catch (IllegalArgumentException invalidArgument) {

@@ -96,7 +96,7 @@ public class TableAutoFilterAdapter implements DocumentListener, ActionListener,
         } 
         else
         {
-            sorter.setRowFilter(RowFilter.regexFilter(searchField.getText()));
+            sorter.setRowFilter(RowFilter.regexFilter("(?i)" + searchField.getText()));
         }
     }
     

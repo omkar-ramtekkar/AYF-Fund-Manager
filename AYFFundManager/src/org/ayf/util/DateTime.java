@@ -12,6 +12,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
+import org.ayf.managers.ApplicationManager;
 
 /**
  *
@@ -24,7 +25,13 @@ public class DateTime {
     private static java.util.Date today = new java.util.Date();
     public static final String[] Months = { "Jan", "Feb", "March", "April", "May", "June", "July", "Aug", "Sep", "Oct", "Nov", "Dec" };
     
-
+    //public static enum Months {Jan, Feb, March, April, May, June, July, Aug, Sep, Oct, Nov, Dec};
+    
+    public static java.sql.Date getFoundationEstablishmentDate()
+    {
+        return ApplicationManager.FOUNDATION_ESTABLISHMENT_DATE;
+    }
+    
     public static String getFormattedDate()
     {
         return dateFormat.format(getToday());
@@ -106,6 +113,51 @@ public class DateTime {
         return toSQLDate(cal.getTime());
     }
     
+    public static java.sql.Date getFiscalYearStart(java.sql.Date date)
+    {
+        if(date == null) return null;
+        
+        int year = getYear(date);
+
+        java.sql.Date april = getDate(1, 3, year);
+        
+        if(date.before(april))
+        {
+            return getDate(1, 3, year-1);
+        }
+        else
+        {
+            return april;
+        }
+    }
+    
+    public static java.sql.Date getFiscalYearEnd(java.sql.Date date)
+    {
+        if(date == null) return null;
+        
+        int year = getYear(date);
+
+        java.sql.Date march = getDate(31, 2, year);
+        
+        if(date.after(march))
+        {
+            return getDate(31, 2, year+1);
+        }
+        else
+        {
+            return march;
+        }
+    }
+    
+    public static java.sql.Date getCurrentFiscalYearStart()
+    {
+        return getFiscalYearStart(getTodaySQL());
+    }
+    
+    public static java.sql.Date getCurrentFiscalYearEnd()
+    {
+        return getFiscalYearEnd(getTodaySQL());
+    }
     
     public static java.sql.Date getDate(int day, String month, int year)
     {

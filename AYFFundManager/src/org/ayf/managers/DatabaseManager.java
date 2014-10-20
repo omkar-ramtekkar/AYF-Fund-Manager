@@ -30,9 +30,12 @@ import org.ayf.database.entities.CashFlow;
 import org.ayf.database.entities.Expense;
 import org.ayf.database.entities.SubscriptionAmountDetails;
 import org.ayf.reports.ReportData;
+import org.ayf.reports.ReportSpecificData;
 import org.ayf.tpl.java2s.FilenameUtils;
 import org.ayf.util.DateTime;
 import org.ayf.util.PreferenceManager;
+import org.jfree.data.category.DefaultCategoryDataset;
+import org.jfree.data.general.DefaultPieDataset;
 
 
 /**
@@ -64,8 +67,10 @@ public class DatabaseManager {
     public static  ArrayList<Type> PAYMENT_MODE_TYPES;
     public static  ArrayList<Type> STATUS_TYPES;
 
+
     
-    enum UpdateAction { Add, Remove, Update, Read };
+    public enum UpdateAction { Add, Remove, Update, Read };
+    public enum GroupingOption { Type, Month, Year };
     
     private static EventListenerList listenerList = new EventListenerList();
     
@@ -716,6 +721,10 @@ public class DatabaseManager {
         return entities;
     }
     
+    public static int getActiveMembersCount(GroupingOption option, java.sql.Date startDate, java.sql.Date endDate)
+    {
+        return 0;
+    }
     
     public static boolean updateEntities(Vector<BaseEntity> entities, Class<?> entityClass)
     {
@@ -1055,7 +1064,7 @@ public class DatabaseManager {
         return bDonateSuccess;
     }
     
-    public static ReportData getDonationBySubscription()
+    public static ReportData getDonationByCategory()
     {
         Connection conn = null;
         Statement statement = null;
@@ -1067,6 +1076,8 @@ public class DatabaseManager {
         columns.add("DonationType");
         columns.add("TotalAmount");
         
+        DefaultPieDataset pieDataSet = new DefaultPieDataset();
+        
         try 
         {
             conn = createConnection();
@@ -1075,7 +1086,6 @@ public class DatabaseManager {
             statement = conn.createStatement();
             rs = statement.executeQuery(sql);
             
-            
             while(rs.next())
             {
                 Vector rowData = new Vector();
@@ -1083,6 +1093,9 @@ public class DatabaseManager {
                 rowData.add(rs.getDouble("TotalAmount"));
                 
                 rows.add(rowData);
+                
+                String type = rs.getString("DonationType");
+                pieDataSet.setValue(type == null ? "Invalid Type" : type, rs.getDouble("TotalAmount"));
             }
             
         } catch (SQLException ex) {
@@ -1094,7 +1107,119 @@ public class DatabaseManager {
             closeConnectionObjects(rs, statement, conn);
         }
         
-        return new ReportData(rows, columns);
+        ReportData data = new ReportData(rows, columns);
+        data.setPieChartDataSet(pieDataSet);
+        
+        return data;
+    }
+    
+    public static ReportData getDonationByGrouping(GroupingOption option, java.sql.Date startDate, java.sql.Date endDate)
+    {
+        Connection conn = null;
+        PreparedStatement statement = null;
+        ResultSet rs = null;
+        
+        Vector rows = new Vector();
+        Vector columns = new Vector();
+        
+        StringBuffer sql = new StringBuffer(100);
+        
+        String rsColumnName = null;
+        
+        
+        switch(option)
+        {
+            case Type:
+            {
+                sql.append("SELECT")
+                    .append(" DonationType, SUM(Amount) as TotalAmount FROM ")
+                    .append(DONATIONS_TABLE_NAME)
+                    .append(" WHERE DonationDate BETWEEN ? AND ? GROUP BY (DonationType)");
+                
+                rsColumnName = "DonationType";
+                columns.add("DonationType"); break;
+                
+            }
+                
+            case Month:
+            {
+                sql.append("SELECT")
+                    .append(" MONTH(DonationDate) as Month, SUM(Amount) as TotalAmount FROM ")
+                    .append(DONATIONS_TABLE_NAME)
+                    .append(" WHERE DonationDate BETWEEN ? AND ? GROUP BY MONTH(DonationDate)")
+                    .append(" ORDER BY Month ASC");
+                
+                rsColumnName = "Month";
+                columns.add("Month"); break;
+            }
+            case Year :
+            {
+                sql.append("SELECT")
+                    .append(" YEAR(DonationDate) as Year, SUM(Amount) as TotalAmount FROM ")
+                    .append(DONATIONS_TABLE_NAME)
+                    .append(" WHERE DonationDate BETWEEN ? AND ? GROUP BY YEAR(DonationDate)");
+                
+                rsColumnName = "Year";
+                columns.add("Year"); break;
+            }
+        }
+        
+        columns.add("TotalAmount");
+        
+        DefaultPieDataset pieDataSet = new DefaultPieDataset();
+        DefaultCategoryDataset barDataSet = new DefaultCategoryDataset();
+        
+        try 
+        {
+            conn = createConnection();
+            
+            statement = conn.prepareStatement(sql.toString());
+            statement.setDate(1, startDate);
+            statement.setDate(2, endDate);
+            
+            rs = statement.executeQuery();
+            
+            while(rs.next())
+            {
+                Vector rowData = new Vector();
+                if(option == GroupingOption.Month)
+                {
+                    rowData.add(DateTime.Months[rs.getInt(rsColumnName)]);
+                }
+                else
+                {
+                    rowData.add(rs.getString(rsColumnName));
+                }
+                
+                rowData.add(rs.getDouble("TotalAmount"));
+                
+                rows.add(rowData);
+                
+                String type = rowData.elementAt(0) != null ? rowData.elementAt(0).toString() : null;
+                pieDataSet.setValue(type == null ? "Invalid Type" : type, rs.getDouble("TotalAmount"));
+                
+                barDataSet.setValue(rs.getDouble("TotalAmount"), "", type == null ? "Invalid Type" : type);
+            }
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(null, ex.getLocalizedMessage(), 
+                    "Unable to get donation details by " + 
+                            option.toString() + 
+                            " for year " + 
+                            DateTime.getYear(startDate) + "-" + DateTime.getYear(endDate), 
+                    ERROR_MESSAGE);
+        }
+        finally
+        {
+            closeConnectionObjects(rs, statement, conn);
+        }
+        
+        ReportData data = new ReportData(rows, columns);
+        data.setPieChartDataSet(pieDataSet);
+        data.setCategoryDataSet(barDataSet);
+        
+        return data;
     }
     
     public static ReportData getMemberStatement(String memberRegNumber)
@@ -1248,4 +1373,177 @@ public class DatabaseManager {
         
         return totalDonation;
     }
+    
+    public static ReportData getTotalExpensesInYearByType(java.sql.Date fromDate, java.sql.Date toDate)
+    {
+        Connection conn = null;
+        PreparedStatement statement = null;
+        ResultSet rs = null;
+        
+        Vector rows = new Vector();
+        Vector columns = new Vector();
+        
+        columns.add(BaseEntity.ColumnName.ExpenseType.toString());
+        columns.add("TotalExpense");
+        columns.add("Year");
+        
+        DefaultPieDataset pieDataSet = new DefaultPieDataset();
+        
+        try 
+        {
+            conn = createConnection();
+            
+            
+            StringBuffer sql = new StringBuffer(100);
+            sql.append("SELECT SUM(Amount) as TotalExpense, ExpenseType  FROM ")
+                    .append(EXPENSES_TABLE_NAME)
+                    .append(" WHERE ")
+                    .append(BaseEntity.ColumnName.ExpenseDate.toString())
+                    .append(" BETWEEN ? AND ?")
+                    .append(" GROUP BY ")
+                    .append(BaseEntity.ColumnName.ExpenseType.toString());
+            
+            
+            statement = conn.prepareStatement(sql.toString());
+            
+            statement.setDate(1, fromDate);
+            statement.setDate(2, toDate);
+            
+            rs = statement.executeQuery();
+            
+            while(rs.next())
+            {
+                Vector rowData = new Vector();
+                rowData.add(rs.getString(BaseEntity.ColumnName.ExpenseType.toString()));
+                rowData.add(rs.getDouble("TotalExpense"));
+                rowData.add(DateTime.getYear(fromDate) + "-" + DateTime.getYear(toDate));
+                
+                rows.add(rowData);
+                
+                String type = rs.getString(BaseEntity.ColumnName.ExpenseType.toString());
+                pieDataSet.setValue(type == null ? "Invalid Type" : type, rs.getDouble("TotalExpense"));
+            }
+        }
+        catch(SQLException ex)
+        {
+            Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        finally
+        {
+            closeConnectionObjects(rs, statement, conn);
+        }
+        
+        ReportData data = new ReportData(rows, columns);
+        data.setPieChartDataSet(pieDataSet);
+        
+        return data;
+    }
+    
+    public static ReportData getTotalExpensesPerYear(java.sql.Date fromDate, java.sql.Date toDate)
+    {
+        return null;
+    }
+    
+    public static ReportData getMemberRegisterationTrendData(GroupingOption option, Date startDate, Date endDate) 
+    {
+        Connection conn = null;
+        PreparedStatement statement = null;
+        ResultSet rs = null;
+        
+        Vector rows = new Vector();
+        Vector columns = new Vector();
+        
+        StringBuffer sql = new StringBuffer(100);
+        
+        String rsColumnName = null;
+        String valueColumnName = "NumberOfMembersRegistered";
+        
+        ReportSpecificData reportSpecificData = new ReportSpecificData();
+        
+        switch(option)
+        {
+            case Month:
+            {
+                sql.append("SELECT").append(" MONTH(RegisterationDate) as Month, COUNT(*) as ").append(valueColumnName)
+                    .append(" FROM ")
+                    .append(MEMBER_TABLE_NAME)
+                    .append(" WHERE RegisterationDate BETWEEN ? AND ? GROUP BY MONTH(RegisterationDate)")
+                    .append(" ORDER BY Month ASC");
+                
+                rsColumnName = "Month";
+                columns.add("Month"); break;
+            }
+            case Year :
+            {
+                sql.append("SELECT").append(" YEAR(RegisterationDate) as Year, COUNT(*) as ").append(valueColumnName)
+                    .append(" FROM ")
+                    .append(MEMBER_TABLE_NAME)
+                    .append(" WHERE RegisterationDate BETWEEN ? AND ? GROUP BY YEAR(RegisterationDate)")
+                        .append(" ORDER BY Year DESC");
+                
+                rsColumnName = "Year";
+                columns.add("Year"); break;
+            }
+        }
+        
+        columns.add(valueColumnName);
+        
+        DefaultPieDataset pieDataSet = new DefaultPieDataset();
+        DefaultCategoryDataset barDataSet = new DefaultCategoryDataset();
+        
+        try 
+        {
+            conn = createConnection();
+            
+            statement = conn.prepareStatement(sql.toString());
+            statement.setDate(1, startDate);
+            statement.setDate(2, endDate);
+            
+            rs = statement.executeQuery();
+            
+            while(rs.next())
+            {
+                Vector rowData = new Vector();
+                if(option == GroupingOption.Month)
+                {
+                    rowData.add(DateTime.Months[rs.getInt(rsColumnName)]);
+                }
+                else
+                {
+                    rowData.add(rs.getString(rsColumnName));
+                }
+                
+                rowData.add(rs.getInt(valueColumnName));
+                
+                rows.add(rowData);
+                
+                String type = rowData.elementAt(0) != null ? rowData.elementAt(0).toString() : null;
+                pieDataSet.setValue(type == null ? "Invalid Type" : type, rs.getInt(valueColumnName));
+                
+                barDataSet.setValue(rs.getInt(valueColumnName), "", type == null ? "Invalid Type" : type);
+            }
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(null, ex.getLocalizedMessage(), 
+                    "Unable to get members detail by " + 
+                            option.toString() + 
+                            " for year " + 
+                            DateTime.getYear(startDate) + "-" + DateTime.getYear(endDate), 
+                    ERROR_MESSAGE);
+        }
+        finally
+        {
+            closeConnectionObjects(rs, statement, conn);
+        }
+        
+        
+        ReportData data = new ReportData(rows, columns);
+        data.setPieChartDataSet(pieDataSet);
+        data.setCategoryDataSet(barDataSet);
+        data.setReportSpecificData(reportSpecificData);
+        return data;
+    }
+
 }
+

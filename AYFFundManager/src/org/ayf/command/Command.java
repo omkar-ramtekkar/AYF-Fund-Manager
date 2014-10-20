@@ -31,6 +31,8 @@ public class Command {
         Notifications,
         Miscellaneous,
         DashboardDonation,
+        DashboardExpenses,
+        DashboardReport,
         DashboardProfitLoss,
         DashboardStatement,
         DetailsAllMembers,
@@ -40,6 +42,8 @@ public class Command {
         DetailsAllSubscriptionAmountDetails,
         StatementsByMember,
         StatementsCashFlows,
+        StatementsOfDonation,
+        MemberRegisterationStatement,
         NotificationsMemberSubscription,
         NotificationsMemberSubscriptionPending,
         
@@ -99,15 +103,17 @@ public class Command {
             case Details:
                 return "Database";
             case Statements:
-                return "Statements";
+                return "Reports";
             case Notifications:
                 return "Notifications";
             case Miscellaneous:
                 return "Miscelleaneous";
             case DashboardDonation:
-                return "Total Donation By Type";
+                return "Donation Report";
+            case DashboardExpenses:
+                return "Expense Report";
             case DashboardProfitLoss:
-                return "Total Income And Expenses";
+                return "Profit and Loss Report";
             case DashboardStatement:
                 return "Statement As Of Today";
             case DetailsAllMembers:
@@ -124,6 +130,10 @@ public class Command {
                 return "Statement of Member";
             case StatementsCashFlows: //Pending cash receipts
                 return "Statement of Cash Flows";
+            case StatementsOfDonation:
+                return "Statement of Donation";
+            case MemberRegisterationStatement:
+                return "Member Registeration Trend";
             case NotificationsMemberSubscription:
                 return "Subscription Reminder";
             case NotificationsMemberSubscriptionPending:

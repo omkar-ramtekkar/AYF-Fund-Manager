@@ -39,7 +39,7 @@ public abstract class Report {
     }
 
     public String getName() {
-        return reportType.toString();
+        return ReportCommand.getDisplayNameForSubCommandType(getReportType());
     }
 
     protected void setView(BaseReportView view) {

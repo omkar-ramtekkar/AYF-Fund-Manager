@@ -145,7 +145,7 @@ public class Donor extends Member
             columnNames.add(ColumnName.ContactNumber);
             columnNames.add(ColumnName.EmailAddress);
             columnNames.add(ColumnName.Profession);
-            
+            columnNames.add(ColumnName.Description);
             
             detailLevelVsColumnsMap.put(DetailsLevel.Database, columnNames);
         }
@@ -226,31 +226,6 @@ public class Donor extends Member
 
     public void setMemberUniqueID(String memberUniqueID) {
         this.memberUniqueID = memberUniqueID;
-        
-        /*
-        if(getMemberUniqueID()!= null && getMemberUniqueID().length() > 0)
-        {
-            Vector<Object> value = new Vector<Object>(1);
-            value.add(getMemberUniqueID());
-            
-            Vector<ColumnName> column = new Vector<ColumnName>(1);
-            column.add(ColumnName.UniqueID);
-            
-            
-            ArrayList<BaseEntity> entity = DatabaseManager.getEntitiesWithCondition(column, value, Member.class);
-            
-            if(entity != null && entity.size() > 0)
-            {
-                BaseEntity baseEntity = entity.get(0);
-                
-                Vector<ColumnName> columns = baseEntity.getColumnIDsForDetailLevel(DetailsLevel.Database);
-                
-                for (ColumnName columnName : columns) 
-                {
-                    this.setValueForField(columnName, baseEntity.getValueForField(columnName));
-                }
-            }
-        }*/
     }
     
     public boolean isSubscription()

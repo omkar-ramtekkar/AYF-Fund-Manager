@@ -60,6 +60,12 @@ public class ReceiptPrintableView extends PrintableView {
         
         return html;
     }
+
+    @Override
+    String getDisplayName() {
+        return "Receipt";
+    }
+    
     
     /**
      * This method is called from within the constructor to initialize the form.
@@ -74,11 +80,11 @@ public class ReceiptPrintableView extends PrintableView {
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 400, Short.MAX_VALUE)
+            .add(0, 597, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 300, Short.MAX_VALUE)
+            .add(0, 307, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
 

@@ -5,6 +5,8 @@ import java.util.logging.Logger;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import org.ayf.managers.ApplicationManager;
+import org.ayf.managers.DatabaseManager;
+import org.ayf.util.DateTime;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -32,6 +34,8 @@ public class AYFMain {
         }
 
         ApplicationManager.getSharedManager().initialize();
+        
+        DatabaseManager.getTotalExpensesInYearByType(DateTime.getDate(1, 1, 2012),DateTime.getTodaySQL());
 
         /*
          TableDialogFrame dialogFrame = new TableDialogFrame();

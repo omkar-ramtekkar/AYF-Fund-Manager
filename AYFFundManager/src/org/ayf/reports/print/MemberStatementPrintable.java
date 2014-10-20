@@ -104,6 +104,10 @@ public class MemberStatementPrintable extends PrintableView {
 
     
     
+    @Override
+    String getDisplayName() {
+        return "Member Statement";
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.

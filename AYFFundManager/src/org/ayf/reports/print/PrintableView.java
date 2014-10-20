@@ -168,7 +168,9 @@ public class PrintableView extends  JPanel implements Printable, HTMLSerializabl
     }
 
     String getDisplayName() {
-        return baseReportView.getDisplayName();
+        if(baseReportView != null)
+            return baseReportView.getDisplayName();
+        return this.getClass().getSimpleName();
     }
 
     public void setHeader(MessageFormat header) {
@@ -218,6 +220,13 @@ public class PrintableView extends  JPanel implements Printable, HTMLSerializabl
     void setShowHorizontalLines(boolean selected) {
         this.reportTable.setShowHorizontalLines(selected);
     }
+
+    @Override
+    public String toString() {
+        return getDisplayName();
+    }
+    
+    
 
     class TableColumnItem
     {

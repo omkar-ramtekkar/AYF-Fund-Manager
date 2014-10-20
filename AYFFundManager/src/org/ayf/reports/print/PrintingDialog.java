@@ -10,7 +10,6 @@ import java.awt.BorderLayout;
 import java.awt.Frame;
 import java.awt.HeadlessException;
 import java.awt.print.PageFormat;
-import java.awt.print.Paper;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
 import java.text.MessageFormat;
@@ -23,7 +22,6 @@ import javax.print.PrintServiceLookup;
 import javax.print.attribute.HashPrintRequestAttributeSet;
 import javax.print.attribute.PrintRequestAttributeSet;
 import javax.print.attribute.standard.MediaSizeName;
-import javax.print.attribute.standard.Sides;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
 import org.ayf.ui.BackgroundPanel;
@@ -447,11 +445,7 @@ public class PrintingDialog extends javax.swing.JDialog {
 
     
     private void previewButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_previewButtonActionPerformed
-        
-//        Paper p = new Paper();
-//        p.setSize(this.htmlPrintable.getEditorView().getWidth(), this.htmlPrintable.getEditorView().getHeight());
-//        final HTMLPrintable htmlPrintable = new HTMLPrintable(this.currentPrintable.getHtml(), p, null);
-//        
+
         PrintPreview preview = new PrintPreview(this, this.htmlPrintable, this.currentPrintable.getPageFormat());
         preview.setVisible(true);
     }//GEN-LAST:event_previewButtonActionPerformed

@@ -37,6 +37,7 @@ import org.ayf.ui.MemberFrame;
 import org.ayf.ui.controllers.ReportViewController;
 import org.ayf.ui.controllers.SettingsViewController;
 import org.ayf.ui.controllers.SideBarTableController;
+import org.ayf.util.DateTime;
 import org.ayf.util.PreferenceManager;
 import org.ayf.util.Toast;
 
@@ -54,6 +55,8 @@ public class ApplicationManager implements ActionListener, DatabaseUpdateListene
     private SettingsViewController settingViewController;
     
     private static ApplicationManager instance = null;
+    
+    public static final java.sql.Date FOUNDATION_ESTABLISHMENT_DATE = DateTime.getDate(1, 9, 2003);
 
     public static ApplicationManager getSharedManager()
     {
@@ -72,6 +75,12 @@ public class ApplicationManager implements ActionListener, DatabaseUpdateListene
     
     public void initialize()
     {
+        // take the menu bar off the jframe
+        System.setProperty("apple.laf.useScreenMenuBar", "true");
+
+        // set the name of the application menu item
+        System.setProperty("com.apple.mrj.application.apple.menu.about.name", "AddimYouthFoundation");
+
         DatabaseManager.loadDatabaseClass();
         DatabaseManager.addDatabaseUpdateListner(this);
         

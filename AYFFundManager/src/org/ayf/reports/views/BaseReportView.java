@@ -109,30 +109,33 @@ public abstract class BaseReportView extends BackgroundPanel implements ReportVi
         
         updateViewDecoration(data);
         
-        Runnable showToastThread = new Runnable() 
+        if(false)
         {
-            @Override
-            public void run() 
+            Runnable showToastThread = new Runnable() 
             {
-                try {
-                    Thread.sleep(500);
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(BaseReportView.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                
-                if(data != null)
+                @Override
+                public void run() 
                 {
-                    Toast.showToastOnComponentCenter(getReportViewTable(), data.getData().size() + " Records Found", true);
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(BaseReportView.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+
+                    if(data != null)
+                    {
+                        Toast.showToastOnComponentCenter(getReportViewTable(), data.getData().size() + " Records Found", true);
+                    }
+                    else
+                    {
+                        Toast.showToastOnComponentCenter(getReportViewTable(), "Report data not available", true);
+                    }
                 }
-                else
-                {
-                    Toast.showToastOnComponentCenter(getReportViewTable(), "Report data not available", true);
-                }
-            }
-        };
-        
-        Thread t = new Thread(showToastThread);
-        t.start();
+            };
+
+            Thread t = new Thread(showToastThread);
+            t.start();
+        }
     }
     
     public abstract void updateViewDecoration(ReportData data);
